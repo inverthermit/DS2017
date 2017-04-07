@@ -26,4 +26,8 @@ public class ServerModel {
 		this.port = port;
 	}
 	
+	public synchronized void addResource(Resource resource){
+		resourceList.add(resource);
+	}
+	
 }

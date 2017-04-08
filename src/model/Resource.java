@@ -14,7 +14,7 @@ public class Resource {
 	public String name;
 	public String description;
 	public String[] tags;
-	public String url;
+	public String uri;
 	public String channel;
 	public String owner;
 	public String EZserver;
@@ -31,8 +31,8 @@ public class Resource {
 	public void setTags(String[] tags) {
 		this.tags = tags;
 	}
-	public void setUrl(String url) {
-		this.url = url;
+	public void setUri(String uri) {
+		this.uri = uri;
 	}
 	public void setChannel(String channel) {
 		this.channel = channel;

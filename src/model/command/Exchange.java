@@ -1,6 +1,7 @@
 package model.command;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,17 +25,17 @@ public class Exchange extends Request {
 	}
 
 	@Override
-	public String toJSON() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(this);
-	}
-
-	@Override
 	public void fromJSON(String json) {
 		Gson gson = new Gson();
 		Exchange obj = gson.fromJson(json, Exchange.class);
 		this.command = obj.command;
 		this.serverList = obj.serverList;
+	}
+	
+	public String toString() {
+		return "Command: " + this.command + ", Resource: [server1="
+				+ this.serverList.get(0) + ", server2="
+				+ this.serverList.get(1) + "]";
 	}
 
 }

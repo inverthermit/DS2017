@@ -26,16 +26,12 @@ public class Publish extends Request {
 		this.resource = resource;
 	}
 
-	@Override
-	public String toJSON() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(this);
-	}
 
 	@Override
 	public void fromJSON(String json) {
 		Gson gson = new Gson();
 		Publish obj = gson.fromJson(json, Publish.class);
+		
 		this.command = obj.command;
 		this.resource = new Resource(obj.resource);
 	}
@@ -44,7 +40,7 @@ public class Publish extends Request {
 		return "Command: " + this.command + ", Resource: [name="
 				+ this.resource.name + ", description="
 				+ this.resource.description + ", tags="
-				+ Arrays.toString(this.resource.tags) + "]";
+				+ Arrays.toString(this.resource.tags) + ", uri=" + this.resource.uri + "]";
 	}
 
 }

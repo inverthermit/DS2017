@@ -54,6 +54,9 @@ public class Main {
 		serverList.add(sm2);
 		Exchange exchange = new Exchange(command, serverList);
 		System.out.println(exchange.toJSON());
+		Exchange exchange2 = new Exchange();
+		exchange2.fromJSON(exchange.toJSON());
+		System.out.println(exchange2);
 		System.out.println("=============================");
 		
 		Fetch fetch = new Fetch("fetch", resource);

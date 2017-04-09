@@ -21,12 +21,6 @@ public class Remove extends Request {
 	}
 
 	@Override
-	public String toJSON() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(this);
-	}
-
-	@Override
 	public void fromJSON(String json) {
 		Gson gson = new Gson();
 		Remove obj = gson.fromJson(json, Remove.class);

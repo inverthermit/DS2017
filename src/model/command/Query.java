@@ -23,12 +23,6 @@ public class Query extends Request {
 	}
 
 	@Override
-	public String toJSON() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(this);
-	}
-
-	@Override
 	public void fromJSON(String json) {
 		Gson gson = new Gson();
 		Query obj = gson.fromJson(json, Query.class);

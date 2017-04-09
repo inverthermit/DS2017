@@ -23,12 +23,6 @@ public class Share extends Request {
 	}
 
 	@Override
-	public String toJSON() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(this);
-	}
-
-	@Override
 	public void fromJSON(String json) {
 		Gson gson = new Gson();
 		Share obj = gson.fromJson(json, Share.class);

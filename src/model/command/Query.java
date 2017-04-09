@@ -10,12 +10,12 @@ import model.Resource;
  */
 public class Query extends Request {
 	private String command;
-	private boolean reply; 
+	private boolean reply;
 	private Resource resource;
-	
+
 	public Query() {
 	}
-	
+
 	public Query(String command, boolean reply, Resource resource) {
 		this.command = command;
 		this.reply = reply;
@@ -26,6 +26,15 @@ public class Query extends Request {
 	public String toJSON() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		return gson.toJson(this);
+	}
+
+	@Override
+	public void fromJSON(String json) {
+		Gson gson = new Gson();
+		Query obj = gson.fromJson(json, Query.class);
+		this.command = obj.command;
+		this.reply = obj.reply;
+		this.resource = new Resource(obj.resource);
 	}
 
 }

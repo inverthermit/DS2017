@@ -4,6 +4,8 @@ package model.command;
 //import java.util.List;
 //import java.util.Map;
 //import net.sf.json.JSONObject;
+import java.util.Arrays;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -15,19 +17,34 @@ import model.Resource;
 public class Publish extends Request {
 	private String command;
 	private Resource resource;
-	
+
 	public Publish() {
 	}
-	
+
 	public Publish(String command, Resource resource) {
 		this.command = command;
 		this.resource = resource;
 	}
-	
+
 	@Override
 	public String toJSON() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		return gson.toJson(this);
+	}
+
+	@Override
+	public void fromJSON(String json) {
+		Gson gson = new Gson();
+		Publish obj = gson.fromJson(json, Publish.class);
+		this.command = obj.command;
+		this.resource = new Resource(obj.resource);
+	}
+
+	public String toString() {
+		return "Command: " + this.command + ", Resource: [name="
+				+ this.resource.name + ", description="
+				+ this.resource.description + ", tags="
+				+ Arrays.toString(this.resource.tags) + "]";
 	}
 
 }

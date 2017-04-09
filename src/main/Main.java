@@ -29,7 +29,9 @@ public class Main {
 		
 		Publish publish = new Publish("PUBLISH", resource);
 		System.out.println(publish.toJSON());
-		System.out.println(publish.toJSON());
+		Publish publish2 = new Publish();
+		publish2.fromJSON(publish.toJSON());
+		System.out.println(publish2);
 		System.out.println("=============================");
 		
 		Remove remove = new Remove("REMOVE", resource);
@@ -67,8 +69,7 @@ public class Main {
 		System.out.println(response1.toJSON());
 		System.out.println("=============================");
 		
-		
-		
+	
 		
 		
 		

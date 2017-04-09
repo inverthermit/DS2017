@@ -14,7 +14,7 @@ public class Remove extends Request {
 
 	public Remove() {
 	}
-	
+
 	public Remove(String command, Resource resource) {
 		this.command = command;
 		this.resource = resource;
@@ -24,6 +24,14 @@ public class Remove extends Request {
 	public String toJSON() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		return gson.toJson(this);
+	}
+
+	@Override
+	public void fromJSON(String json) {
+		Gson gson = new Gson();
+		Remove obj = gson.fromJson(json, Remove.class);
+		this.command = obj.command;
+		this.resource = new Resource(obj.resource);
 	}
 
 }

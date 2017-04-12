@@ -32,7 +32,13 @@ public class ServerThread implements Runnable{
 	                //TODO: Print out log
 	                System.out.println(message);
 	                //TODO:2.Parse message, do operations, return ArrayList<String> to send back to client
-	                ArrayList<String> resultSet = null;//tool() switch case
+	                Operation op = new Operation();
+	                ArrayList<String> resultSet = op.dispatcher(message, selfModel);
+	                if(resultSet==null){
+	                	//Print log
+	                	System.out.print("Nothing to output...");
+	                	return;
+	                }
 	                //3.Send results back to client
 	                for(int i=0;i<resultSet.size();i++){
 	                	out.writeUTF(resultSet.get(i));
@@ -44,7 +50,6 @@ public class ServerThread implements Runnable{
 			in.close();
 			out.close();
 			client.close();
-			
 		}
 		catch(Exception ee){
 			ee.printStackTrace();

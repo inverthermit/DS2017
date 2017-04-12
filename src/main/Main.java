@@ -47,8 +47,8 @@ public class Main {
 		System.out.println("=============================");
 		
 		String command = "EXCHANGE";
-		ServerModel sm1 = new ServerModel("baidu.com", "3067");
-		ServerModel sm2 = new ServerModel("google.com", "4000");
+		ServerModel sm1 = new ServerModel("baidu.com", 3067);
+		ServerModel sm2 = new ServerModel("google.com", 4000);
 		ArrayList<ServerModel> serverList = new ArrayList<ServerModel>();
 		serverList.add(sm1);
 		serverList.add(sm2);

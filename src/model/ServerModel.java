@@ -13,7 +13,7 @@ import com.google.gson.Gson;
 public class ServerModel {
 	
 	public String hostname;
-	public String port;
+	public int port;
 	public Socket socket;
 	public ArrayList<ServerModel> serverList;
 	public ArrayList<ClientModel> clientList;
@@ -23,7 +23,7 @@ public class ServerModel {
 		
 	}
 	
-	public ServerModel(String hostname, String port) {
+	public ServerModel(String hostname, int port) {
 		this.hostname = hostname;
 		this.port = port;
 	}
@@ -70,7 +70,7 @@ public class ServerModel {
 	}
 	public String toServerListJson(){
 		String command = "EXCHANGE";
-		Exchange exchange = new Exchange(command,serverList);
+		Exchange exchange = new Exchange(command,this.serverList);
 		String json = exchange.toJSON();
 		//TODO: Act as a tcp client and exchange with other servers
 		for(int i=0;i<serverList.size();i++){

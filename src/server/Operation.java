@@ -4,6 +4,7 @@ import model.command.*;
 
 import java.util.*;
 
+import client.Client;
 import tool.Common;
 
 public class Operation {
@@ -79,7 +80,11 @@ public class Operation {
 	
 	//Send using the EXCHANGE request to other servers in server.serverList
 	public ArrayList<String> doServerExchange(Exchange exchange,ServerModel server){
-		
+		String query = server.toServerListJson();
+		for(int i=0;i<server.serverList.size();i++){
+			ServerModel tempServer = server.serverList.get(i);
+			Client.doSend(tempServer.hostname, tempServer.port, query);
+		}
 		return null;
 	}
 }

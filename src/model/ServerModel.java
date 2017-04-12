@@ -3,6 +3,8 @@ package model;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import model.command.Exchange;
+
 import com.google.gson.Gson;
 
 /**
@@ -65,6 +67,16 @@ public class ServerModel {
 				return -2;
 			}
 		}
+	}
+	public String toServerListJson(){
+		String command = "EXCHANGE";
+		Exchange exchange = new Exchange(command,serverList);
+		String json = exchange.toJSON();
+		//TODO: Act as a tcp client and exchange with other servers
+		for(int i=0;i<serverList.size();i++){
+			//Send json to lists
+		}
+		return null;
 	}
 	
 }

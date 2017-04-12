@@ -1,11 +1,52 @@
 package server;
 import model.ServerModel;
 import model.command.*;
+
 import java.util.*;
 
+import tool.Common;
+
 public class Operation {
-	public ArrayList<String> dispatcher(String json){
-		//TODO:1.get the command of json
+	public ArrayList<String> dispatcher(String json, ServerModel server){
+		//1.get the command of json
+		String op = Common.getOperationfromJson(json);
+		ArrayList<String> result = null;
+		switch (op){
+		case "PUBLISH":
+			Publish publish = new Publish();
+			publish.fromJSON(json);
+			result = doClientPublish(publish, server);
+			break;
+		case "REMOVE":
+			Remove remove = new Remove();
+			remove.fromJSON(json);
+			result = doClientRemove(remove, server);
+			break;
+		case "SHARE":
+			Share share = new Share();
+			share.fromJSON(json);
+			result = doClientShare(share, server);
+			break;
+		case "QUERY":
+			Query query = new Query();
+			query.fromJSON(json);
+			result = doClientQuery(query, server);
+			break;
+		case "EXCHANGE":
+			Exchange exchange = new Exchange();
+			exchange.fromJSON(json);
+			result = doClientExchange(exchange, server);
+			break;
+		case "FETCH":
+			Fetch fetch = new Fetch();
+			fetch.fromJSON(json);
+			result = doClientFetch(fetch, server);
+			break;
+		default:
+			result = null;
+			break;
+		}
+		return result;
 	}
 	
 	public ArrayList<String> doClientExchange(Exchange exchange,ServerModel server){
@@ -41,5 +82,4 @@ public class Operation {
 		
 		return null;
 	}
-
 }

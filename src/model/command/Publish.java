@@ -43,6 +43,22 @@ public class Publish extends Request {
 				+ Arrays.toString(this.resource.tags) + ", uri=" + this.resource.uri + "]";
 	}
 
+	public String getCommand() {
+		return command;
+	}
+
+	public void setCommand(String command) {
+		this.command = command;
+	}
+
+	public Resource getResource() {
+		return resource;
+	}
+
+	public void setResource(Resource resource) {
+		this.resource = resource;
+	}
+
 }
 
 // @Override

@@ -13,6 +13,7 @@ import model.ServerModel;
  */
 public class Exchange extends Request {
 	private String command;
+
 	private ArrayList<ServerModel> serverList;
 
 	public Exchange() {
@@ -36,6 +37,22 @@ public class Exchange extends Request {
 		return "Command: " + this.command + ", Resource: [server1="
 				+ this.serverList.get(0) + ", server2="
 				+ this.serverList.get(1) + "]";
+	}
+	
+	public String getCommand() {
+		return command;
+	}
+
+	public void setCommand(String command) {
+		this.command = command;
+	}
+
+	public ArrayList<ServerModel> getServerList() {
+		return serverList;
+	}
+
+	public void setServerList(ArrayList<ServerModel> serverList) {
+		this.serverList = serverList;
 	}
 
 }

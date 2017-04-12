@@ -10,6 +10,7 @@ import model.Resource;
  */
 public class Fetch extends Request {
 	private String command;
+
 	private Resource resource;
 
 	public Fetch() {
@@ -26,5 +27,21 @@ public class Fetch extends Request {
 		Fetch obj = gson.fromJson(json, Fetch.class);
 		this.command = obj.command;
 		this.resource = new Resource(obj.resource);
+	}
+	
+	public String getCommand() {
+		return command;
+	}
+
+	public void setCommand(String command) {
+		this.command = command;
+	}
+
+	public Resource getResource() {
+		return resource;
+	}
+
+	public void setResource(Resource resource) {
+		this.resource = resource;
 	}
 }

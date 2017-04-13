@@ -4,5 +4,5 @@ package tool;
  */
 public class Config {
 	public static final int MAX_CONNECTION = 10;
-	
+	public static final int HEARTBEAT_INTERVAL = 10000;//ms
 }

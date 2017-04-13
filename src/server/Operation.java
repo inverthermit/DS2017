@@ -79,7 +79,7 @@ public class Operation {
 	}
 	
 	//Send using the EXCHANGE request to other servers in server.serverList
-	public ArrayList<String> doServerExchange(Exchange exchange,ServerModel server){
+	public ArrayList<String> doServerExchange(ServerModel server){
 		String query = server.toServerListJson();
 		for(int i=0;i<server.serverList.size();i++){
 			ServerModel tempServer = server.serverList.get(i);

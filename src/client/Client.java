@@ -18,8 +18,7 @@ public class Client {
 	public static void doSend(String hostname, int port, String query){
 		try{
 			//3.Create socket/input/output
-			int serverPort = 3780;
-		    Socket socket = new Socket(hostname, serverPort);  
+			Socket socket = new Socket(hostname, port);  
 		    //TODO: Output the log of connction
 		    System.out.println("Connection Established");
 		    DataInputStream in = new DataInputStream( socket.getInputStream());

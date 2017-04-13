@@ -11,8 +11,11 @@ public class Server {
 	private static ServerModel selfModel = new ServerModel();
 	public static void main(String[] args){
 		//TODO: Get port from command line?
-		int port = 9999;
+		int port = 10000;
+		//int port = 10001;
+		//int port = 10002;
 		ExecutorService pool = Executors.newCachedThreadPool();
+		pool.execute(new HeartbeatThread(selfModel));
 		try{
 			ServerSocket server = new ServerSocket(port);
 			Socket client = null;

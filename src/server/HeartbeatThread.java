@@ -12,6 +12,7 @@ public class HeartbeatThread implements Runnable{
 	@Override
 	public void run() {
 		Operation op = new Operation();
+		int i=0;
 		while(true){
 			try {
 				Thread.sleep(Config.HEARTBEAT_INTERVAL);
@@ -19,6 +20,8 @@ public class HeartbeatThread implements Runnable{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			System.out.println("Count:"+i);
+			i++;
 			if(server.serverList.size()>0){
 				op.doServerExchange(this.server);
 			}

@@ -3,16 +3,19 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
+import model.ClientModel;
 import model.ServerModel;
 
 public class ServerThread implements Runnable{
 	private Socket client;
+	private ClientModel clientModel;
 	private DataInputStream in;
 	private DataOutputStream out;
 	private ServerModel selfModel;
 	
-	public ServerThread(Socket client, ServerModel selfModel){
-		this.client=client;
+	public ServerThread(ClientModel client, ServerModel selfModel){
+		this.clientModel = client;
+		this.client=client.socket;
 		this.selfModel = selfModel;
 		try{
 			this.in = new DataInputStream( this.client.getInputStream());
@@ -33,7 +36,7 @@ public class ServerThread implements Runnable{
 	                System.out.println(message);
 	                //TODO:2.Parse message, do operations, return ArrayList<String> to send back to client
 	                Operation op = new Operation();
-	                ArrayList<String> resultSet = op.dispatcher(message, selfModel);
+	                ArrayList<String> resultSet = op.dispatcher(message, selfModel, clientModel);
 	                if(resultSet==null){
 	                	//Print log
 	                	System.out.print("Nothing to output...");

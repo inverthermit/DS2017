@@ -15,9 +15,9 @@ public class ServerModel {
 	public String hostname;
 	public int port;
 	public Socket socket;
-	public ArrayList<ServerModel> serverList;
-	public ArrayList<ClientModel> clientList;
-	public ArrayList<Resource> resourceList;
+	public ArrayList<ServerModel> serverList = new ArrayList<ServerModel>();
+	public ArrayList<ClientModel> clientList = new ArrayList<ClientModel>();
+	public ArrayList<Resource> resourceList = new ArrayList<Resource>();
 	
 	public ServerModel() {
 		
@@ -72,11 +72,7 @@ public class ServerModel {
 		String command = "EXCHANGE";
 		Exchange exchange = new Exchange(command,this.serverList);
 		String json = exchange.toJSON();
-		//TODO: Act as a tcp client and exchange with other servers
-		for(int i=0;i<serverList.size();i++){
-			//Send json to lists
-		}
-		return null;
+		return json;
 	}
 	
 }

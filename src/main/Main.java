@@ -2,7 +2,7 @@ package main;
 
 import model.Resource;
 import model.ServerModel;
-import model.Response.NomalResponse;
+import model.Response.NormalResponse;
 import model.command.Exchange;
 import model.command.Fetch;
 import model.command.Publish;
@@ -64,11 +64,11 @@ public class Main {
 		System.out.println("=============================");
 		
 		ErrorMessage error = new ErrorMessage();
-		NomalResponse response = new NomalResponse("error", error.GENERIC_INVALID);
+		NormalResponse response = new NormalResponse("error", error.GENERIC_INVALID);
 		System.out.println(response.toJSON());
 		System.out.println("=============================");
 		
-		NomalResponse response1 = new NomalResponse("success");
+		NormalResponse response1 = new NormalResponse("success");
 		System.out.println(response1.toJSON());
 		System.out.println("=============================");
 		

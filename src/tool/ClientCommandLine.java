@@ -1,4 +1,6 @@
 package tool;
+
+import java.security.cert.PKIXRevocationChecker.Option;
 import org.apache.commons.cli.*;
 /**
 	 * Created by Tim Luo on 2017/3/27.
@@ -19,6 +21,7 @@ public class ClientCommandLine {
         		.desc("print debug informaton")
         		.build();
         opt.addOption(debug);
+       
         Option description = Option.builder("description")
         		.hasArg()
         		.desc("rescource description")

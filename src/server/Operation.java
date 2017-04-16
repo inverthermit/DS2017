@@ -19,7 +19,7 @@ public class Operation {
 		return null;	
 	}
 	public ArrayList<String> doClientPublish(Publish publish,ServerModel server){
-		server.addDelResource(publish.getResource(), true);
+		server.addDelResource(publish.getResource(), true); 
 		return null;
 	}
 	public ArrayList<String> doClientQuery(Query query,ServerModel server){

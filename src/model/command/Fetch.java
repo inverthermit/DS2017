@@ -10,14 +10,15 @@ import model.Resource;
  */
 public class Fetch extends Request {
 	private String command;
-	private Resource resource;
+	//TODO:Should be resource template
+	private Resource resourceTemplate;
 
 	public Fetch() {
 	}
 
-	public Fetch(String command, Resource resource) {
+	public Fetch(String command, Resource resourceTemplate) {
 		this.command = command;
-		this.resource = resource;
+		this.resourceTemplate = resourceTemplate;
 	}
 
 	@Override
@@ -25,6 +26,22 @@ public class Fetch extends Request {
 		Gson gson = new Gson();
 		Fetch obj = gson.fromJson(json, Fetch.class);
 		this.command = obj.command;
-		this.resource = new Resource(obj.resource);
+		this.resourceTemplate = new Resource(obj.resourceTemplate);
+	}
+	
+	public String getCommand() {
+		return command;
+	}
+
+	public void setCommand(String command) {
+		this.command = command;
+	}
+
+	public Resource getResource() {
+		return resourceTemplate;
+	}
+
+	public void setResource(Resource resourceTemplate) {
+		this.resourceTemplate = resourceTemplate;
 	}
 }

@@ -31,4 +31,28 @@ public class Query extends Request {
 		this.resource = new Resource(obj.resource);
 	}
 
+	public String getCommand() {
+		return command;
+	}
+
+	public void setCommand(String command) {
+		this.command = command;
+	}
+
+	public boolean isReply() {
+		return reply;
+	}
+
+	public void setReply(boolean reply) {
+		this.reply = reply;
+	}
+
+	public Resource getResource() {
+		return resource;
+	}
+
+	public void setResource(Resource resource) {
+		this.resource = resource;
+	}
+
 }

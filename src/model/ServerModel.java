@@ -3,6 +3,8 @@ package model;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import model.command.Exchange;
+
 import com.google.gson.Gson;
 
 /**
@@ -11,17 +13,17 @@ import com.google.gson.Gson;
 public class ServerModel {
 	
 	public String hostname;
-	public String port;
+	public int port;
 	public Socket socket;
-	public ArrayList<ServerModel> serverList;
-	public ArrayList<ClientModel> clientList;
-	public ArrayList<Resource> resourceList;
+	public ArrayList<ServerModel> serverList = new ArrayList<ServerModel>();
+	public ArrayList<ClientModel> clientList = new ArrayList<ClientModel>();
+	public ArrayList<Resource> resourceList = new ArrayList<Resource>();
 	
 	public ServerModel() {
 		
 	}
 	
-	public ServerModel(String hostname, String port) {
+	public ServerModel(String hostname, int port) {
 		this.hostname = hostname;
 		this.port = port;
 	}
@@ -65,6 +67,12 @@ public class ServerModel {
 				return -2;
 			}
 		}
+	}
+	public String toServerListJson(){
+		String command = "EXCHANGE";
+		Exchange exchange = new Exchange(command,this.serverList);
+		String json = exchange.toJSON();
+		return json;
 	}
 	
 }

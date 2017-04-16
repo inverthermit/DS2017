@@ -3,19 +3,19 @@ package model.Response;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class NomalResponse {
+public class NormalResponse {
 	private String response;
 	private String errorType;
 
-	public NomalResponse() {
+	public NormalResponse() {
 		
 	}
 	
-	public NomalResponse(String sucResponce) {
+	public NormalResponse(String sucResponce) {
 		this.response = sucResponce;
 	}
 	
-	public NomalResponse(String errorResponce, String errorType) {
+	public NormalResponse(String errorResponce, String errorType) {
 		this.response = errorResponce;
 		this.errorType = errorType;
 	}

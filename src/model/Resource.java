@@ -20,7 +20,7 @@ public class Resource {
 	public String uri;
 	public String channel;
 	public String owner;
-	public String EZserver;
+	public String[] EZserver;
 	public long resourceSize;
 
 	public Resource() {
@@ -65,7 +65,7 @@ public class Resource {
 		this.owner = owner;
 	}
 
-	public void setEZserver(String eZserver) {
+	public void setEZserver(String[] eZserver) {
 		EZserver = eZserver;
 	}
 

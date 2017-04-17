@@ -1,12 +1,28 @@
 package tool;
 
-import java.security.cert.PKIXRevocationChecker.Option;
+import java.util.ArrayList;
+
 import org.apache.commons.cli.*;
+
+import model.Resource;
+import model.ServerModel;
+import model.Response.NormalResponse;
+import model.command.*;
 /**
 	 * Created by Tim Luo on 2017/3/27.
 	 */
 public class ClientCommandLine {
-	public static void main(String[] args) {
+	public static final int[] FETCH = {-1,-1,-1,1,1,-1,-1,-1,-1,-1};
+	public static final int[] EXCHANGE = {-1,-1,-1,-1,-1,-1,-1,-1,1,1};
+	public static final int[] REMOVE= {-1,-1,-1,1,1,1,-1,-1,-1,-1};
+	public static final int[] QUERY={0,0,0,0,1,0,0,-1,-1,-1};
+	public static final int[] PUBLISH= {0,0,0,1,0,0,0,-1,-1,1,1};
+	public static final int[] SHARE= {0,0,0,1,0,0,-1,1,-1,-1};
+	private static boolean valid;
+	
+	public static String ClientCommandLine(String[] args) {
+		Resource resource = new Resource();
+		String request = null;
         Options opt = new Options();
         // add command line option to options
         /*
@@ -89,120 +105,234 @@ public class ClientCommandLine {
         opt.addOption(uri);
         opt.addOption("h", "help", false, "help");
         
-        String formatterHelp  = "WRONG COMMAND" + "\n" + "HELP";
-        HelpFormatter formatter = new HelpFormatter();
         CommandLineParser parser = new  DefaultParser();
         CommandLine commandLine = null;
-        //if command is wrong print out help message
+        //check commandline
         try {
             commandLine = parser.parse( opt, args);
-        
-        // if command line has -h or -help
-        if (commandLine.hasOption("h")) {
-            HelpFormatter hf = new HelpFormatter();
-            hf.printHelp(formatterHelp, "", opt, "");
-            System.out.println("has h ");
-            return;
-        }
-        
-        // if command line has -channel 
-        if (commandLine.hasOption("channel")) {
-        	String channel1 = commandLine.getOptionValue("channel");
-            System.out.println("has channel and its arg is " + channel1);
-        }
-        
-         // if command line has -debug
-        if (commandLine.hasOption("debug")) {
-            System.out.println("has debug");
-        }
-        
-        //if command line has -description
-        if (commandLine.hasOption("description")) {
-        	String descip = commandLine.getOptionValue("description");
-            System.out.println("has description and its arg is " + descip);
-        }
-        
-        // if command line has -exchange
-        if (commandLine.hasOption("exchange")) {
-            System.out.println("has exchange");
-        }
-        
-        // if command line has -fetch
-        if (commandLine.hasOption("fetch")) {
-            System.out.println("has fetch");
-        }
-        
-        //if command line has -port
-        if (commandLine.hasOption("host")) {
-        	String hostName = commandLine.getOptionValue("host");
-            System.out.println("has host and its arg is " + hostName);
-        }
-        
-        //if command line has -name
-        if (commandLine.hasOption("name")) {
-        	String resourceName = commandLine.getOptionValue("name");
-            System.out.println("has name and its arg is " + resourceName);
-        }
-        
-        //if command line has -owner
-        if (commandLine.hasOption("owner")) {
-        	String ownerName = commandLine.getOptionValue("owner");
-            System.out.println("has owner and its arg is " + ownerName);
-        }
-        
-        //if command line has -port
-        if (commandLine.hasOption("port")) {
-        	String portName = commandLine.getOptionValue("port");
-        	int portNum;
-        	portNum = Integer.parseInt(portName);
-            System.out.println("has port and its arg is " + portNum);
-        }
-        
-        // if command line has -publish
-        if (commandLine.hasOption("publish")) {
-            System.out.println("has publish");
-        }
-        
-        // if command line has -query
-        if (commandLine.hasOption("query")) {
-            System.out.println("has query");
-        }
-        
-        // if command line has -remove
-        if (commandLine.hasOption("remove")) {
-            System.out.println("has remove");
-        }
-        
-        //if command line has -secret
-        if (commandLine.hasOption("secret")) {
-        	String secretName = commandLine.getOptionValue("secret");
-            System.out.println("has secretl and its arg is " + secretName);
-        }
-        
-        //if command line has -servers
-        if (commandLine.hasOption("servers")) {
-        	String serversName = commandLine.getOptionValue("servers");
-            System.out.println("has servers and its arg is " + serversName);
-        }
-        
-        
-        // if command line has -share
-        if (commandLine.hasOption("share")) {
-            System.out.println("has share");
-        }
-        
-        //if command line has -uri
-        if (commandLine.hasOption("uri")) {
-        	String uriName = commandLine.getOptionValue("uri");
-            System.out.println("has uri and its arg is " + uriName);
-        }
-        
+            Option[] commandline = commandLine.getOptions();
+            if(commandline.length==0){
+            	ErrorMessage error = new ErrorMessage();
+        		NormalResponse response = new NormalResponse("error", error.GENERIC_MISS_INCORRECT);
+        		System.out.println(response.toJSON());
+            } else {
+            	String command = commandline[0].toString();
+            	switch (command){
+            	case "publish":
+            		request = cliPublish(commandline);
+            		break;
+            	case "remove":
+            		request = cliRemove(commandline);
+            		break;
+            	case "query":
+            		request = cliQuery(commandline);
+            		break;
+            	case "fetch":
+            		request = cliFetch(commandline);
+            		break;
+            	case "share":
+            		request = cliPublish(commandline);
+            		break;
+            	case "exchange":
+            		request = cliPublish(commandline);
+            		break;
+            	default:
+            		ErrorMessage error = new ErrorMessage();
+            		NormalResponse response = new NormalResponse("error", error.GENERIC_INVALID);
+            		System.out.println(response.toJSON());
+            		break;
+            	}
+            	if(valid == false){
+            		request = null;
+            	}
+            	return request;
+            }
         } catch (ParseException e) {
-            formatter.printHelp( formatterHelp,opt ); 
+            //formatter.printHelp( formatterHelp,opt ); 
         }
-        
-
-        
+		return request;      
     }
+
+	public static String cliPublish(Option[] commandline) {
+		String request;
+		Resource resource = new Resource();
+		resource = cliResource(commandline, PUBLISH, "publish");
+		Publish publish = new Publish("PUBLISH", resource);
+		request = publish.toJSON();
+		return request;
+	}
+
+	public static String cliRemove(Option[] commandline) {
+		String request;
+		Resource resource = new Resource();
+		resource = cliResource(commandline, REMOVE, "remove");
+		Remove remove = new Remove("REMOVE", resource);
+		request = remove.toJSON();
+		return request;
+	}
+
+	public static String cliQuery(Option[] commandline) {
+		String request;
+		Resource resource = new Resource();
+		resource = cliResource(commandline,QUERY, "query");
+		Query query = new Query("QUERY",true, resource);
+		request = query.toJSON();
+		return request;
+	}
+
+	public static String cliFetch(Option[] commandline) {
+		String request;
+		Resource resource = new Resource();
+		resource = cliResource(commandline, FETCH, "fetch");
+		Fetch fetch = new Fetch("FETCH", resource);
+		request = fetch.toJSON();
+		return request;
+	}
+
+	public static String cliShare(Option[] commandline) {
+		String request;
+		String secret = null;
+		Resource resource = new Resource();
+		resource = cliResource(commandline, PUBLISH, "publish");
+		for(int i =1;i<commandline.length;i++){
+			if (commandline[i].toString().equals("share")){
+				secret = commandline[i].getValue();
+				checkString(secret);
+			} else {
+				ErrorMessage error = new ErrorMessage();
+        		NormalResponse response = new NormalResponse("error", error.SHARE_MISSING);
+        		System.out.println(response.toJSON());
+        		secret = "";
+        		valid = false;
+			}
+		}
+		Share share = new Share("SHARE",secret, resource);
+		request = share.toJSON();
+		return request;
+	}
+
+	public static String cliExchange(Option[] commandline) {
+		String request,hostName;
+		int portNum;
+		String[] serverlists = null,servers;
+		ArrayList<ServerModel> serverList = new ArrayList<ServerModel>();
+		for(int i =1;i<commandline.length;i++){
+			if (commandline[i].toString().equals("servers")){
+				serverlists = commandline[i].getValues();
+		}
+		for(int m =0;i<serverlists.length;i++){
+			String serverlist = serverlists[i];
+			servers = serverlist.split(":");
+			hostName = servers[0];
+			portNum = Integer.parseInt(servers[1]);
+			ServerModel sm = new ServerModel(hostName,portNum);
+			serverList.add(sm);
+		}
+		}
+		Exchange exchange = new Exchange("EXCHANGE", serverList);
+		request = exchange.toJSON();
+		return request;
+	}
+
+	public static Resource cliResource(Option[] commandline, int[] command, String commandName) {
+		Resource resource = new Resource();
+		int[] arg = new int[command.length];
+		String resourceFeature;
+		for (int i = 1; i < commandline.length; i++) {
+			resourceFeature = commandline[i].toString();
+			switch (resourceFeature) {
+			case "name":
+			   checkString(commandline[i].getValue());
+			   resource.setName(commandline[i].getValue());
+			   arg[0]=1;
+			   break;
+			case "tags":
+				checkStringArray(commandline[i].getValues());
+				resource.setTags(commandline[i].getValues());
+			    arg[1]=1;
+			    break;
+			case "description":
+				checkString(commandline[i].getValue());
+				resource.setDescription(commandline[i].getValue());
+			    arg[2]=1;
+			    break;
+			case "uri":
+				checkString(commandline[i].getValue());
+			    resource.setUri(commandline[i].getValue());
+			    arg[3]=1;
+			    break;
+			case "channel":
+				checkString(commandline[i].getValue());
+			    resource.setChannel(commandline[i].getValue());
+			    arg[4]=1;
+			    break;
+			case "owner":
+				checkString(commandline[i].getValue());
+			    resource.setOwner(commandline[i].getValue());
+			    arg[5]=1;
+			    break;
+			case "servers":
+				checkStringArray(commandline[i].getValues());
+			    resource.setEZserver(commandline[i].getValues());
+			    arg[6]=1;
+			    break;
+			default:
+			   break;
+			}
+		}
+		checkArg(arg,command,commandName);
+		return resource;
+	}
+
+	public static void checkArg(int[] arg, int[] command, String commandName) {
+		ErrorMessage error = new ErrorMessage();
+		NormalResponse response;
+		for(int i =0;i<arg.length;i++){
+			if( command[i]==1 && arg[i]!=command[i]){
+				switch(commandName){
+				case "publish":
+				case "remove":
+					response = new NormalResponse("error", error.PUBLISH_REMOVE_RESOURCE_MISSING);
+	        		System.out.println(response.toJSON());
+	        		break;
+				case "query":
+				case "fetch":
+				case "exchange":
+	        		response = new NormalResponse("error", error.QUERY_FETCH_EXCHANGE_RESOURCETEMPLATE_MISSING);
+	        		System.out.println(response.toJSON());
+	        		break;
+				case "share":
+					response = new NormalResponse("error", error.SHARE_MISSING );
+	        		System.out.println(response.toJSON());
+	        		break;
+	        	default:
+	        		break;	
+				}
+				break;
+			}
+		}
+		valid = false;
+	}
+
+	// treat this situation for invalid
+	public static boolean checkString(String str) {
+		if(str.contains("\0")||str.charAt(0)==' ' || str.charAt(str.length())==' '){
+			ErrorMessage error = new ErrorMessage();
+    		NormalResponse response = new NormalResponse("error", error.GENERIC_INVALID);
+    		System.out.println(response.toJSON());	
+    		valid = false;
+    		return true;
+		} else { return false;}
+	}
+
+	public static void checkStringArray(String[] strs) {
+		for(int i =0; i<strs.length;i++){
+			String str =strs[i];
+			if (checkString(str)){
+				valid = false;
+				break;
+			}
+		}
+	}
 	
 }

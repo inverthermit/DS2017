@@ -5,6 +5,7 @@ import java.io.*;
 
 import model.Resource;
 import model.command.Fetch;
+import tool.ClientCommandLine;
 import tool.Common;
 import tool.Config;
 /**
@@ -18,6 +19,9 @@ public class Client {
 		//Commandline.isValid(args);
 		//TODO:2.Translate cli to query
 	    String query = "";//Translated query
+	    // translate cli to query and if the commanline is unvalid will print out the error message 
+	    // and send null to query
+	    query = ClientCommandLine.ClientCommandLine(args);
 		doSend(serverHostname,serverPort,query);
 	}
 	

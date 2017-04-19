@@ -14,13 +14,13 @@ import com.google.gson.GsonBuilder;
 
 public class Resource {
 
-	public String name;
-	public String description;
-	public String[] tags;
-	public String uri;
-	public String channel;
-	public String owner;
-	public String[] EZserver;
+	public String name = "";
+	public String description= "";
+	public String[] tags= {};
+	public String uri= "";
+	public String channel= "";
+	public String owner= "";
+	public String[] EZserver={};
 	public long resourceSize;
 
 	public Resource() {

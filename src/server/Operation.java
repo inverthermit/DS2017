@@ -1,5 +1,6 @@
 package server;
 import model.ClientModel;
+import model.Resource;
 import model.ServerModel;
 import model.Response.NormalResponse;
 import model.command.*;
@@ -66,7 +67,6 @@ public class Operation {
 		return arr;
 	}
 	
-	//TODO:Add file stream transfer API!!!!!!!!! This is a special operation
 	public ArrayList<String> doClientFetch(Fetch fetch,ServerModel server, ClientModel client){
 		String fileName = (String) fetch.getResource().uri;
 		// Check if file exists
@@ -104,8 +104,37 @@ public class Operation {
 		return null;
 	}
 	public ArrayList<String> doClientQuery(Query query,ServerModel server){
-
-		return null;
+		ArrayList<String> result = new ArrayList<String>();
+		NormalResponse nr = new NormalResponse("success");
+		result.add(nr.toJSON());
+		int count =0;
+		for(int i=0;i<server.resourceList.size();i++){
+			Resource resource = server.resourceList.get(i);
+			/*
+			1.(The template channel equals (case sensitive) the resource channel AND
+			2.If the template contains an owner that is not "", then the candidate owner must equal it (case sensitive) AND
+			3.Any tags present in the template also are present in the candidate (case insensitive) AND
+			4.If the template contains a URI then the candidate URI matches (case sensitive) AND
+			5.(The candidate name contains the template name as a substring (for non "" template name) OR
+			6.The candidate description contains the template description as a substring (for non "" template descriptions)
+			OR
+			7.The template description and name are both ""))
+			*/
+			if(query.getResource().channel.equals(resource.channel) &&//1
+					(query.getResource().owner.equals("")||((!query.getResource().owner.equals(""))&&query.getResource().owner.equals(resource.owner))) &&//2
+					(Common.arrayInArray(query.getResource().tags, resource.tags)) && //3
+					(query.getResource().uri.equals(resource.uri)) &&//4
+					(resource.name.contains(query.getResource().name) ||//5
+					 query.getResource().description.equals("")||resource.description.contains(query.getResource().description) ||//6
+					 (query.getResource().description.equals("")&&query.getResource().name.equals(""))//7
+							)
+					) {
+				result.add(resource.toJSON());		
+				count++;
+			}
+		}
+		result.add("{\"resultSize\":"+count+"}");
+		return result;
 	}
 	public ArrayList<String> doClientRemove(Remove remove,ServerModel server){
 		server.addDelResource(remove.getResource(), false);//Add getters and setters

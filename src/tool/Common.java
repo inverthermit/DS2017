@@ -35,4 +35,23 @@ public class Common {
 	    return methodName;
 	}
 	
+	public static boolean arrayInArray(String[] arrSmall, String[] arrBig){
+		if(arrSmall.length>arrBig.length){
+			return false;
+		}
+		for(int i=0;i<arrSmall.length;i++){
+			boolean containFlag = false;
+			for(int j=0;j<arrBig.length;j++){
+				if(arrSmall[i].equals(arrBig)){
+					containFlag = true;
+					break;
+				}
+			}
+			if(containFlag==false){
+				return false;
+			}
+		}
+		return true;
+	}
+	
 }

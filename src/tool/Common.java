@@ -6,6 +6,7 @@ import java.security.SecureRandom;
 	 * Created by Tim Luo on 2017/3/27.
 	 */
 public class Common {
+	public static String SECRET = randomString(10);
 	public static final String[] LOGGIN_LEVEL = {"SEVERE","WARNING","INFO","CONFIG","FINE","FINER","FINEST"};
 	
 	public static final String[] BASIC_OP = {"EXCHANGE","FETCH","SHARE","PUBLISH","QUERY","REMOVE"};
@@ -21,7 +22,7 @@ public class Common {
 		}
 		return null;
 	}
-	public String randomString( int len ){
+	public static String randomString( int len ){
 	   StringBuilder sb = new StringBuilder( len );
 	   for( int i = 0; i < len; i++ ) 
 	      sb.append( AB.charAt( rnd.nextInt(AB.length()) ) );

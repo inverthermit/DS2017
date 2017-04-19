@@ -15,6 +15,7 @@ import java.util.*;
 import client.Client;
 import tool.Common;
 import tool.Config;
+import tool.ErrorMessage;
 
 public class Operation {
 	public ArrayList<String> dispatcher(String json, ServerModel server, ClientModel client){
@@ -61,10 +62,10 @@ public class Operation {
 	
 	public ArrayList<String> doClientExchange(Exchange exchange,ServerModel server){
 		System.out.println("doClientExchange:"+exchange.toJSON());
+		ArrayList<String> result = new ArrayList<String>();
 		NormalResponse nr = new NormalResponse("success");
-		ArrayList<String> arr = new ArrayList<String>();
-		arr.add(nr.toJSON());
-		return arr;
+		result.add(nr.toJSON());
+		return result;
 	}
 	
 	public ArrayList<String> doClientFetch(Fetch fetch,ServerModel server, ClientModel client){
@@ -100,8 +101,16 @@ public class Operation {
 		return null;	
 	}
 	public ArrayList<String> doClientPublish(Publish publish,ServerModel server){
-		server.addDelResource(publish.getResource(), true); 
-		return null;
+		ArrayList<String> result = new ArrayList<String>();
+		int status = server.addDelResource(publish.getResource(), true); 
+		if(status>0){
+			NormalResponse nr = new NormalResponse("success");
+			result.add(nr.toJSON());
+		}
+		else{
+			//Temporary only return 1
+		}
+		return result;
 	}
 	public ArrayList<String> doClientQuery(Query query,ServerModel server){
 		ArrayList<String> result = new ArrayList<String>();
@@ -137,13 +146,41 @@ public class Operation {
 		return result;
 	}
 	public ArrayList<String> doClientRemove(Remove remove,ServerModel server){
-		server.addDelResource(remove.getResource(), false);//Add getters and setters
-		return null;
+		ArrayList<String> result = new ArrayList<String>();
+		int status = server.addDelResource(remove.getResource(), false); 
+		if(status>0){
+			NormalResponse nr = new NormalResponse("success");
+			result.add(nr.toJSON());
+		}
+		else{
+			NormalResponse nr = new NormalResponse("error",ErrorMessage.REMOVE_RESOURCE_NOT_EXIST);
+			result.add(nr.toJSON());
+		}
+		return result;
 	}
 	public ArrayList<String> doClientShare(Share share,ServerModel server){
-		//TODO:Check if the resource uri is a file which exists
-		server.addDelResource(share.getResource(), true);
-		return null;
+		ArrayList<String> result = new ArrayList<String>();
+		if(!share.getSecret().equals(Common.SECRET)){
+			NormalResponse nr = new NormalResponse("error",ErrorMessage.SHARE_SECRET_INCORRECT);
+			result.add(nr.toJSON());
+			return result;
+		}
+		//Check if the resource uri is a file which exists
+		File f = new File(share.getResource().uri);
+		if(!(f.exists() && !f.isDirectory())) { 
+			NormalResponse nr = new NormalResponse("error",ErrorMessage.SHARE_MISSING);
+			result.add(nr.toJSON());
+			return result;
+		}
+		int status = server.addDelResource(share.getResource(), true); 
+		if(status>0){
+			NormalResponse nr = new NormalResponse("success");
+			result.add(nr.toJSON());
+		}
+		else{
+			//Temporary only return 1
+		}
+		return result;
 	}
 	
 	//Send using the EXCHANGE request to other servers in server.serverList

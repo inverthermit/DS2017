@@ -13,7 +13,9 @@ public class Common {
 	public static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 	public static String getOperationfromJson(String json){
 		for(int i=0;i<BASIC_OP.length;i++){
-			if(json.contains("\"command\": \""+BASIC_OP[i]+"\"")){
+			//if(json.matches("\"command\"( )?:( )?\""+BASIC_OP[i]+"\""))
+			//TODO: Optimize the command
+			if(json.contains("\""+BASIC_OP[i]+"\"")){
 				return BASIC_OP[i];
 			}
 		}

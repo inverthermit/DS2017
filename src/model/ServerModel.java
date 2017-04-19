@@ -13,7 +13,10 @@ import com.google.gson.Gson;
 public class ServerModel {
 
 	public String hostname;
+	public String intervallimit;
+	public String exchangeInterval;
 	public int port;
+	public String secret;
 	public Socket socket;
 	public ArrayList<ServerModel> serverList = new ArrayList<ServerModel>();
 	public ArrayList<ClientModel> clientList = new ArrayList<ClientModel>();
@@ -26,6 +29,26 @@ public class ServerModel {
 	public ServerModel(String hostname, int port) {
 		this.hostname = hostname;
 		this.port = port;
+		}
+	
+	public void setHostName(String hostName){
+		this.hostname = hostName;
+	}
+	
+	public void setIntervalLimit(String intervalLimit){
+		this.intervallimit = intervalLimit;
+	}
+	
+	public void setExchangeInterval(String exchangeInterval){
+		this.exchangeInterval = exchangeInterval;
+	}
+	
+	public void setPort(int port){
+		this.port = port;
+	}
+	
+	public void setSecret(String secret){
+		this.secret = secret;
 	}
 
 	/**

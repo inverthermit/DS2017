@@ -11,15 +11,15 @@ import model.Resource;
 public class Query extends Request {
 	private String command;
 	private boolean reply;
-	private Resource resource;
+	private Resource resourceTemplate;	
 
 	public Query() {
 	}
 
-	public Query(String command, boolean reply, Resource resource) {
+	public Query(String command, boolean reply, Resource resourceTemplate) {
 		this.command = command;
 		this.reply = reply;
-		this.resource = resource;
+		this.resourceTemplate = resourceTemplate;
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public class Query extends Request {
 		Query obj = gson.fromJson(json, Query.class);
 		this.command = obj.command;
 		this.reply = obj.reply;
-		this.resource = new Resource(obj.resource);
+		this.resourceTemplate = new Resource(obj.resourceTemplate);
 	}
 
 	public String getCommand() {
@@ -48,11 +48,11 @@ public class Query extends Request {
 	}
 
 	public Resource getResource() {
-		return resource;
+		return resourceTemplate;
 	}
 
-	public void setResource(Resource resource) {
-		this.resource = resource;
+	public void setResource(Resource resourceTemplate) {
+		this.resourceTemplate = resourceTemplate;
 	}
 
 }

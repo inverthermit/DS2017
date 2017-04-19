@@ -10,7 +10,7 @@ import model.Resource;
 public abstract class Request {
 
 	public String toJSON() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		Gson gson = new Gson();
 		return gson.toJson(this);
 	}
 

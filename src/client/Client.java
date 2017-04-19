@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.io.*;
 
 import model.Resource;
+import model.Response.NormalResponse;
 import model.command.Fetch;
 import tool.ClientCommandLine;
 import tool.Common;
@@ -53,7 +54,9 @@ public class Client {
 						String message = in.readUTF();
 						// TODO: Output result
 						System.out.println(message);
-						if (message.equals("{\"response\":\"success\"}")) {
+						NormalResponse nr = new NormalResponse();
+						nr.fromJSON(message);
+						if (nr.getResponse().equals("success")) {
 							String resourceStr = in.readUTF();
 							// TODO: Output result
 							System.out.println(resourceStr);

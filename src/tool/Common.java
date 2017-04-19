@@ -6,13 +6,14 @@ import java.security.SecureRandom;
 	 * Created by Tim Luo on 2017/3/27.
 	 */
 public class Common {
-	public static String SECRET = randomString(10);
+	public static String SECRET = "2os41f58vkd9e1q4ua6ov5emlv";
 	public static final String[] LOGGIN_LEVEL = {"SEVERE","WARNING","INFO","CONFIG","FINE","FINER","FINEST"};
 	
 	public static final String[] BASIC_OP = {"EXCHANGE","FETCH","SHARE","PUBLISH","QUERY","REMOVE"};
 	static SecureRandom rnd = new SecureRandom();
 	public static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 	public static String getOperationfromJson(String json){
+		System.out.println(json);
 		for(int i=0;i<BASIC_OP.length;i++){
 			//if(json.matches("\"command\"( )?:( )?\""+BASIC_OP[i]+"\""))
 			//TODO: Optimize the command

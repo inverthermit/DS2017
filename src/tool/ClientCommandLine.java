@@ -217,7 +217,7 @@ public class ClientCommandLine {
         	System.out.println(response.toJSON());
         	secret = "";
         	valid = false;
-        	System.out.println("1");
+        	//System.out.println("1");
 		}
 		Share share = new Share("SHARE",secret, resource);
 		request = share.toJSON();
@@ -228,17 +228,20 @@ public class ClientCommandLine {
 		String request,hostName;
 		int portNum;
 		String servers = null;
+		boolean flag = false;
 		ArrayList<ServerModel> serverList = new ArrayList<ServerModel>();
 		for(int i =1;i<commandline.length;i++){
 			if (commandline[i].getOpt().equals("servers")){
 				servers = commandline[i].getValue();
-			} else {
-				ErrorMessage error = new ErrorMessage();
-        		NormalResponse response = new NormalResponse("error", error.EXCHANGE_SERVERLIST_MISSING);
-        		System.out.println(response.toJSON());
-        		valid = false;
-        		System.out.println("2");
+				flag =true;
 			}
+		}
+		if(!flag){
+			ErrorMessage error = new ErrorMessage();
+    		NormalResponse response = new NormalResponse("error", error.EXCHANGE_SERVERLIST_MISSING);
+    		System.out.println(response.toJSON());
+    		valid = false;
+    		//System.out.println("2");
 		}
 		String[] server = servers.split(","); 
 		for(int m = 0;m<server.length;m++){
@@ -256,7 +259,7 @@ public class ClientCommandLine {
 
 	public static Resource cliResource(Option[] commandline, int[] command, String commandName) {
 		Resource resource = new Resource();
-		setResourceArgDefault(resource);
+		//setResourceArgDefault(resource);
 		int[] arg = new int[RESOURCE_ARGS_NUM];
 		String resourceFeature;
 		for (int i = 1; i < commandline.length; i++) {
@@ -334,6 +337,7 @@ public class ClientCommandLine {
 		return false;
 	}
 	
+	/*
 	public static void setResourceArgDefault(Resource resource){
 		// to do : how to default tags
 		String[] tags = new String[1];
@@ -346,6 +350,7 @@ public class ClientCommandLine {
 		resource.setEZserver(null);
 		resource.setUri("");
 	}
+	*/
 
 	public static void checkArg(int[] arg, int[] command, String commandName) {
 		ErrorMessage error = new ErrorMessage();
@@ -372,7 +377,7 @@ public class ClientCommandLine {
 	        		break;	
 				}
 				valid = false;
-				System.out.println("3");
+				//System.out.println("3");
 				break;
 			}
 		}
@@ -385,7 +390,7 @@ public class ClientCommandLine {
     		NormalResponse response = new NormalResponse("error", error.GENERIC_INVALID);
     		System.out.println(response.toJSON());	
     		valid = false;
-    		System.out.println("4");
+    		//System.out.println("4");
     		return true;
 		} else { return false;}
 	}
@@ -395,7 +400,7 @@ public class ClientCommandLine {
 			String str =strs[i];
 			if (checkString(str)){
 				valid = false;
-				System.out.println("checkStringArray 2");
+				//System.out.println("checkStringArray 2");
 				break;
 			}
 		}

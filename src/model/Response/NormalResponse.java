@@ -4,7 +4,7 @@ import model.Resource;
 import model.command.Share;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+//import com.google.gson.GsonBuilder;
 
 public class NormalResponse {
 	private String response;
@@ -25,7 +25,7 @@ public class NormalResponse {
 	
 	
 	public String toJSON() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		Gson gson = new Gson();
 		return gson.toJson(this);
 	}
 	public void fromJSON(String json) {

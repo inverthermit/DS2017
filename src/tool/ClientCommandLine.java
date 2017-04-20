@@ -12,13 +12,15 @@ import model.command.*;
 	 * Created by Tim Luo on 2017/3/27.
 	 */
 public class ClientCommandLine {
+	// resource arg name tags description uri channel owner ezserver secret hostname port
 	public static final int[] FETCH = {-1,-1,-1,1,1,-1,-1,-1,-1,-1};
 	public static final int[] EXCHANGE = {-1,-1,-1,-1,-1,-1,-1,-1,1,1};
 	public static final int[] REMOVE= {-1,-1,-1,1,1,1,-1,-1,-1,-1};
 	public static final int[] QUERY={0,0,0,0,1,0,0,-1,-1,-1};
 	public static final int[] PUBLISH= {0,0,0,1,0,0,0,-1,-1,1,1};
 	public static final int[] SHARE= {0,0,0,1,0,0,-1,1,-1,-1};
-	private static boolean valid;
+	public static final int RESOURCE_ARGS_NUM = 6;
+	private static boolean valid = true;
 	
 	public static String ClientCommandLine(String[] args) {
 		Resource resource = new Resource();
@@ -33,6 +35,7 @@ public class ClientCommandLine {
         opt.addOption(channel);
         */
         opt.addOption("channel", true, "channel");
+        opt.addOption("name", true, "resource name");
         Option debug = Option.builder("debug")
         		.desc("print debug informaton")
         		.build();
@@ -84,7 +87,6 @@ public class ClientCommandLine {
         		.build();
         opt.addOption(secret);
         Option share = Option.builder("share")
-        		.hasArg()
         		.desc("share resource on server")
         		.build();
         opt.addOption(share);
@@ -109,14 +111,16 @@ public class ClientCommandLine {
         CommandLine commandLine = null;
         //check commandline
         try {
-            commandLine = parser.parse( opt, args);
+            commandLine = parser.parse(opt,args);
             Option[] commandline = commandLine.getOptions();
             if(commandline.length==0){
             	ErrorMessage error = new ErrorMessage();
         		NormalResponse response = new NormalResponse("error", error.GENERIC_MISS_INCORRECT);
         		System.out.println(response.toJSON());
+        		//System.out.println("if there is no cli");
             } else {
-            	String command = commandline[0].toString();
+            	String command = commandline[0].getOpt();
+            	//System.out.println(command);
             	switch (command){
             	case "publish":
             		request = cliPublish(commandline);
@@ -131,24 +135,29 @@ public class ClientCommandLine {
             		request = cliFetch(commandline);
             		break;
             	case "share":
-            		request = cliPublish(commandline);
+            		request = cliShare(commandline);
             		break;
             	case "exchange":
-            		request = cliPublish(commandline);
+            		request = cliExchange(commandline);
             		break;
             	default:
             		ErrorMessage error = new ErrorMessage();
             		NormalResponse response = new NormalResponse("error", error.GENERIC_INVALID);
             		System.out.println(response.toJSON());
+            		System.out.println("un vaild command");
             		break;
             	}
             	if(valid == false){
+            		System.out.println("0");
             		request = null;
             	}
             	return request;
             }
         } catch (ParseException e) {
-            //formatter.printHelp( formatterHelp,opt ); 
+            System.out.println(e.getMessage());
+            ErrorMessage error = new ErrorMessage();
+    		NormalResponse response = new NormalResponse("error", error.GENERIC_MISS_INCORRECT);
+    		System.out.println(response.toJSON());
         }
 		return request;      
     }
@@ -192,19 +201,23 @@ public class ClientCommandLine {
 	public static String cliShare(Option[] commandline) {
 		String request;
 		String secret = null;
+		boolean flag = false;
 		Resource resource = new Resource();
-		resource = cliResource(commandline, PUBLISH, "publish");
+		resource = cliResource(commandline, SHARE, "share");
 		for(int i =1;i<commandline.length;i++){
-			if (commandline[i].toString().equals("share")){
+			if (commandline[i].getOpt().equals("secret")){
 				secret = commandline[i].getValue();
 				checkString(secret);
-			} else {
-				ErrorMessage error = new ErrorMessage();
-        		NormalResponse response = new NormalResponse("error", error.SHARE_MISSING);
-        		System.out.println(response.toJSON());
-        		secret = "";
-        		valid = false;
-			}
+				flag = true;
+			} 
+		}
+		if(!flag){
+			ErrorMessage error = new ErrorMessage();
+        	NormalResponse response = new NormalResponse("error", error.SHARE_MISSING);
+        	System.out.println(response.toJSON());
+        	secret = "";
+        	valid = false;
+        	System.out.println("1");
 		}
 		Share share = new Share("SHARE",secret, resource);
 		request = share.toJSON();
@@ -214,32 +227,40 @@ public class ClientCommandLine {
 	public static String cliExchange(Option[] commandline) {
 		String request,hostName;
 		int portNum;
-		String[] serverlists = null,servers;
+		String servers = null;
 		ArrayList<ServerModel> serverList = new ArrayList<ServerModel>();
 		for(int i =1;i<commandline.length;i++){
-			if (commandline[i].toString().equals("servers")){
-				serverlists = commandline[i].getValues();
+			if (commandline[i].getOpt().equals("servers")){
+				servers = commandline[i].getValue();
+			} else {
+				ErrorMessage error = new ErrorMessage();
+        		NormalResponse response = new NormalResponse("error", error.EXCHANGE_SERVERLIST_MISSING);
+        		System.out.println(response.toJSON());
+        		valid = false;
+        		System.out.println("2");
+			}
 		}
-		for(int m =0;i<serverlists.length;i++){
-			String serverlist = serverlists[i];
-			servers = serverlist.split(":");
-			hostName = servers[0];
-			portNum = Integer.parseInt(servers[1]);
+		String[] server = servers.split(","); 
+		for(int m = 0;m<server.length;m++){
+			String[] serverlist = server[m].split(":");
+			hostName = serverlist[0];
+			portNum = Integer.parseInt(serverlist[1]);
 			ServerModel sm = new ServerModel(hostName,portNum);
 			serverList.add(sm);
 		}
-		}
 		Exchange exchange = new Exchange("EXCHANGE", serverList);
 		request = exchange.toJSON();
+		System.out.println(request);
 		return request;
 	}
 
 	public static Resource cliResource(Option[] commandline, int[] command, String commandName) {
 		Resource resource = new Resource();
-		int[] arg = new int[command.length];
+		setResourceArgDefault(resource);
+		int[] arg = new int[RESOURCE_ARGS_NUM];
 		String resourceFeature;
 		for (int i = 1; i < commandline.length; i++) {
-			resourceFeature = commandline[i].toString();
+			resourceFeature = commandline[i].getOpt();
 			switch (resourceFeature) {
 			case "name":
 			   checkString(commandline[i].getValue());
@@ -247,8 +268,10 @@ public class ClientCommandLine {
 			   arg[0]=1;
 			   break;
 			case "tags":
-				checkStringArray(commandline[i].getValues());
-				resource.setTags(commandline[i].getValues());
+				checkString(commandline[i].getValue());
+				String tags = commandline[i].getValue();
+				String[] tag = tags.split(",");
+				resource.setTags(tag);
 			    arg[1]=1;
 			    break;
 			case "description":
@@ -283,6 +306,46 @@ public class ClientCommandLine {
 		checkArg(arg,command,commandName);
 		return resource;
 	}
+	
+	public static String getHost(Option[] commandline){
+		for(int i=0;i<commandline.length;i++){
+			if(commandline[i].getOpt().equals("host")){
+				return commandline[i].getValue();
+			}
+		}
+		return null;
+	}
+	
+	public static int getPort(Option[] commandline){
+		for(int i=0;i<commandline.length;i++){
+			if(commandline[i].getOpt().equals("port")){
+				return Integer.parseInt(commandline[i].getValue());
+			}
+		}
+		return 0;
+	}
+	
+	public static boolean getDebug(Option[] commandline){
+		for(int i=0;i<commandline.length;i++){
+			if(commandline[i].getOpt().equals("debug")){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static void setResourceArgDefault(Resource resource){
+		// to do : how to default tags
+		String[] tags = new String[1];
+		tags[0] = "";
+		resource.setChannel("");
+		resource.setDescription("");
+		resource.setName("");
+		resource.setOwner("");
+		resource.setTags(tags);
+		resource.setEZserver(null);
+		resource.setUri("");
+	}
 
 	public static void checkArg(int[] arg, int[] command, String commandName) {
 		ErrorMessage error = new ErrorMessage();
@@ -308,28 +371,31 @@ public class ClientCommandLine {
 	        	default:
 	        		break;	
 				}
+				valid = false;
+				System.out.println("3");
 				break;
 			}
 		}
-		valid = false;
 	}
 
 	// treat this situation for invalid
 	public static boolean checkString(String str) {
-		if(str.contains("\0")||str.charAt(0)==' ' || str.charAt(str.length())==' '){
+		if(str.contains("\0")||str.charAt(0)==' ' || str.charAt(str.length()-1)==' '){
 			ErrorMessage error = new ErrorMessage();
     		NormalResponse response = new NormalResponse("error", error.GENERIC_INVALID);
     		System.out.println(response.toJSON());	
     		valid = false;
+    		System.out.println("4");
     		return true;
 		} else { return false;}
 	}
-
+	
 	public static void checkStringArray(String[] strs) {
 		for(int i =0; i<strs.length;i++){
 			String str =strs[i];
 			if (checkString(str)){
 				valid = false;
+				System.out.println("checkStringArray 2");
 				break;
 			}
 		}

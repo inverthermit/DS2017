@@ -22,6 +22,7 @@ public class Client {
 	    // translate cli to query and if the commanline is unvalid will print out the error message 
 	    // and send null to query
 	    query = ClientCommandLine.ClientCommandLine(args);
+	    System.out.println(query);
 		doSend(serverHostname,serverPort,query);
 	}
 	

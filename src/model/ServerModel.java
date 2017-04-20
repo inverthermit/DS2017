@@ -8,71 +8,91 @@ import model.command.Exchange;
 import com.google.gson.Gson;
 
 /**
-	 * Created by Tim Luo on 2017/3/27.
-	 */
+ * Created by Tim Luo on 2017/3/27.
+ */
 public class ServerModel {
-	
+
 	public String hostname;
+	public String intervallimit;
+	public String exchangeInterval;
 	public int port;
+	public String secret;
 	public Socket socket;
 	public ArrayList<ServerModel> serverList = new ArrayList<ServerModel>();
 	public ArrayList<ClientModel> clientList = new ArrayList<ClientModel>();
 	public ArrayList<Resource> resourceList = new ArrayList<Resource>();
-	
+
 	public ServerModel() {
-		
+
 	}
-	
+
 	public ServerModel(String hostname, int port) {
 		this.hostname = hostname;
 		this.port = port;
+		}
+	
+	public void setHostName(String hostName){
+		this.hostname = hostName;
 	}
 	
+	public void setIntervalLimit(String intervalLimit){
+		this.intervallimit = intervalLimit;
+	}
+	
+	public void setExchangeInterval(String exchangeInterval){
+		this.exchangeInterval = exchangeInterval;
+	}
+	
+	public void setPort(int port){
+		this.port = port;
+	}
+	
+	public void setSecret(String secret){
+		this.secret = secret;
+	}
+
 	/**
-	 * addDelResource
-	 * Parameters: Resource(including resource template), isAdd(true for add operation, false for delete operation)
-	 * Return: Integer(1:Successfully added;-1:Resource with same primary key found, add failed;2:Successfully deleted;-2:No such resource to delete)
+	 * addDelResource Parameters: Resource(including resource template),
+	 * isAdd(true for add operation, false for delete operation) Return:
+	 * Integer(1:Successfully added;-1:Resource with same primary key found, add
+	 * failed;2:Successfully deleted;-2:No such resource to delete)
 	 */
-	public synchronized int addDelResource(Resource resource, boolean isAdd){ 
-		if(isAdd){
-			int flag=0;
-			for(int i=0;i<this.resourceList.size();i++){
+
+	public synchronized int addDelResource(Resource resource, boolean isAdd) {
+		if (isAdd) {
+			for (int i = 0; i < this.resourceList.size(); i++) {
 				Resource element = this.resourceList.get(i);
-				if(resource.owner.equals(element.owner)&&resource.channel.equals(element.channel)&&resource.uri.equals(element.uri)){
-					flag=1;
+				if (resource.owner.equals(element.owner) && resource.channel.equals(element.channel)
+						&& resource.uri.equals(element.uri)) {
+					resourceList.remove(i);
 					break;
 				}
 			}
-			if(flag==0){
-				this.resourceList.add(resource);
-				return 1;
-			}
-			else{
-				return -1;
-			}
-		}
-		else{
-			int flag = 0;//Record if there's a successful deletion
-			for(int i=0;i<this.resourceList.size();i++){
+			this.resourceList.add(resource);
+			return 1;
+		} else {
+			int flag = 0;// Record if there's a successful deletion
+			for (int i = 0; i < this.resourceList.size(); i++) {
 				Resource element = this.resourceList.get(i);
-				if(resource.owner.equals(element.owner)&&resource.channel.equals(element.channel)&&resource.uri.equals(element.uri)){
+				if (resource.owner.equals(element.owner) && resource.channel.equals(element.channel)
+						&& resource.uri.equals(element.uri)) {
 					this.resourceList.remove(i);
-					flag=1;
+					flag = 1;
 				}
 			}
-			if(flag==1){
+			if (flag == 1) {
 				return 2;
-			}
-			else{
+			} else {
 				return -2;
 			}
 		}
 	}
-	public String toServerListJson(){
+
+	public String toServerListJson() {
 		String command = "EXCHANGE";
-		Exchange exchange = new Exchange(command,this.serverList);
+		Exchange exchange = new Exchange(command, this.serverList);
 		String json = exchange.toJSON();
 		return json;
 	}
-	
+
 }

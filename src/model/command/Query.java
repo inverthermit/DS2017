@@ -13,12 +13,17 @@ public class Query extends Request {
 	private boolean reply;
 	private Resource resourceTemplate;	
 
+
+
 	public Query() {
 	}
 
 	public Query(String command, boolean reply, Resource resourceTemplate) {
 		this.command = command;
 		this.reply = reply;
+
+		this.resourceTemplate = resourceTemplate;
+
 		this.resourceTemplate = resourceTemplate;
 	}
 
@@ -51,8 +56,10 @@ public class Query extends Request {
 		return resourceTemplate;
 	}
 
+
 	public void setResource(Resource resourceTemplate) {
 		this.resourceTemplate = resourceTemplate;
+
 	}
 
 }

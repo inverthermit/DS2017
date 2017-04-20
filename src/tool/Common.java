@@ -13,7 +13,7 @@ public class Common {
 	static SecureRandom rnd = new SecureRandom();
 	public static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 	public static String getOperationfromJson(String json){
-		System.out.println(json);
+		//System.out.println(json);
 		for(int i=0;i<BASIC_OP.length;i++){
 			//if(json.matches("\"command\"( )?:( )?\""+BASIC_OP[i]+"\""))
 			//TODO: Optimize the command

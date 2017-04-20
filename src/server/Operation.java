@@ -62,7 +62,7 @@ public class Operation {
 	}
 
 	public ArrayList<String> doClientExchange(Exchange exchange, ServerModel server) {
-		System.out.println("doClientExchange:" + exchange.toJSON());
+		//System.out.println("doClientExchange:" + exchange.toJSON());
 		ArrayList<String> result = new ArrayList<String>();
 		NormalResponse nr = new NormalResponse("success");
 		result.add(nr.toJSON());

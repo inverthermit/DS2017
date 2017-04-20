@@ -25,6 +25,12 @@ public class ServerModel {
 	public ServerModel() {
 
 	}
+	
+	public void init(){
+		serverList = new ArrayList<ServerModel>();
+		clientList = new ArrayList<ClientModel>();
+		resourceList = new ArrayList<Resource>();
+	}
 
 	public ServerModel(String hostname, int port) {
 		this.hostname = hostname;

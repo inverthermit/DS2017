@@ -3,29 +3,16 @@ import java.net.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import tool.Config;
-import tool.ServerCommandLine;
 import model.ClientModel;
 import model.ServerModel;
 /**
 	 * Created by Tim Luo on 2017/3/27.
 	 */
-public class Server {
+public class TesterServer {
 	private static ServerModel selfModel = new ServerModel();
 	public static void main(String[] args){
-		ServerModel sm = ServerCommandLine.ServerCommandLine(args);
-		if(sm == null){
-			return;
-		}
-		else{
-			selfModel = sm;
-		}
 		//TODO: Get port from command line?
-		if(selfModel.port == 0){
-			selfModel.port = Config.DEFAULT_PORT;
-		}
-		selfModel.init();
-		int port = selfModel.port;
+		int port = 10000;
 		//int port = 10001;
 		//int port = 10002;
 		ServerModel sm1 = new ServerModel("127.0.0.1",10001);

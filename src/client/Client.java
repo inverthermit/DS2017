@@ -23,13 +23,16 @@ public class Client {
 		// translate cli to query and if the commanline is unvalid will print
 		// out the error message
 		// and send null to query
-		for(int i=0;i<args.length;i++){
+		/*for(int i=0;i<args.length;i++){
 			System.out.println(args[i]);
-		}
+		}*/
 		String query = ClientCommandLine.ClientCommandLine(args);
-		System.out.println(query);
+		System.out.println("Client Main Print:"+query);
 		if (query != null) {
 			doSend(serverHostname,serverPort,query);
+		}
+		else{
+			System.out.println("query==null");
 		}
 	}
 
@@ -60,6 +63,9 @@ public class Client {
 							String resourceStr = in.readUTF();
 							// TODO: Output result
 							System.out.println(resourceStr);
+							if(resourceStr.equals("{\"resultSize\":0}")){
+								break;
+							}
 							Resource resource = new Resource();
 							resource.fromJSON(resourceStr);
 							// The file location

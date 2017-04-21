@@ -17,6 +17,7 @@ import client.Client;
 import tool.Common;
 import tool.Config;
 import tool.ErrorMessage;
+import tool.Log;
 
 public class Operation {
 	public ArrayList<String> dispatcher(String json, ServerModel server, ClientModel client) {
@@ -70,6 +71,24 @@ public class Operation {
 	}
 
 	public ArrayList<String> doClientFetch(Fetch fetch, ServerModel server, ClientModel client) {
+		ArrayList<String> result = new ArrayList<String>();
+		boolean hasResource = false;
+		Resource fetchResource = fetch.getResource();
+		for(int i=0;i<server.resourceList.size();i++){
+			Resource rc = server.resourceList.get(i);
+			/*System.out.println(fetchResource.name+" "+rc.name);
+			System.out.println(fetchResource.channel+" "+rc.channel);
+			System.out.println(fetchResource.uri+" "+rc.uri);*/
+			if(fetchResource.name.equals(rc.name)&&fetchResource.channel.equals(rc.channel)&&fetchResource.uri.equals(rc.uri)){
+				hasResource = true;
+				break;
+			}
+		}
+		if(!hasResource){
+			NormalResponse nr = new NormalResponse("error", ErrorMessage.QUERY_FETCH_RESOURCETEMPLATE_INVALID+"1");
+			result.add(nr.toJSON());
+			return result;
+		}
 		String fileName = (String) fetch.getResource().uri;
 		// Check if file exists
 		File f = new File(fileName);
@@ -80,9 +99,11 @@ public class Operation {
 				// Send trigger to client
 				NormalResponse nr = new NormalResponse("success");
 				output.writeUTF(nr.toJSON());
+				Log.log(Common.getMethodName(), "FINE", "SENDING: "+nr.toJSON());
 				fetch.getResource().resourceSize = f.length();
 				// System.out.println(fetch.getResource().toJSON());
 				output.writeUTF(fetch.getResource().toJSON());
+				Log.log(Common.getMethodName(), "FINE", "SENDING: "+fetch.getResource().toJSON());
 				// Start sending file
 				RandomAccessFile byteFile = new RandomAccessFile(f, "r");
 				byte[] sendingBuffer = new byte[Config.TRUNK_SIZE];
@@ -94,9 +115,15 @@ public class Operation {
 				byteFile.close();
 			} catch (IOException e) {
 				e.printStackTrace();
+				NormalResponse nr = new NormalResponse("error", ErrorMessage.QUERY_FETCH_RESOURCETEMPLATE_INVALID+"2");
+				result.add(nr.toJSON());
+				return result;
 			}
 		} else {
 			// Throw an error here..
+			NormalResponse nr = new NormalResponse("error", ErrorMessage.QUERY_FETCH_RESOURCETEMPLATE_INVALID+"3");
+			result.add(nr.toJSON());
+			return result;
 		}
 		return null;
 	}
@@ -121,15 +148,12 @@ public class Operation {
 		for (int i = 0; i < server.resourceList.size(); i++) {
 			Resource resource = server.resourceList.get(i);
 			/*
-			 * 1.(The template channel equals (case sensitive) the resource
-			 * channel AND 2.If the template contains an owner that is not "",
-			 * then the candidate owner must equal it (case sensitive) AND 3.Any
-			 * tags present in the template also are present in the candidate
-			 * (case insensitive) AND 4.If the template contains a URI then the
-			 * candidate URI matches (case sensitive) AND 5.(The candidate name
-			 * contains the template name as a substring (for non "" template
-			 * name) OR 6.The candidate description contains the template
-			 * description as a substring (for non "" template descriptions) OR
+			 * 1.(The template channel equals (case sensitive) the resource channel AND 
+			 * 2.If the template contains an owner that is not "", then the candidate owner must equal it (case sensitive) AND 
+			 * 3.Any tags present in the template also are present in the candidate (case insensitive) AND 
+			 * 4.If the template contains a URI then the candidate URI matches (case sensitive) AND 
+			 * 5.(The candidate name contains the template name as a substring (for non "" template name) OR 
+			 * 6.The candidate description contains the template description as a substring (for non "" template descriptions) OR
 			 * 7.The template description and name are both ""))
 			 */
 			if (query.getResource().channel.equals(resource.channel) && // 1
@@ -166,15 +190,17 @@ public class Operation {
 
 	public ArrayList<String> doClientShare(Share share, ServerModel server) {
 		ArrayList<String> result = new ArrayList<String>();
-		if (!share.getSecret().equals(Common.SECRET)) {
+		//System.out.println(share.getSecret()+"--"+server.secret);
+		if (!share.getSecret().equals(server.secret)) {
 			NormalResponse nr = new NormalResponse("error", ErrorMessage.SHARE_SECRET_INCORRECT);
 			result.add(nr.toJSON());
 			return result;
 		}
 		// Check if the resource uri is a file which exists
 		File f = new File(share.getResource().uri);
+		//System.out.println(share.getResource().uri+" "+f.exists()+" "+f.isDirectory()+" ");
 		if (!(f.exists() && !f.isDirectory())) {
-			NormalResponse nr = new NormalResponse("error", ErrorMessage.SHARE_MISSING);
+			NormalResponse nr = new NormalResponse("error", ErrorMessage.PUBLISH_REMOVE_RESOURCE_INCORRECT);
 			result.add(nr.toJSON());
 			return result;
 		}
@@ -195,9 +221,13 @@ public class Operation {
 		for (int i = 0; i < server.serverList.size(); i++) {
 			ServerModel tempServer = server.serverList.get(i);
 			System.out.println("In doServerExchange start client.doSend" + tempServer.hostname + tempServer.port);
-			// TODO: java.net.ConnectException Then Delete the address (Add a
-			// return to doSend)
-			Client.doSend(tempServer.hostname, tempServer.port, query);
+			// java.net.ConnectException Then Delete the address (Add a return to doSend)
+			//TODO: Needed test
+			boolean success = Client.doSend(tempServer.hostname, tempServer.port, query);
+			if(!success){
+				server.serverList.remove(i);
+				i--;
+			}
 			System.out.println("Finished doServerExchange start client.doSend" + tempServer.hostname + tempServer.port);
 		}
 		return null;

@@ -18,9 +18,9 @@ public class ServerModel {
 	public int port;
 	public String secret;
 	public Socket socket;
-	public ArrayList<ServerModel> serverList = new ArrayList<ServerModel>();
-	public ArrayList<ClientModel> clientList = new ArrayList<ClientModel>();
-	public ArrayList<Resource> resourceList = new ArrayList<Resource>();
+	public ArrayList<ServerModel> serverList;
+	public ArrayList<ClientModel> clientList;
+	public ArrayList<Resource> resourceList;
 
 	public ServerModel() {
 
@@ -75,6 +75,10 @@ public class ServerModel {
 				}
 			}
 			this.resourceList.add(resource);
+			System.out.println("Resource List in server:");
+			for(int i=0;i<this.resourceList.size();i++){
+				System.out.println(resourceList.get(i).toJSON());
+			}
 			return 1;
 		} else {
 			int flag = 0;// Record if there's a successful deletion
@@ -85,6 +89,9 @@ public class ServerModel {
 					this.resourceList.remove(i);
 					flag = 1;
 				}
+			}
+			for(int i=0;i<this.resourceList.size();i++){
+				System.out.println(resourceList.get(i).toJSON());
 			}
 			if (flag == 1) {
 				return 2;

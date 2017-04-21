@@ -3,6 +3,8 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
+import tool.Common;
+import tool.Log;
 import model.ClientModel;
 import model.ServerModel;
 
@@ -33,18 +35,20 @@ public class ServerThread implements Runnable{
 		    		//1.Get message
 	                String message = in.readUTF();
 	                //TODO: Print out log
-	                System.out.println(message);
+	                //System.out.println(message);
+	                Log.log(Common.getMethodName(), "FINE", "RECEIVED: "+message);
 	                //TODO:2.Parse message, do operations, return ArrayList<String> to send back to client
 	                Operation op = new Operation();
 	                ArrayList<String> resultSet = op.dispatcher(message, selfModel, clientModel);
 	                if(resultSet==null){
 	                	//Print log
-	                	System.out.print("Nothing to output...");
+	                	//System.out.print("Nothing to output...");
 	                	return;
 	                }
 	                //3.Send results back to client
 	                for(int i=0;i<resultSet.size();i++){
 	                	out.writeUTF(resultSet.get(i));
+	                	Log.log(Common.getMethodName(), "FINE", "SENDING: "+resultSet.get(i));
 	                }
 	                break;
 	            }

@@ -4,7 +4,9 @@ package tool;
  */
 public class Config {
 	public static final int MAX_CONNECTION = 10;
-	public static final int HEARTBEAT_INTERVAL = 30000;//ms
+	public static int HEARTBEAT_INTERVAL = 30000;//ms
+	public static int CONNECTION_LIMIT_INTERVAL = 10000;//ms
 	public static final int TRUNK_SIZE = 1024*1024;
 	public static final int DEFAULT_PORT = 10000;
+	public static final String DEFAULT_HOSTNAME = "ez.server.org";
 }

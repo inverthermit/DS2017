@@ -15,12 +15,13 @@ public class ClientCommandLine {
 	// resource arg name tags description uri channel owner ezserver secret hostname port
 	public static final int[] FETCH = {-1,-1,-1,1,1,-1,-1,-1,-1,-1};
 	public static final int[] EXCHANGE = {-1,-1,-1,-1,-1,-1,-1,-1,1,1};
-	public static final int[] REMOVE= {-1,-1,-1,1,1,1,-1,-1,-1,-1};
-	public static final int[] QUERY={0,0,0,0,1,0,0,-1,-1,-1};
+	public static final int[] REMOVE= {-1,-1,-1,0,0,0,-1,-1,-1,-1};
+	public static final int[] QUERY={0,0,0,0,0,0,0,-1,-1,-1};
 	public static final int[] PUBLISH= {0,0,0,1,0,0,0,-1,-1,1,1};
 	public static final int[] SHARE= {0,0,0,1,0,0,-1,1,-1,-1};
 	public static final int RESOURCE_ARGS_NUM = 6;
 	private static boolean valid = true;
+	public static Option[] allcommandline;
 	
 	public static String ClientCommandLine(String[] args) {
 		Resource resource = new Resource();
@@ -106,13 +107,13 @@ public class ClientCommandLine {
         		.build();
         opt.addOption(uri);
         opt.addOption("h", "help", false, "help");
-        
         CommandLineParser parser = new  DefaultParser();
         CommandLine commandLine = null;
         //check commandline
         try {
             commandLine = parser.parse(opt,args);
             Option[] commandline = commandLine.getOptions();
+            allcommandline = commandline;
             if(commandline.length==0){
             	ErrorMessage error = new ErrorMessage();
         		NormalResponse response = new NormalResponse("error", error.GENERIC_MISS_INCORRECT);
@@ -310,27 +311,27 @@ public class ClientCommandLine {
 		return resource;
 	}
 	
-	public static String getHost(Option[] commandline){
-		for(int i=0;i<commandline.length;i++){
-			if(commandline[i].getOpt().equals("host")){
-				return commandline[i].getValue();
+	public static String getHost(){
+		for(int i=0;i<allcommandline.length;i++){
+			if(allcommandline[i].getOpt().equals("host")){
+				return allcommandline[i].getValue();
 			}
 		}
 		return null;
 	}
 	
-	public static int getPort(Option[] commandline){
-		for(int i=0;i<commandline.length;i++){
-			if(commandline[i].getOpt().equals("port")){
-				return Integer.parseInt(commandline[i].getValue());
+	public static int getPort(){
+		for(int i=0;i<allcommandline.length;i++){
+			if(allcommandline[i].getOpt().equals("port")){
+				return Integer.parseInt(allcommandline[i].getValue());
 			}
 		}
 		return 0;
 	}
 	
-	public static boolean getDebug(Option[] commandline){
-		for(int i=0;i<commandline.length;i++){
-			if(commandline[i].getOpt().equals("debug")){
+	public static boolean getDebug(){
+		for(int i=0;i<allcommandline.length;i++){
+			if(allcommandline[i].getOpt().equals("debug")){
 				return true;
 			}
 		}

@@ -43,7 +43,7 @@ public class ServerCommandLine {
 			if (commandLine.hasOption("h")) {
 				HelpFormatter hf = new HelpFormatter();
 				hf.printHelp(formatterHelp, "", opt, "");
-				System.out.println("has h ");
+				//System.out.println("has h ");
 				return null;
 			}
 
@@ -52,8 +52,7 @@ public class ServerCommandLine {
 				String hostName = commandLine
 						.getOptionValue("advertisedhostname");
 				server.setHostName(hostName);
-				System.out.println("has advertisedhostname and its arg is "
-						+ hostName);
+				//System.out.println("has advertisedhostname and its arg is "+ hostName);
 			}
 
 			// if command line has -connectionintervallimit
@@ -62,9 +61,7 @@ public class ServerCommandLine {
 						.getOptionValue("connectionintervallimit");
 				// ServerModel server = new ServerModel();
 				server.setIntervalLimit(intervalLimit);
-				System.out
-						.println("has connectionintervallimit and its arg is "
-								+ intervalLimit);
+				//System.out.println("has connectionintervallimit and its arg is "+ intervalLimit);
 			}
 
 			// if command line has -exchangeinterval
@@ -73,8 +70,7 @@ public class ServerCommandLine {
 						.getOptionValue("exchangeinterval");
 				// ServerModel server = new ServerModel();
 				server.setExchangeInterval(exchangeInterval);
-				System.out.println("has exchangeinterval and its arg is "
-						+ exchangeinterval);
+				//System.out.println("has exchangeinterval and its arg is "+ exchangeInterval);
 			}
 
 			// if command line has -port
@@ -84,7 +80,7 @@ public class ServerCommandLine {
 				portNum = Integer.parseInt(portName);
 				// ServerModel server = new ServerModel();
 				server.setPort(portNum);
-				System.out.println("has port and its arg is " + portNum);
+				//System.out.println("has port and its arg is " + portNum);
 			}
 
 			// if command line has -secret
@@ -92,13 +88,13 @@ public class ServerCommandLine {
 				String secretName = commandLine.getOptionValue("secret");
 				// ServerModel server = new ServerModel();
 				server.setSecret(secretName);
-				System.out.println("has secret and its arg is " + secretName);
+				//System.out.println("has secret and its arg is " + secretName);
 			}
 
 			// if command line has -debug
 			if (commandLine.hasOption("debug")) {
 				Log.debug = true;
-				System.out.println("has debug");
+				//System.out.println("has debug");
 			}
 			return server;
 		} catch (ParseException e) {

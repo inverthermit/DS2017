@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import tool.Common;
+import tool.Config;
 import tool.Log;
 import model.ClientModel;
 import model.ServerModel;
@@ -34,10 +35,11 @@ public class ServerThread implements Runnable{
 		    	if(in.available() > 0) {
 		    		//1.Get message
 	                String message = in.readUTF();
-	                //TODO: Print out log
+	                //Print out log
 	                //System.out.println(message);
 	                Log.log(Common.getMethodName(), "FINE", "RECEIVED: "+message);
-	                //TODO:2.Parse message, do operations, return ArrayList<String> to send back to client
+	                Thread.sleep(Config.CONNECTION_LIMIT_INTERVAL);//Connectin Interval Limit
+	                //2.Parse message, do operations, return ArrayList<String> to send back to client
 	                Operation op = new Operation();
 	                ArrayList<String> resultSet = op.dispatcher(message, selfModel, clientModel);
 	                if(resultSet==null){

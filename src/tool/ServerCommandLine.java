@@ -51,7 +51,7 @@ public class ServerCommandLine {
 			if (commandLine.hasOption("advertisedhostname")) {
 				String hostName = commandLine
 						.getOptionValue("advertisedhostname");
-				server.setHostName(hostName);
+				server.advertisedhostname=(hostName);
 				//System.out.println("has advertisedhostname and its arg is "+ hostName);
 			}
 

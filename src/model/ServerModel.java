@@ -11,6 +11,8 @@ import com.google.gson.Gson;
  * Created by Tim Luo on 2017/3/27.
  */
 public class ServerModel {
+	public String advertisedhostname;
+	
 
 	public String hostname;
 	public String intervallimit;
@@ -56,7 +58,43 @@ public class ServerModel {
 	public void setSecret(String secret){
 		this.secret = secret;
 	}
+	public String getAdvertisedhostname() {
+		return advertisedhostname;
+	}
 
+	public void setAdvertisedhostname(String advertisedhostname) {
+		this.advertisedhostname = advertisedhostname;
+	}
+	public synchronized int addDelServer(ServerModel server, boolean isAdd) {
+		if (isAdd) {
+			for (int i = 0; i < this.serverList.size(); i++) {
+				ServerModel element = this.serverList.get(i);
+				if (server.hostname.equals(element.hostname) && server.port==element.port) {
+					this.serverList.remove(i);
+					break;
+				}
+			}
+			this.serverList.add(server);
+
+			//System.out.println("Server List in server after ADD:"+this.toServerListJson());
+			return 1;
+		} else {
+			int flag = 0;// Record if there's a successful deletion
+			for (int i = 0; i < this.serverList.size(); i++) {
+				ServerModel element = this.serverList.get(i);
+				if (server.hostname.equals(element.hostname) && server.port==element.port) {
+					this.serverList.remove(i);
+					flag = 1;
+				}
+			}
+			//System.out.println("Server List in server after DELETE:"+this.toServerListJson());
+			if (flag == 1) {
+				return 2;
+			} else {
+				return -2;
+			}
+		}
+	}
 	/**
 	 * addDelResource Parameters: Resource(including resource template),
 	 * isAdd(true for add operation, false for delete operation) Return:

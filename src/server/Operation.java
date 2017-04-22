@@ -65,6 +65,11 @@ public class Operation {
 	public ArrayList<String> doClientExchange(Exchange exchange, ServerModel server) {
 		//System.out.println("doClientExchange:" + exchange.toJSON());
 		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<ServerModel> queryServerList = exchange.getServerList();
+		for(int i=0;i<queryServerList.size();i++){
+			server.addDelServer(queryServerList.get(i),true);
+		}
+		System.out.println("Server List in server after ADD:"+server.toServerListJson());
 		NormalResponse nr = new NormalResponse("success");
 		result.add(nr.toJSON());
 		return result;
@@ -85,8 +90,9 @@ public class Operation {
 			}
 		}
 		if(!hasResource){
-			NormalResponse nr = new NormalResponse("error", ErrorMessage.QUERY_FETCH_RESOURCETEMPLATE_INVALID+"1");
+			NormalResponse nr = new NormalResponse("success");
 			result.add(nr.toJSON());
+			result.add("{\"resultSize\":0}");
 			return result;
 		}
 		String fileName = (String) fetch.getResource().uri;
@@ -156,20 +162,29 @@ public class Operation {
 			 * 6.The candidate description contains the template description as a substring (for non "" template descriptions) OR
 			 * 7.The template description and name are both ""))
 			 */
+			/*System.out.println("1"+query.getResource().channel.equals(resource.channel));
+			System.out.println("2"+(query.getResource().owner.equals("") || ((!query.getResource().owner.equals(""))
+					&& query.getResource().owner.equals(resource.owner))));
+			System.out.println("3"+(Common.arrayInArray(query.getResource().tags, resource.tags)));
+			System.out.println("4"+	(query.getResource().uri.equals("")||((!query.getResource().uri.equals(""))&&query.getResource().uri.equals(resource.uri))));
+			System.out.println("5"+resource.name.contains(query.getResource().name));
+			System.out.println("6"+(query.getResource().description.equals("") || resource.description.contains(query.getResource().description)));
+			System.out.println("7"+(query.getResource().description.equals("") && query.getResource().name.equals("")));*/
 			if (query.getResource().channel.equals(resource.channel) && // 1
 					(query.getResource().owner.equals("") || ((!query.getResource().owner.equals(""))
-							&& query.getResource().owner.equals(resource.owner)))
-					&& // 2
+							&& query.getResource().owner.equals(resource.owner))) && // 2
 					(Common.arrayInArray(query.getResource().tags, resource.tags)) && // 3
-					(query.getResource().uri.equals(resource.uri)) && // 4
+					(query.getResource().uri.equals("")||((!query.getResource().uri.equals(""))&&query.getResource().uri.equals(resource.uri))) && // 4
 					(resource.name.contains(query.getResource().name) || // 5
-							query.getResource().description.equals("")
-							|| resource.description.contains(query.getResource().description) || // 6
+							(query.getResource().description.equals("") || resource.description.contains(query.getResource().description)) || // 6
 							(query.getResource().description.equals("") && query.getResource().name.equals(""))// 7
 					)) {
 				result.add(resource.toJSON());
 				count++;
 			}
+		}
+		if(query.isRelay()){
+			//TODO: Connect with other and add result to it
 		}
 		result.add("{\"resultSize\":" + count + "}");
 		return result;
@@ -216,19 +231,45 @@ public class Operation {
 
 	// Send using the EXCHANGE request to other servers in server.serverList
 	public ArrayList<String> doServerExchange(ServerModel server) {
+		
+		//Check which servers are available
+		for (int i = 0; i < server.serverList.size(); i++) {
+			ServerModel tempServer = server.serverList.get(i);
+			//System.out.println(server.hostname+" "+(tempServer.hostname)+" "+server.port+" "+tempServer.port);
+			if(server.hostname.equals(tempServer.hostname)&&server.port==tempServer.port){
+				continue;
+			}
+			//Log.log(Common.getMethodName(), "INFO", "Starting server exchange with:" + tempServer.hostname +":"+ tempServer.port);
+			// java.net.ConnectException Then Delete the address (Add a return to doSend)
+			//TODO: Needed test
+			boolean success = Client.doSend(tempServer.hostname, tempServer.port, Common.queryExample);
+			if(!success){
+				//Log.log(Common.getMethodName(), "INFO", "Server unreachable, deleting server from list:" + tempServer.hostname +":"+ tempServer.port);
+				server.addDelServer(server.serverList.get(i),false);
+				//System.out.println("Server List in server after DELETE:"+server.toServerListJson());
+				i--;
+			}
+			//Log.log(Common.getMethodName(), "INFO", "Finished server exchange with:" + tempServer.hostname +":"+ tempServer.port);
+		}
 		String query = server.toServerListJson();
 		System.out.println("In doServerExchange" + query);
 		for (int i = 0; i < server.serverList.size(); i++) {
 			ServerModel tempServer = server.serverList.get(i);
-			System.out.println("In doServerExchange start client.doSend" + tempServer.hostname + tempServer.port);
+			//System.out.println(server.hostname+" "+(tempServer.hostname)+" "+server.port+" "+tempServer.port);
+			if(server.hostname.equals(tempServer.hostname)&&server.port==tempServer.port){
+				continue;
+			}
+			Log.log(Common.getMethodName(), "INFO", "Starting server exchange with:" + tempServer.hostname +":"+ tempServer.port);
 			// java.net.ConnectException Then Delete the address (Add a return to doSend)
 			//TODO: Needed test
 			boolean success = Client.doSend(tempServer.hostname, tempServer.port, query);
 			if(!success){
-				server.serverList.remove(i);
+				Log.log(Common.getMethodName(), "INFO", "Server unreachable, deleting server from list:" + tempServer.hostname +":"+ tempServer.port);
+				server.addDelServer(server.serverList.get(i),false);
+				System.out.println("Server List in server after DELETE:"+server.toServerListJson());
 				i--;
 			}
-			System.out.println("Finished doServerExchange start client.doSend" + tempServer.hostname + tempServer.port);
+			Log.log(Common.getMethodName(), "INFO", "Finished server exchange with:" + tempServer.hostname +":"+ tempServer.port);
 		}
 		return null;
 	}

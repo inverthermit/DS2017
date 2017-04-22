@@ -20,7 +20,7 @@ public class HeartbeatThread implements Runnable{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//System.out.println("Heartbeat Count:"+i);
+			System.out.println("Heartbeat Count:"+i);
 			i++;
 			if(server.serverList.size()>0){
 				op.doServerExchange(this.server);

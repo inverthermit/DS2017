@@ -51,12 +51,14 @@ public class Client {
 		if(ClientCommandLine.getHost()!=null){
 			serverHostname = ClientCommandLine.getHost();
 		}
-		System.out.println("Client Main Print:"+query);
+		//System.out.println("Client Main Print:"+query);
+		Log.log(Common.getMethodName(), "FINE", "SENDING: "+query);
 		if (query != null) {
 			doSend(serverHostname,serverPort,query);
 		}
 		else{
-			System.out.println("query==null");
+			//System.out.println("query==null");
+			Log.log(Common.getMethodName(), "FINE", "Nothing to send to server.");
 		}
 	}
 
@@ -64,9 +66,10 @@ public class Client {
 		String op = Common.getOperationfromJson(query);
 		try {
 			// 3.Create socket/input/output
-			Socket socket = new Socket(hostname, port);
-			// TODO: Output the log of connction
-			//System.out.println("Connection Established");
+			Socket socket = new Socket();
+			socket.connect(new InetSocketAddress(hostname, port), Config.CONNECTION_TIMEOUT);
+			// This stops the request from dragging on after connection succeeds.
+			socket.setSoTimeout(Config.CONNECTION_TIMEOUT);
 			Log.log(Common.getMethodName(), "FINE", "Connection Established");
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			DataOutputStream out = new DataOutputStream(
@@ -97,8 +100,15 @@ public class Client {
 							// The file location
 							// Create a RandomAccessFile to read and write the
 							// output file.
+							File file = new File(resource.uri);
+							String filename = file.getName();
+							String pathString = "/ezdownload/";
+							File path = new File(pathString);
+							path.mkdirs();
+							String absolutePath = path.getAbsolutePath()+"/"+filename;
+							Log.log(Common.getMethodName(), "FINE", "Downloading to Destination: "+absolutePath);
 							RandomAccessFile downloadingFile = new RandomAccessFile(
-									resource.uri, "rw");
+									pathString+filename, "rw");
 
 							// Find out how much size is remaining to get from
 							// the server.
@@ -170,7 +180,8 @@ public class Client {
 			in.close();
 			out.close();
 		} catch (Exception ee) {
-			ee.printStackTrace();
+			//ee.printStackTrace();
+			Log.log(Common.getMethodName(), "FINE", "CONNECTION ERROR: Please check the network or server.");
 			return false;
 		}
 		return true;

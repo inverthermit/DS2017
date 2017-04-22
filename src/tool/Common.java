@@ -12,6 +12,7 @@ public class Common {
 	public static final String[] BASIC_OP = {"EXCHANGE","FETCH","SHARE","PUBLISH","QUERY","REMOVE"};
 	static SecureRandom rnd = new SecureRandom();
 	public static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	public static String queryExample = "{\"command\": \"QUERY\",    \"reply\": true, \"resourceTemplate\": {\"name\": \"\",\"tags\": [],\"description\": \"\",\"uri\": \"\",\"channel\": \"\",\"owner\": \"\",\"ezserver\": null}}";
 	public static String getOperationfromJson(String json){
 		//System.out.println(json);
 		for(int i=0;i<BASIC_OP.length;i++){

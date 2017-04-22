@@ -10,7 +10,7 @@ import model.Resource;
  */
 public class Query extends Request {
 	private String command;
-	private boolean reply;
+	private boolean relay = true;
 	private Resource resourceTemplate;	
 
 
@@ -18,9 +18,9 @@ public class Query extends Request {
 	public Query() {
 	}
 
-	public Query(String command, boolean reply, Resource resourceTemplate) {
+	public Query(String command, boolean relay, Resource resourceTemplate) {
 		this.command = command;
-		this.reply = reply;
+		this.relay = relay;
 
 		this.resourceTemplate = resourceTemplate;
 
@@ -32,7 +32,7 @@ public class Query extends Request {
 		Gson gson = new Gson();
 		Query obj = gson.fromJson(json, Query.class);
 		this.command = obj.command;
-		this.reply = obj.reply;
+		this.relay = obj.relay;
 		this.resourceTemplate = new Resource(obj.resourceTemplate);
 	}
 
@@ -44,12 +44,12 @@ public class Query extends Request {
 		this.command = command;
 	}
 
-	public boolean isReply() {
-		return reply;
+	public boolean isRelay() {
+		return relay;
 	}
 
-	public void setReply(boolean reply) {
-		this.reply = reply;
+	public void setRelay(boolean relay) {
+		this.relay = relay;
 	}
 
 	public Resource getResource() {

@@ -12,8 +12,8 @@ import model.command.*;
 	 * Created by Tim Luo on 2017/3/27.
 	 */
 public class ClientCommandLine {
-	// resource arg name tags description uri channel owner ezserver secret hostname port
-	public static final int[] FETCH = {-1,-1,-1,1,1,-1,-1,-1,-1,-1};
+	// resource arg 1name 2tags 3description 4uri 5channel 6owner 7ezserver 8secret 9hostname 10port
+	public static final int[] FETCH = {-1,-1,-1,1,0,-1,-1,-1,-1,-1};
 	public static final int[] EXCHANGE = {-1,-1,-1,-1,-1,-1,-1,-1,1,1};
 	public static final int[] REMOVE= {-1,-1,-1,0,0,0,-1,-1,-1,-1};
 	public static final int[] QUERY={0,0,0,0,0,0,0,-1,-1,-1};
@@ -106,6 +106,11 @@ public class ClientCommandLine {
         		.desc("resource URI")
         		.build();
         opt.addOption(uri);
+        Option relay = Option.builder("relay")
+        		.hasArg()
+        		.desc("query relay")
+        		.build();
+        opt.addOption(relay);
         opt.addOption("h", "help", false, "help");
         CommandLineParser parser = new  DefaultParser();
         CommandLine commandLine = null;
@@ -117,7 +122,8 @@ public class ClientCommandLine {
             if(commandline.length==0){
             	ErrorMessage error = new ErrorMessage();
         		NormalResponse response = new NormalResponse("error", error.GENERIC_MISS_INCORRECT);
-        		System.out.println(response.toJSON());
+        		//System.out.println(response.toJSON());
+        		Log.log(Common.getMethodName(), "FINE", "RECEIVED: "+response.toJSON());
         		//System.out.println("if there is no cli");
             } else {
             	String command = commandline[0].getOpt();
@@ -144,12 +150,13 @@ public class ClientCommandLine {
             	default:
             		ErrorMessage error = new ErrorMessage();
             		NormalResponse response = new NormalResponse("error", error.GENERIC_INVALID);
-            		System.out.println(response.toJSON());
+            		//System.out.println(response.toJSON());
+            		Log.log(Common.getMethodName(), "FINE", "RECEIVED: "+response.toJSON());
             		System.out.println("un vaild command");
             		break;
             	}
             	if(valid == false){
-            		System.out.println("0");
+            		//System.out.println("0");
             		request = null;
             	}
             	return request;

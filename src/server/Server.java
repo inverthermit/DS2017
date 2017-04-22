@@ -29,11 +29,14 @@ public class Server {
 		if(selfModel.port == 0){
 			selfModel.port = Config.DEFAULT_PORT;
 		}
-		if(selfModel.hostname == null){
-			selfModel.hostname = Config.DEFAULT_HOSTNAME;
+		if(selfModel.advertisedhostname == null){
+			selfModel.advertisedhostname = Config.DEFAULT_ADVERTISED_HOSTNAME;
 		}
 		if(selfModel.secret == null){
 			selfModel.secret = Common.SECRET;
+		}
+		if(selfModel.hostname == null){
+			selfModel.hostname = "127.0.0.1";
 		}
 		if(selfModel.exchangeInterval!=null){
 			//to int catch exception
@@ -61,7 +64,7 @@ public class Server {
 		}
 		selfModel.init();
 		int port = selfModel.port;
-		System.out.println(selfModel.hostname+":"+selfModel.port+" "+selfModel.exchangeInterval+" "+selfModel.intervallimit+" "+selfModel.secret);
+		//System.out.println(selfModel.hostname+":"+selfModel.port+" "+selfModel.exchangeInterval+" "+selfModel.intervallimit+" "+selfModel.secret);
 		Log.log(Common.getMethodName(), "INFO", "Starting the EZShare Server");
 		Log.log(Common.getMethodName(), "INFO", "using advertised hostname: "+selfModel.hostname);
 		Log.log(Common.getMethodName(), "INFO", "using secret: "+selfModel.secret);
@@ -78,15 +81,15 @@ public class Server {
 			boolean bool=true;
 			while(bool){
 				ClientModel client = new ClientModel();
-				Log.log(Common.getMethodName(), "INFO", "started");
+				//Log.log(Common.getMethodName(), "INFO", "started");
 				client.socket=server.accept();
 				//Timeout
-				client.socket.setSoTimeout(Config.CONNECTION_LIMIT_INTERVAL);
-				System.out.println(client.socket.getSoTimeout());
+				client.socket.setSoTimeout(Config.CONNECTION_TIMEOUT);
+				//System.out.println(client.socket.getSoTimeout());
 				selfModel.clientList.add(client);
 				//TODO: Output client connection log
 				//System.out.println("Connected");
-				Log.log(Common.getMethodName(), "INFO", "New Connection");
+				Log.log(Common.getMethodName(), "INFO", "New Connection:"+client.socket.getInetAddress()+":"+client.socket.getPort());
 				pool.execute(new ServerThread(client,selfModel));
 			}
 			server.close();

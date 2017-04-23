@@ -1,11 +1,6 @@
 /** Course: COMP90015 2017-SM1 Distributed Systems
  *  Project: Project1-EZShare Resource Sharing Network
  *  Group Name: Alpha Panthers
- *  
- *  This class inherits the Request class and it is utilized to create a
- *  Publish object which contains its server command "PUBLISH" and a resource
- *  instance. 
- *  
  */
 package model.command;
 
@@ -13,6 +8,14 @@ import java.util.Arrays;
 import com.google.gson.Gson;
 import model.Resource;
 
+/**
+ * This class inherits the Request class and it is utilized to create a
+ * Publish object which contains its server command "PUBLISH" and a resource
+ * instance. 
+ * 
+ * @author  Group - Alpha Panthers
+ * @version 1.1
+ */
 public class Publish extends Request {
 	private String command;
 	private Resource resource;

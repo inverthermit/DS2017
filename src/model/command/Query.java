@@ -1,19 +1,21 @@
 /** Course: COMP90015 2017-SM1 Distributed Systems
  *  Project: Project1-EZShare Resource Sharing Network
  *  Group Name: Alpha Panthers
- *  
- *  This class inherits the Request class and it is utilized to create a
- *  Query object which contains its server command "QUERY", a boolean relay
- *  and a resource instance. The relay field sets as true then the server
- *  sends a QUERY command to each of the servers in its serverList.
- *  
  */
 package model.command;
 
 import com.google.gson.Gson;
 import model.Resource;
 
-
+/**
+ * This class inherits the Request class and it is utilized to create a
+ * Query object which contains its server command "QUERY", a boolean relay
+ * and a resource instance. The relay field sets as true then the server
+ * sends a QUERY command to each of the servers in its serverList.
+ * 
+ * @author  Group - Alpha Panthers
+ * @version 1.1
+ */
 public class Query extends Request {
 	private String command;
 	private boolean relay = true;

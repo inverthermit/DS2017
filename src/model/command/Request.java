@@ -1,11 +1,6 @@
 /** Course: COMP90015 2017-SM1 Distributed Systems
  *  Project: Project1-EZShare Resource Sharing Network
  *  Group Name: Alpha Panthers
- *  
- *  This class is a parent class of all of server commands classes. It
- *  contains a concrete function that its children will inherit and a abstract
- *  function that its children will override.
- *  
  */
 package model.command;
 
@@ -16,6 +11,14 @@ import com.google.gson.Gson;
 
 import model.Resource;
 
+/**
+ * This class is a parent class of all of server commands classes. It
+ * contains a concrete function that its children will inherit and a abstract
+ * function that its children will override.
+ * 
+ * @author  Group - Alpha Panthers
+ * @version 1.1 
+ */
 public abstract class Request {
 
 	/**

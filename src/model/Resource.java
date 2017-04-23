@@ -1,23 +1,24 @@
 /** Course: COMP90015 2017-SM1 Distributed Systems
  *  Project: Project1-EZShare Resource Sharing Network
  *  Group Name: Alpha Panthers
- *  
- *  This class is implemented to develop a robust Resource template class
- *  including all of attributes such as name, description and uri. It also
- *  can transmit a Resource object to a JSON string by using the function - 
- *  toJSON and transmit a JSON string to a Resource object by utilizing the
- *  function called fromJSON. The objective of the class is to makes Resource
- *  instances stored, looked up and transmitted more efficiently.
- *  
  */
 package model;
 
 import java.util.Arrays;
-
 import model.command.Share;
-
 import com.google.gson.Gson;
 
+/**
+ * This class is implemented to develop a robust Resource template class
+ * including all of attributes such as name, description and uri. It also
+ * can transmit a Resource object to a JSON string by using the function - 
+ * toJSON and transmit a JSON string to a Resource object by utilizing the
+ * function called fromJSON. The objective of the class is to makes Resource
+ * instances stored, looked up and transmitted more efficiently.
+ * 
+ * @author  Group - Alpha Panthers
+ * @version 1.1
+ */
 public class Resource {
 	/** All of attributes of one resource and initial them. */
 	public String name = "";

@@ -9,8 +9,8 @@ import tool.Common;
 import tool.Config;
 public class TesterClient {
 	public static void main(String[] args){
-		int serverPort = 19999;//3780;
-		String serverHostname = "127.0.0.1";//"sunrise.cis.unimelb.edu.au";
+		int serverPort = 3780;//3780;
+		String serverHostname = "sunrise.cis.unimelb.edu.au";//"sunrise.cis.unimelb.edu.au";
 		//TODO: 1. Check if parameters are valid
 		//Commandline.isValid(args);
 		//TODO:2.Translate cli to query

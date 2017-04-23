@@ -1,19 +1,18 @@
+/** Course: COMP90015 2017-SM1 Distributed Systems
+ *  Project: Project1-EZShare Resource Sharing Network
+ *  Group Name: Alpha Panthers
+ *  
+ *  This class inherits the Request class and it is utilized to create a
+ *  Publish object which contains its server command "PUBLISH" and a resource
+ *  instance. 
+ *  
+ */
 package model.command;
 
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.Map;
-//import net.sf.json.JSONObject;
 import java.util.Arrays;
-
 import com.google.gson.Gson;
-//import com.google.gson.GsonBuilder;
-
 import model.Resource;
 
-/**
- * Created by Tim Luo on 2017/3/27.
- */
 public class Publish extends Request {
 	private String command;
 	private Resource resource;
@@ -26,7 +25,6 @@ public class Publish extends Request {
 		this.resource = resource;
 	}
 
-
 	@Override
 	public void fromJSON(String json) {
 		Gson gson = new Gson();
@@ -34,13 +32,6 @@ public class Publish extends Request {
 		
 		this.command = obj.command;
 		this.resource = new Resource(obj.resource);
-	}
-
-	public String toString() {
-		return "Command: " + this.command + ", Resource: [name="
-				+ this.resource.name + ", description="
-				+ this.resource.description + ", tags="
-				+ Arrays.toString(this.resource.tags) + ", uri=" + this.resource.uri + "]";
 	}
 
 	public String getCommand() {
@@ -58,39 +49,5 @@ public class Publish extends Request {
 	public void setResource(Resource resource) {
 		this.resource = resource;
 	}
-
 }
 
-// @Override
-// public String toJSON() {
-
-/* EXAMPLE */
-
-// How to build a json object
-// JSONObject entry=new JSONObject();
-// entry.put("commit_fr", "pb");
-// entry.put("ie", "utf-8");
-// entry.put("tbs", "d316085121f93c631441951687");
-// entry.put("kw", "�������ҵ��ѧ");
-// entry.put("fid", "35522");
-// entry.put("tid", tid);
-// entry.put("pid", pid);
-// entry.put("is_vipdel", "0");
-// entry.put("is_finf", "false");
-//
-// //How to build a json array
-// JSONObject scholarshipItem;
-// List<JSONObject> scholarshipList=new ArrayList<JSONObject>();
-// for(Map.Entry<String, String>e:major.getScholarship().entrySet()){
-// scholarshipItem=new JSONObject();
-// scholarshipItem.put("name", e.getKey());
-// scholarshipItem.put("value", e.getValue());
-// scholarshipList.add(scholarshipItem);
-// }
-//
-// entry.put("asdf", scholarshipList);
-//
-//
-// return null;
-// }
-// }

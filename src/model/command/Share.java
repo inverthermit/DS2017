@@ -1,13 +1,17 @@
+/** Course: COMP90015 2017-SM1 Distributed Systems
+ *  Project: Project1-EZShare Resource Sharing Network
+ *  Group Name: Alpha Panthers
+ *  
+ *  This class inherits the Request class and it is utilized to create a
+ *  Share object which contains its server command "SHARE", a random string secret and a resource
+ *  instance. 
+ *  
+ */
 package model.command;
 
 import com.google.gson.Gson;
-//import com.google.gson.GsonBuilder;
-
 import model.Resource;
 
-/**
- * Created by Tim Luo on 2017/3/27.
- */
 public class Share extends Request {
 	private String command;
 	private String secret;

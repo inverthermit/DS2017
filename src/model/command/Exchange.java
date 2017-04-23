@@ -1,21 +1,23 @@
+/** Course: COMP90015 2017-SM1 Distributed Systems
+ *  Project: Project1-EZShare Resource Sharing Network
+ *  Group Name: Alpha Panthers
+ *  
+ *  This class inherits the Request class and it is utilized to create a
+ *  Exchange object which contains its server command "EXCHANGE" and a
+ *  serverList that need to do the exchange operation.
+ *  
+ */
 package model.command;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import com.google.gson.Gson;
-//import com.google.gson.GsonBuilder;
-
 import model.ServerModel;
 
-/**
- * Created by Tim Luo on 2017/3/27.
- */
 public class Exchange extends Request {
 	private String command;
-
 	private ArrayList<ServerModel> serverList;
-
+  
 	public Exchange() {
 
 	}
@@ -33,12 +35,6 @@ public class Exchange extends Request {
 		this.serverList = obj.serverList;
 	}
 	
-	public String toString() {
-		return "Command: " + this.command + ", Resource: [server1="
-				+ this.serverList.get(0) + ", server2="
-				+ this.serverList.get(1) + "]";
-	}
-	
 	public String getCommand() {
 		return command;
 	}
@@ -54,5 +50,4 @@ public class Exchange extends Request {
 	public void setServerList(ArrayList<ServerModel> serverList) {
 		this.serverList = serverList;
 	}
-
 }

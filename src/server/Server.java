@@ -95,7 +95,9 @@ public class Server {
 			server.close();
 		}
 		catch(Exception ee){
-			ee.printStackTrace();
+			//ee.printStackTrace();
+			Log.log(Common.getMethodName(), "INFO", "Server fail to start: Port already in used("+port+")");
+			System.exit(0);
 		}
     }
 }

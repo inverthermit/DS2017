@@ -111,6 +111,11 @@ public class ServerModel {
 					resourceList.remove(i);
 					break;
 				}
+				//According to Aeron's server
+				else if(!resource.owner.equals(element.owner) && resource.channel.equals(element.channel)
+						&& resource.uri.equals(element.uri)){
+					return -1;
+				}
 			}
 			resource.setEZserver(this.advertisedhostname);
 			this.resourceList.add(resource);

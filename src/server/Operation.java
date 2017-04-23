@@ -142,7 +142,8 @@ public class Operation {
 			NormalResponse nr = new NormalResponse("success");
 			result.add(nr.toJSON());
 		} else {
-			// Temporary only return 1
+			NormalResponse nr = new NormalResponse("error",ErrorMessage.PUBLISH_BROKEN);
+			result.add(nr.toJSON());
 		}
 		return result;
 	}

@@ -112,6 +112,7 @@ public class ServerModel {
 					break;
 				}
 			}
+			resource.setEZserver(this.advertisedhostname);
 			this.resourceList.add(resource);
 			System.out.println("Resource List in server:");
 			for(int i=0;i<this.resourceList.size();i++){

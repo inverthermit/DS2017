@@ -11,7 +11,7 @@ import tool.ClientCommandLine;
 import tool.Common;
 import tool.Config;
 import tool.Log;
-
+import java.util.*;
 /**
  * Created by Tim Luo on 2017/3/27.
  */
@@ -54,7 +54,7 @@ public class Client {
 		//System.out.println("Client Main Print:"+query);
 		Log.log(Common.getMethodName(), "FINE", "SENDING: "+query);
 		if (query != null) {
-			doSend(serverHostname,serverPort,query);
+			doSend(serverHostname,serverPort,query,null);
 		}
 		else{
 			//System.out.println("query==null");
@@ -62,15 +62,18 @@ public class Client {
 		}
 	}
 
-	public static boolean doSend(String hostname, int port, String query) {
+	public static boolean doSend(String hostname, int port, String query, ArrayList<String> resultArr) {
 		String op = Common.getOperationfromJson(query);
 		try {
 			// 3.Create socket/input/output
 			Socket socket = new Socket();
+			if(op.equals("QUERY")){
+				//Config.CONNECTION_TIMEOUT = Config.CONNECTION_TIMEOUT*5;
+			}
 			socket.connect(new InetSocketAddress(hostname, port), Config.CONNECTION_TIMEOUT);
 			// This stops the request from dragging on after connection succeeds.
 			socket.setSoTimeout(Config.CONNECTION_TIMEOUT);
-			Log.log(Common.getMethodName(), "FINE", "Connection Established");
+			Log.log(Common.getMethodName(), "FINE", "Connection Established("+hostname+":"+port+")");
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			DataOutputStream out = new DataOutputStream(
 					socket.getOutputStream());
@@ -151,22 +154,33 @@ public class Client {
 						break;
 					}
 					else if (op.equals("QUERY")) {
-						while(true){
-							String message = in.readUTF();
-							// TODO: Output result
-							//System.out.println(message);
-							Log.log(Common.getMethodName(), "FINE", "RECEIVED: "+message);
-							// TODO: set {"resultSize":6} as end flag
-							if(message.contains("{\"resultSize\":")){
-								break;
+						String messageResponse = in.readUTF();
+						Log.log(Common.getMethodName(), "FINE", "RECEIVED: "+messageResponse);
+						NormalResponse nr = new NormalResponse();
+						nr.fromJSON(messageResponse);
+						if(nr.getResponse().equals("success")){
+							while(true){
+								String message = in.readUTF();
+								// TODO: Output result
+								//System.out.println(message);
+								Log.log(Common.getMethodName(), "FINE", "RECEIVED: "+message);
+								// TODO: set {"resultSize":6} as end flag
+								if(message.contains("{\"resultSize\":")){
+									break;
+								}
+								else{
+									if(resultArr!=null){
+										resultArr.add(message);
+									}
+								}
 							}
 						}
 					} else {
 						String message = in.readUTF();
-						// TODO: Output result
+						// Output result
 						//System.out.println(message);
 						Log.log(Common.getMethodName(), "FINE", "RECEIVED: "+message);
-						// TODO: set response as end flag
+						// set response as end flag
 						if(message.contains("{\"response\":\"")){
 							break;
 						}
@@ -181,7 +195,7 @@ public class Client {
 			out.close();
 		} catch (Exception ee) {
 			//ee.printStackTrace();
-			Log.log(Common.getMethodName(), "FINE", "CONNECTION ERROR: Please check the network or server.");
+			Log.log(Common.getMethodName(), "FINE", "CONNECTION ERROR: Please check the network or server("+hostname+":"+port+"). Timeout or connection refused.");
 			return false;
 		}
 		return true;

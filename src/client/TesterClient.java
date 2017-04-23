@@ -1,16 +1,9 @@
 package client;
-import java.io.*;
-import java.net.*;
-import java.util.Arrays;
 
-import model.Resource;
-import model.Response.NormalResponse;
-import tool.Common;
-import tool.Config;
 public class TesterClient {
 	public static void main(String[] args){
-		int serverPort = 19999;//3780;
-		String serverHostname = "127.0.0.1";//"sunrise.cis.unimelb.edu.au";
+		int serverPort = 3780;//3780;
+		String serverHostname = "sunrise.cis.unimelb.edu.au";//"sunrise.cis.unimelb.edu.au";
 		//TODO: 1. Check if parameters are valid
 		//Commandline.isValid(args);
 		//TODO:2.Translate cli to query
@@ -22,8 +15,8 @@ public class TesterClient {
 	    String exchangeExample = "{ \"command\": \"EXCHANGE\", \"serverList\": [ { \"hostname\": \"115.146.85.165\", \"port\": 3780 }, { \"hostname\": \"115.146.85.24\", \"port\": 3780 },{ \"hostname\": \"115.146.85.165\", \"port\": 3780 }, { \"hostname\": \"115.146.85.24\", \"port\": 3780 } ] }";	    
 	    String fetchExample = "{\"command\": \"FETCH\",    \"reply\": true, \"resourceTemplate\": {\"name\": \"aEZShare JAR\",\"tags\": [],\"description\": \"\",\"uri\":\"d://temp.txt\",\"channel\": \"\",\"owner\": \"\",\"ezserver\": null}}";;
 	    
-	    String query = fetchExample;//Translated query
-	    Client.doSend(serverHostname,serverPort,query);
+	    String query = queryExample;//Translated query
+	    Client.doSend(serverHostname,serverPort,query,null);
 	}
 
 }

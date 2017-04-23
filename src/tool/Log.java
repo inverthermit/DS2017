@@ -2,7 +2,7 @@ package tool;
 import java.text.*;
 import java.util.*;
 public class Log{
-	public static boolean debug = true;
+	public static boolean debug = false;
 	public static void log(String msg){
 		if(debug){
 			System.out.println(msg);

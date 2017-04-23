@@ -84,7 +84,8 @@ public class Operation {
 			/*System.out.println(fetchResource.name+" "+rc.name);
 			System.out.println(fetchResource.channel+" "+rc.channel);
 			System.out.println(fetchResource.uri+" "+rc.uri);*/
-			if(fetchResource.name.equals(rc.name)&&fetchResource.channel.equals(rc.channel)&&fetchResource.uri.equals(rc.uri)){
+			//Only the channel and URI fields in the template is relevant as it must be an exact match for the command to work.
+			if(fetchResource.channel.equals(rc.channel)&&fetchResource.uri.equals(rc.uri)){
 				hasResource = true;
 				break;
 			}
@@ -141,7 +142,8 @@ public class Operation {
 			NormalResponse nr = new NormalResponse("success");
 			result.add(nr.toJSON());
 		} else {
-			// Temporary only return 1
+			NormalResponse nr = new NormalResponse("error",ErrorMessage.PUBLISH_BROKEN);
+			result.add(nr.toJSON());
 		}
 		return result;
 	}
@@ -185,8 +187,22 @@ public class Operation {
 		}
 		if(query.isRelay()){
 			//TODO: Connect with other and add result to it
+			//Check which servers are available
+			Query relayQuery = new Query();
+			relayQuery.fromJSON(query.toJSON());
+			relayQuery.setRelay(false);
+			relayQuery.getResource().channel="";
+			relayQuery.getResource().owner = "";
+			String forwardQuery = relayQuery.toJSON();
+			for (int i = 0; i < server.serverList.size(); i++) {
+				ServerModel tempServer = server.serverList.get(i);
+				if(server.hostname.equals(tempServer.hostname)&&server.port==tempServer.port){
+					continue;
+				}
+				Client.doSend(tempServer.hostname, tempServer.port, forwardQuery,result);
+			}
 		}
-		result.add("{\"resultSize\":" + count + "}");
+		result.add("{\"resultSize\":" + (result.size()-1) + "}");
 		return result;
 	}
 
@@ -242,7 +258,7 @@ public class Operation {
 			//Log.log(Common.getMethodName(), "INFO", "Starting server exchange with:" + tempServer.hostname +":"+ tempServer.port);
 			// java.net.ConnectException Then Delete the address (Add a return to doSend)
 			//TODO: Needed test
-			boolean success = Client.doSend(tempServer.hostname, tempServer.port, Common.queryExample);
+			boolean success = Client.doSend(tempServer.hostname, tempServer.port, Common.queryExample,null);
 			if(!success){
 				//Log.log(Common.getMethodName(), "INFO", "Server unreachable, deleting server from list:" + tempServer.hostname +":"+ tempServer.port);
 				server.addDelServer(server.serverList.get(i),false);
@@ -259,17 +275,17 @@ public class Operation {
 			if(server.hostname.equals(tempServer.hostname)&&server.port==tempServer.port){
 				continue;
 			}
-			Log.log(Common.getMethodName(), "INFO", "Starting server exchange with:" + tempServer.hostname +":"+ tempServer.port);
+			//Log.log(Common.getMethodName(), "INFO", "Starting server exchange with:" + tempServer.hostname +":"+ tempServer.port);
 			// java.net.ConnectException Then Delete the address (Add a return to doSend)
 			//TODO: Needed test
-			boolean success = Client.doSend(tempServer.hostname, tempServer.port, query);
+			boolean success = Client.doSend(tempServer.hostname, tempServer.port, query,null);
 			if(!success){
-				Log.log(Common.getMethodName(), "INFO", "Server unreachable, deleting server from list:" + tempServer.hostname +":"+ tempServer.port);
+				//Log.log(Common.getMethodName(), "INFO", "Server unreachable, deleting server from list:" + tempServer.hostname +":"+ tempServer.port);
 				server.addDelServer(server.serverList.get(i),false);
-				System.out.println("Server List in server after DELETE:"+server.toServerListJson());
+				//System.out.println("Server List in server after DELETE:"+server.toServerListJson());
 				i--;
 			}
-			Log.log(Common.getMethodName(), "INFO", "Finished server exchange with:" + tempServer.hostname +":"+ tempServer.port);
+			//Log.log(Common.getMethodName(), "INFO", "Finished server exchange with:" + tempServer.hostname +":"+ tempServer.port);
 		}
 		return null;
 	}

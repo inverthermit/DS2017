@@ -8,11 +8,11 @@ import java.security.SecureRandom;
 public class Common {
 	public static String SECRET = "2os41f58vkd9e1q4ua6ov5emlv";
 	public static final String[] LOGGIN_LEVEL = {"SEVERE","WARNING","INFO","CONFIG","FINE","FINER","FINEST"};
-	
 	public static final String[] BASIC_OP = {"EXCHANGE","FETCH","SHARE","PUBLISH","QUERY","REMOVE"};
-	static SecureRandom rnd = new SecureRandom();
 	public static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-	public static String queryExample = "{\"command\": \"QUERY\",    \"reply\": true, \"resourceTemplate\": {\"name\": \"\",\"tags\": [],\"description\": \"\",\"uri\": \"\",\"channel\": \"\",\"owner\": \"\",\"ezserver\": null}}";
+	public static String queryExample = "{\"command\": \"QUERY\",    \"reply\": false, \"resourceTemplate\": {\"name\": \"randomname\",\"tags\": [],\"description\": \"\",\"uri\": \"randomurl\",\"channel\": \"\",\"owner\": \"randomowner\",\"ezserver\": null}}";
+	private static SecureRandom rnd = new SecureRandom();
+	
 	public static String getOperationfromJson(String json){
 		//System.out.println(json);
 		for(int i=0;i<BASIC_OP.length;i++){

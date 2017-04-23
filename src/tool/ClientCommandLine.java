@@ -305,11 +305,11 @@ public class ClientCommandLine {
 			    resource.setOwner(commandline[i].getValue());
 			    arg[5]=1;
 			    break;
-			case "servers":
+			/*case "servers":
 				checkStringArray(commandline[i].getValues());
 			    resource.setEZserver(commandline[i].getValues());
 			    arg[6]=1;
-			    break;
+			    break;*/
 			default:
 			   break;
 			}

@@ -26,7 +26,7 @@ public class Resource {
 	public String uri = "";
 	public String channel = "";
 	public String owner = "";
-	public String[] EZserver = {};
+	public String EZserver = "null";
 	public long resourceSize;
 	
 	/** Default constructor of the class Resource. */
@@ -112,13 +112,15 @@ public class Resource {
 		this.owner = owner;
 	}
 
+
 	/**
      * This is a setter() function to set the EZserver for a resource instance.
      * 
      * @param a String[] type EZserver
      */
-	public void setEZserver(String[] EZserver) {
-		EZserver = EZserver;
+
+	public void setEZserver(String eZserver) {
+		EZserver = eZserver;
 	}
 
 	/**

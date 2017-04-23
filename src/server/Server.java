@@ -13,7 +13,7 @@ import model.ServerModel;
 	 * Created by Tim Luo on 2017/3/27.
 	 */
 /*
--advertisedhostname localhost -connectionintervallimit 10 -exchangeinterval 10 -port 10000 -secret asdfwefwasdf -debug
+-advertisedhostname server1 -connectionintervallimit 0 -exchangeinterval 20 -port 10000 -secret asdfwefwasdf -debug
 */
 public class Server {
 	private static ServerModel selfModel = new ServerModel();
@@ -66,7 +66,7 @@ public class Server {
 		int port = selfModel.port;
 		//System.out.println(selfModel.hostname+":"+selfModel.port+" "+selfModel.exchangeInterval+" "+selfModel.intervallimit+" "+selfModel.secret);
 		Log.log(Common.getMethodName(), "INFO", "Starting the EZShare Server");
-		Log.log(Common.getMethodName(), "INFO", "using advertised hostname: "+selfModel.hostname);
+		Log.log(Common.getMethodName(), "INFO", "using advertised hostname: "+selfModel.advertisedhostname);
 		Log.log(Common.getMethodName(), "INFO", "using secret: "+selfModel.secret);
 		//int port = 10001;
 		//int port = 10002;
@@ -95,7 +95,9 @@ public class Server {
 			server.close();
 		}
 		catch(Exception ee){
-			ee.printStackTrace();
+			//ee.printStackTrace();
+			Log.log(Common.getMethodName(), "INFO", "Server fail to start: Port already in used("+port+")");
+			System.exit(0);
 		}
     }
 }

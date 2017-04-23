@@ -302,6 +302,7 @@ public class ClientCommandLine {
 			    break;
 			case "owner":
 				checkString(commandline[i].getValue());
+				checkOwner(commandline[i].getValue());
 			    resource.setOwner(commandline[i].getValue());
 			    arg[5]=1;
 			    break;
@@ -401,6 +402,15 @@ public class ClientCommandLine {
     		//System.out.println("4");
     		return true;
 		} else { return false;}
+	}
+	
+	public static void checkOwner(String owner){
+		if(owner == "*"){
+			ErrorMessage error = new ErrorMessage();
+    		NormalResponse response = new NormalResponse("error", error.GENERIC_INVALID);
+    		System.out.println(response.toJSON());	
+    		valid = false;
+		}
 	}
 	
 	public static void checkStringArray(String[] strs) {

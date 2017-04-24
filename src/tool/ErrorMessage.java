@@ -20,9 +20,9 @@ public class ErrorMessage
   
   public void checkPublish() {}
   
-  public String toJSON()
-  {
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    return gson.toJson(this);
-  }
+//  public String toJSON()
+//  {
+//    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+//    return gson.toJson(this);
+//  }
 }

@@ -35,12 +35,6 @@ public class Resource {
 
 	}
 
-	// Tim: this shouldn't be a Constructor, it actually finish the job of deep
-	// copy of java object. Change function name to copyOf/clone
-	// Refer to
-	// http://stackoverflow.com/questions/64036/how-do-you-make-a-deep-copy-of-an-object-in-java
-	// Use serialization code in the page.
-	
 	/**
      * Construct a Resource. It contains all of information which a resource
      * should be had.

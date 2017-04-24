@@ -1,3 +1,7 @@
+/** Course: COMP90015 2017-SM1 Distributed Systems
+ *  Project: Project1-EZShare Resource Sharing Network
+ *  Group Name: Alpha Panthers
+ */
 package client;
 
 import java.net.*;
@@ -10,7 +14,9 @@ import model.command.Fetch;
 import tool.ClientCommandLine;
 import tool.Common;
 import tool.Config;
+import tool.ErrorMessage;
 import tool.Log;
+
 import java.util.*;
 /**
  * Created by Tim Luo on 2017/3/27.
@@ -55,7 +61,7 @@ public class Client {
 		//System.out.println("Client Main Print:"+query);
 		Log.log(Common.getMethodName(), "FINE", "SENT: "+query);
 		if (query != null) {
-			doSend(serverHostname,serverPort,query,null);
+			doSend(serverHostname,serverPort,query,null,Log.debug);
 		}
 		else{
 			//System.out.println("query==null");
@@ -63,8 +69,13 @@ public class Client {
 		}
 	}
 
-	public static boolean doSend(String hostname, int port, String query, ArrayList<String> resultArr) {
+	public static boolean doSend(String hostname, int port, String query, ArrayList<String> resultArr, boolean printLog) {
 		String op = Common.getOperationfromJson(query);
+		if(op==null){
+			NormalResponse nr = new NormalResponse("error",ErrorMessage.GENERIC_INVALID);
+			Log.log(Common.getMethodName(), "FINE", nr.toJSON());
+			return false;
+		}
 		try {
 			// 3.Create socket/input/output
 			Socket socket = new Socket();
@@ -74,15 +85,20 @@ public class Client {
 			socket.connect(new InetSocketAddress(hostname, port), Config.CONNECTION_TIMEOUT);
 			// This stops the request from dragging on after connection succeeds.
 			socket.setSoTimeout(Config.CONNECTION_TIMEOUT);
+			if(printLog)
 			Log.log(Common.getMethodName(), "FINE", "Connection Established("+hostname+":"+port+")");
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			DataOutputStream out = new DataOutputStream(
 					socket.getOutputStream());
 			// 4.Send the query to the server
 			out.writeUTF(query);
+			long start = Common.getCurrentSecTimestamp();
 			// 5.Listen for the results and output to log. End the listening based on commands
 			boolean endFlag = false;
 			while (!endFlag) {
+				if(Common.getCurrentSecTimestamp()-start>=Config.CONNECTION_TIMEOUT/1000){
+					throw new Exception();
+				}
 				if (in.available() > 0) {
 					if (op.equals("FETCH")) {
 						String message = in.readUTF();
@@ -156,6 +172,7 @@ public class Client {
 					}
 					else if (op.equals("QUERY")) {
 						String messageResponse = in.readUTF();
+						if(printLog)
 						Log.log(Common.getMethodName(), "FINE", "RECEIVED: "+messageResponse);
 						NormalResponse nr = new NormalResponse();
 						nr.fromJSON(messageResponse);
@@ -164,6 +181,7 @@ public class Client {
 								String message = in.readUTF();
 								// TODO: Output result
 								//System.out.println(message);
+								if(printLog)
 								Log.log(Common.getMethodName(), "FINE", "RECEIVED: "+message);
 								// TODO: set {"resultSize":6} as end flag
 								if(message.contains("{\"resultSize\":")){

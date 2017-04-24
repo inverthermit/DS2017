@@ -1,7 +1,9 @@
 package server;
 import java.net.*;
+import java.text.SimpleDateFormat;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.*;
 
 import tool.Common;
 import tool.Config;
@@ -54,7 +56,7 @@ public class Server {
 			//to int catch exception
 			try{
 				int interval = Integer.parseInt(selfModel.intervallimit);
-				Config.CONNECTION_LIMIT_INTERVAL = interval*1000;
+				Config.CONNECTION_LIMIT_INTERVAL = interval;
 			}
 			catch(Exception ee){
 				//System.out.println("connection interval is not an int");
@@ -84,13 +86,26 @@ public class Server {
 				ClientModel client = new ClientModel();
 				//Log.log(Common.getMethodName(), "INFO", "started");
 				client.socket=server.accept();
+				client.ip=client.socket.getRemoteSocketAddress().toString().split(":")[0];
+				long timestamp = Common.getCurrentSecTimestamp();
+				if(selfModel.ipTimeList == null){
+					selfModel.ipTimeList = new HashMap<String,Long>();
+				}
+				else if(timestamp-selfModel.getLastClientTime(client.ip)<Config.CONNECTION_LIMIT_INTERVAL){
+					System.out.println("Less than connection limit interval");
+					client.socket.close();
+					continue;
+				}
+				selfModel.ipTimeList.put(client.ip, timestamp);
+				//client.timestamp = timestamp;
+				
 				//Timeout
 				client.socket.setSoTimeout(Config.CONNECTION_TIMEOUT);
 				//System.out.println(client.socket.getSoTimeout());
 				selfModel.clientList.add(client);
 				//TODO: Output client connection log
 				//System.out.println("Connected");
-				Log.log(Common.getMethodName(), "INFO", "New Connection:"+client.socket.getInetAddress()+":"+client.socket.getPort());
+				Log.log(Common.getMethodName(), "INFO", "New Connection:"+client.socket.getRemoteSocketAddress().toString().split(":")[0]+":"+client.socket.getPort());
 				pool.execute(new ServerThread(client,selfModel));
 			}
 			server.close();

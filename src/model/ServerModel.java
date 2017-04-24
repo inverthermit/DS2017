@@ -2,6 +2,7 @@ package model;
 
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import model.command.Exchange;
 
@@ -23,6 +24,7 @@ public class ServerModel {
 	public ArrayList<ServerModel> serverList;
 	public ArrayList<ClientModel> clientList;
 	public ArrayList<Resource> resourceList;
+	public HashMap<String,Long> ipTimeList;
 
 	public ServerModel() {
 
@@ -143,6 +145,10 @@ public class ServerModel {
 				return -2;
 			}
 		}
+	}
+	
+	public long getLastClientTime(String ip){
+		return this.ipTimeList.get(ip);
 	}
 
 	public String toServerListJson() {

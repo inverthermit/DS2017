@@ -13,4 +13,5 @@ public class ClientModel {
 	public Socket socket;
 	public ArrayList<ServerModel> serverList;
 	public ArrayList<Resource> resourceList;
+	public long timestamp;
 }

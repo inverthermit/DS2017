@@ -1,4 +1,10 @@
+/** Course: COMP90015 2017-SM1 Distributed Systems
+ *  Project: Project1-EZShare Resource Sharing Network
+ *  Group Name: Alpha Panthers
+ */
 package client;
+
+import tool.Log;
 
 public class TesterClient {
 	public static void main(String[] args){
@@ -16,7 +22,7 @@ public class TesterClient {
 	    String fetchExample = "{\"command\": \"FETCH\",    \"reply\": true, \"resourceTemplate\": {\"name\": \"aEZShare JAR\",\"tags\": [],\"description\": \"\",\"uri\":\"d://temp.txt\",\"channel\": \"\",\"owner\": \"\",\"ezserver\": null}}";;
 	    
 	    String query = queryExample;//Translated query
-	    Client.doSend(serverHostname,serverPort,query,null);
+	    Client.doSend(serverHostname,serverPort,query,null,Log.debug);
 	}
 
 }

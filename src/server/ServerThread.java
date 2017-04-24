@@ -38,7 +38,6 @@ public class ServerThread implements Runnable{
 	                //Print out log
 	                //System.out.println(message);
 	                Log.log(Common.getMethodName(), "FINE", "RECEIVED: "+message);
-	                Thread.sleep(Config.CONNECTION_LIMIT_INTERVAL);//Connectin Interval Limit
 	                //2.Parse message, do operations, return ArrayList<String> to send back to client
 	                Operation op = new Operation();
 	                ArrayList<String> resultSet = op.dispatcher(message, selfModel, clientModel);

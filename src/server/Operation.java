@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 import client.Client;
 import tool.Common;
@@ -24,6 +25,11 @@ public class Operation {
 		// 1.get the command of json
 		String op = Common.getOperationfromJson(json);
 		ArrayList<String> result = null;
+		if(op==null){
+			NormalResponse nr = new NormalResponse("error",ErrorMessage.GENERIC_INVALID);
+			result.add(nr.toJSON());
+			return result;
+		}
 		switch (op) {
 		case "PUBLISH":
 			Publish publish = new Publish();
@@ -199,7 +205,7 @@ public class Operation {
 				if(server.hostname.equals(tempServer.hostname)&&server.port==tempServer.port){
 					continue;
 				}
-				Client.doSend(tempServer.hostname, tempServer.port, forwardQuery,result);
+				Client.doSend(tempServer.hostname, tempServer.port, forwardQuery,result,Log.debug);
 			}
 		}
 		result.add("{\"resultSize\":" + (result.size()-1) + "}");
@@ -258,7 +264,7 @@ public class Operation {
 			//Log.log(Common.getMethodName(), "INFO", "Starting server exchange with:" + tempServer.hostname +":"+ tempServer.port);
 			// java.net.ConnectException Then Delete the address (Add a return to doSend)
 			//TODO: Needed test
-			boolean success = Client.doSend(tempServer.hostname, tempServer.port, Common.queryExample,null);
+			boolean success = Client.doSend(tempServer.hostname, tempServer.port, Common.queryExample,null,false);
 			if(!success){
 				//Log.log(Common.getMethodName(), "INFO", "Server unreachable, deleting server from list:" + tempServer.hostname +":"+ tempServer.port);
 				server.addDelServer(server.serverList.get(i),false);
@@ -267,9 +273,20 @@ public class Operation {
 			}
 			//Log.log(Common.getMethodName(), "INFO", "Finished server exchange with:" + tempServer.hostname +":"+ tempServer.port);
 		}
-		String query = server.toServerListJson();
-		System.out.println("In doServerExchange" + query);
-		for (int i = 0; i < server.serverList.size(); i++) {
+		if(server.serverList.size()>0){
+			String query = server.toServerListJson();
+			int randomNum = ThreadLocalRandom.current().nextInt(0, server.serverList.size());
+			ServerModel tempServer = server.serverList.get(randomNum);
+			if(server.hostname.equals(tempServer.hostname)&&server.port==tempServer.port){
+				return null;
+			}
+			boolean success = Client.doSend(tempServer.hostname, tempServer.port, query,null,Log.debug);
+			if(!success){
+				server.addDelServer(server.serverList.get(randomNum),false);
+			}
+		}
+		//System.out.println("In doServerExchange" + query);
+		/*for (int i = 0; i < server.serverList.size(); i++) {
 			ServerModel tempServer = server.serverList.get(i);
 			//System.out.println(server.hostname+" "+(tempServer.hostname)+" "+server.port+" "+tempServer.port);
 			if(server.hostname.equals(tempServer.hostname)&&server.port==tempServer.port){
@@ -286,7 +303,7 @@ public class Operation {
 				i--;
 			}
 			//Log.log(Common.getMethodName(), "INFO", "Finished server exchange with:" + tempServer.hostname +":"+ tempServer.port);
-		}
+		}*/
 		return null;
 	}
 }

@@ -44,6 +44,7 @@ public class Client {
 		String query = ClientCommandLine.ClientCommandLine(args);
 		if(ClientCommandLine.getDebug()){
 			Log.debug = true;
+			Log.log(Common.getMethodName(), "INFO", "setting debug on");
 		}
 		if(ClientCommandLine.getPort()!=0){
 			serverPort = ClientCommandLine.getPort();
@@ -52,7 +53,7 @@ public class Client {
 			serverHostname = ClientCommandLine.getHost();
 		}
 		//System.out.println("Client Main Print:"+query);
-		Log.log(Common.getMethodName(), "FINE", "SENDING: "+query);
+		Log.log(Common.getMethodName(), "FINE", "SENT: "+query);
 		if (query != null) {
 			doSend(serverHostname,serverPort,query,null);
 		}

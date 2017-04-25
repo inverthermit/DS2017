@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import client.Client;
 import tool.Common;
@@ -32,6 +34,10 @@ public class Operation {
 			result.add(nr.toJSON());
 			return result;
 		}
+		if(checkValidMissing(op,json)!=null){
+			result.add(checkValidMissing(op,json));
+			return result;
+		} else {
 		switch (op) {
 		case "PUBLISH":
 			Publish publish = new Publish();
@@ -67,6 +73,7 @@ public class Operation {
 			result = null;
 			break;
 		}
+		}
 		return result;
 	}
 
@@ -85,84 +92,98 @@ public class Operation {
 
 	public ArrayList<String> doClientFetch(Fetch fetch, ServerModel server, ClientModel client) {
 		ArrayList<String> result = new ArrayList<String>();
-		boolean hasResource = false;
-		Resource fetchResource = fetch.getResource();
-		for(int i=0;i<server.resourceList.size();i++){
-			Resource rc = server.resourceList.get(i);
+		if(checkServerFetch(fetch)!=null){
+			result.add(checkServerFetch(fetch));
+			return result;
+		} else {
+			boolean hasResource = false;
+			Resource fetchResource = fetch.getResource();
+			for(int i=0;i<server.resourceList.size();i++){
+				Resource rc = server.resourceList.get(i);
 			/*System.out.println(fetchResource.name+" "+rc.name);
 			System.out.println(fetchResource.channel+" "+rc.channel);
 			System.out.println(fetchResource.uri+" "+rc.uri);*/
 			//Only the channel and URI fields in the template is relevant as it must be an exact match for the command to work.
-			if(fetchResource.channel.equals(rc.channel)&&fetchResource.uri.equals(rc.uri)){
-				hasResource = true;
-				break;
-			}
-		}
-		if(!hasResource){
-			NormalResponse nr = new NormalResponse("success");
-			result.add(nr.toJSON());
-			result.add("{\"resultSize\":0}");
-			return result;
-		}
-		String fileName = (String) fetch.getResource().uri;
-		// Check if file exists
-		File f = new File(fileName);
-		if (f.exists()) {
-			// Send this back to client so that they know what the file is.
-			try {
-				DataOutputStream output = new DataOutputStream(client.socket.getOutputStream());
-				// Send trigger to client
-				NormalResponse nr = new NormalResponse("success");
-				output.writeUTF(nr.toJSON());
-				Log.log(Common.getMethodName(), "FINE", "SENDING: "+nr.toJSON());
-				fetch.getResource().resourceSize = f.length();
-				// System.out.println(fetch.getResource().toJSON());
-				output.writeUTF(fetch.getResource().toJSON());
-				Log.log(Common.getMethodName(), "FINE", "SENDING: "+fetch.getResource().toJSON());
-				// Start sending file
-				RandomAccessFile byteFile = new RandomAccessFile(f, "r");
-				byte[] sendingBuffer = new byte[Config.TRUNK_SIZE];
-				int num;
-				// While there are still bytes to send..
-				while ((num = byteFile.read(sendingBuffer)) > 0) {
-					output.write(Arrays.copyOf(sendingBuffer, num));
+				if(fetchResource.channel.equals(rc.channel)&&fetchResource.uri.equals(rc.uri)){
+					hasResource = true;
+					break;
 				}
-				byteFile.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-				NormalResponse nr = new NormalResponse("error", ErrorMessage.QUERY_FETCH_RESOURCETEMPLATE_INVALID+"2");
+			}
+			if(!hasResource){
+				NormalResponse nr = new NormalResponse("success");
+				result.add(nr.toJSON());
+				result.add("{\"resultSize\":0}");
+				return result;
+			}
+			String fileName = (String) fetch.getResource().uri;
+		// Check if file exists
+			File f = new File(fileName);
+			if (f.exists()) {
+			// Send this back to client so that they know what the file is.
+				try {
+					DataOutputStream output = new DataOutputStream(client.socket.getOutputStream());
+				// Send trigger to client
+					NormalResponse nr = new NormalResponse("success");
+					output.writeUTF(nr.toJSON());
+					Log.log(Common.getMethodName(), "FINE", "SENDING: "+nr.toJSON());
+					fetch.getResource().resourceSize = f.length();
+				// System.out.println(fetch.getResource().toJSON());
+					output.writeUTF(fetch.getResource().toJSON());
+					Log.log(Common.getMethodName(), "FINE", "SENDING: "+fetch.getResource().toJSON());
+				// Start sending file
+					RandomAccessFile byteFile = new RandomAccessFile(f, "r");
+					byte[] sendingBuffer = new byte[Config.TRUNK_SIZE];
+					int num;
+				// While there are still bytes to send..
+					while ((num = byteFile.read(sendingBuffer)) > 0) {
+						output.write(Arrays.copyOf(sendingBuffer, num));
+					}
+					byteFile.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+					NormalResponse nr = new NormalResponse("error", ErrorMessage.QUERY_FETCH_RESOURCETEMPLATE_INVALID+"2");
+					result.add(nr.toJSON());
+					return result;
+				}
+			} else {
+			// Throw an error here..
+				NormalResponse nr = new NormalResponse("error", ErrorMessage.QUERY_FETCH_RESOURCETEMPLATE_INVALID+"3");
 				result.add(nr.toJSON());
 				return result;
 			}
-		} else {
-			// Throw an error here..
-			NormalResponse nr = new NormalResponse("error", ErrorMessage.QUERY_FETCH_RESOURCETEMPLATE_INVALID+"3");
-			result.add(nr.toJSON());
-			return result;
 		}
-		return null;
+			return null;
 	}
 
 	public ArrayList<String> doClientPublish(Publish publish, ServerModel server) {
 		ArrayList<String> result = new ArrayList<String>();
-		int status = server.addDelResource(publish.getResource(), true);
-		if (status > 0) {
-			NormalResponse nr = new NormalResponse("success");
-			result.add(nr.toJSON());
-		} else {  // error 4
-			NormalResponse nr = new NormalResponse("error",ErrorMessage.PUBLISH_BROKEN);
-			result.add(nr.toJSON());
+		if(checkServerPublish(publish)!=null){
+			result.add(checkServerPublish(publish));
+			return result;
+		} else {
+			int status = server.addDelResource(publish.getResource(), true);
+			if (status > 0) {
+				NormalResponse nr = new NormalResponse("success");
+				result.add(nr.toJSON());
+			} else {  // error 4
+				NormalResponse nr = new NormalResponse("error",ErrorMessage.PUBLISH_BROKEN);
+				result.add(nr.toJSON());
+			}
 		}
 		return result;
 	}
 
 	public ArrayList<String> doClientQuery(Query query, ServerModel server) {
 		ArrayList<String> result = new ArrayList<String>();
-		NormalResponse nr = new NormalResponse("success");
-		result.add(nr.toJSON());
-		int count = 0;
-		for (int i = 0; i < server.resourceList.size(); i++) {
-			Resource resource = server.resourceList.get(i);
+		if(checkServerQuery(query)!=null){
+			result.add(checkServerQuery(query));
+			return result;
+		} else {
+			NormalResponse nr = new NormalResponse("success");
+			result.add(nr.toJSON());
+			int count = 0;
+			for (int i = 0; i < server.resourceList.size(); i++) {
+				Resource resource = server.resourceList.get(i);
 			/*
 			 * 1.(The template channel equals (case sensitive) the resource channel AND 
 			 * 2.If the template contains an owner that is not "", then the candidate owner must equal it (case sensitive) AND 
@@ -180,76 +201,87 @@ public class Operation {
 			System.out.println("5"+resource.name.contains(query.getResource().name));
 			System.out.println("6"+(query.getResource().description.equals("") || resource.description.contains(query.getResource().description)));
 			System.out.println("7"+(query.getResource().description.equals("") && query.getResource().name.equals("")));*/
-			if (query.getResource().channel.equals(resource.channel) && // 1
-					(query.getResource().owner.equals("") || ((!query.getResource().owner.equals(""))
-							&& query.getResource().owner.equals(resource.owner))) && // 2
-					(Common.arrayInArray(query.getResource().tags, resource.tags)) && // 3
-					(query.getResource().uri.equals("")||((!query.getResource().uri.equals(""))&&query.getResource().uri.equals(resource.uri))) && // 4
-					(resource.name.contains(query.getResource().name) || // 5
-							(query.getResource().description.equals("") || resource.description.contains(query.getResource().description)) || // 6
-							(query.getResource().description.equals("") && query.getResource().name.equals(""))// 7
-					)) {
-				result.add(resource.toJSON());
-				count++;
+				if (query.getResource().channel.equals(resource.channel) && // 1
+						(query.getResource().owner.equals("") || ((!query.getResource().owner.equals(""))
+								&& query.getResource().owner.equals(resource.owner))) && // 2
+						(Common.arrayInArray(query.getResource().tags, resource.tags)) && // 3
+						(query.getResource().uri.equals("")||((!query.getResource().uri.equals(""))&&query.getResource().uri.equals(resource.uri))) && // 4
+						(resource.name.contains(query.getResource().name) || // 5
+								(query.getResource().description.equals("") || resource.description.contains(query.getResource().description)) || // 6
+								(query.getResource().description.equals("") && query.getResource().name.equals(""))// 7
+								)) {
+					result.add(resource.toJSON());
+					count++;
+				}
 			}
-		}
-		if(query.isRelay()){
+			if(query.isRelay()){
 			//TODO: Connect with other and add result to it
 			//Check which servers are available
-			Query relayQuery = new Query();
-			relayQuery.fromJSON(query.toJSON());
-			relayQuery.setRelay(false);
-			relayQuery.getResource().channel="";
-			relayQuery.getResource().owner = "";
-			String forwardQuery = relayQuery.toJSON();
-			for (int i = 0; i < server.serverList.size(); i++) {
-				ServerModel tempServer = server.serverList.get(i);
-				if(server.hostname.equals(tempServer.hostname)&&server.port==tempServer.port){
+				Query relayQuery = new Query();
+				relayQuery.fromJSON(query.toJSON());
+				relayQuery.setRelay(false);
+				relayQuery.getResource().channel="";
+				relayQuery.getResource().owner = "";
+				String forwardQuery = relayQuery.toJSON();
+				for (int i = 0; i < server.serverList.size(); i++) {
+					ServerModel tempServer = server.serverList.get(i);
+					if(server.hostname.equals(tempServer.hostname)&&server.port==tempServer.port){
 					continue;
+					}
+					Client.doSend(tempServer.hostname, tempServer.port, forwardQuery,result,Log.debug);
 				}
-				Client.doSend(tempServer.hostname, tempServer.port, forwardQuery,result,Log.debug);
 			}
+			result.add("{\"resultSize\":" + (result.size()-1) + "}");
 		}
-		result.add("{\"resultSize\":" + (result.size()-1) + "}");
 		return result;
 	}
 
 	public ArrayList<String> doClientRemove(Remove remove, ServerModel server) {
 		ArrayList<String> result = new ArrayList<String>();
-		int status = server.addDelResource(remove.getResource(), false);
-		if (status > 0) {
-			NormalResponse nr = new NormalResponse("success");
-			result.add(nr.toJSON());
-		} else {    // 3 
-			NormalResponse nr = new NormalResponse("error", ErrorMessage.REMOVE_RESOURCE_NOT_EXIST);
-			result.add(nr.toJSON());
+		if(checkServerRemove(remove)!=null){
+			result.add(checkServerRemove(remove));
+			return result;
+		} else {
+			int status = server.addDelResource(remove.getResource(), false);
+			if (status > 0) {
+				NormalResponse nr = new NormalResponse("success");
+				result.add(nr.toJSON());
+			} else {    // 3 
+				NormalResponse nr = new NormalResponse("error", ErrorMessage.REMOVE_RESOURCE_NOT_EXIST);
+				result.add(nr.toJSON());
+			}
 		}
 		return result;
 	}
 
 	public ArrayList<String> doClientShare(Share share, ServerModel server) {
 		ArrayList<String> result = new ArrayList<String>();
+		if(checkServerShare(share)!=null){
+			result.add(checkServerShare(share));
+			return result;
+		} else {
 		//System.out.println(share.getSecret()+"--"+server.secret);
-		if (!share.getSecret().equals(server.secret)) {  // error 5
-			NormalResponse nr = new NormalResponse("error", ErrorMessage.SHARE_SECRET_INCORRECT);
-			result.add(nr.toJSON());
-			return result;
-		}
+			if (!share.getSecret().equals(server.secret)) {  // error 5
+				NormalResponse nr = new NormalResponse("error", ErrorMessage.SHARE_SECRET_INCORRECT);
+				result.add(nr.toJSON());
+				return result;
+			}
 		// Check if the resource uri is a file which exists
-		File f = new File(share.getResource().uri);
+			File f = new File(share.getResource().uri);
 		//System.out.println(share.getResource().uri+" "+f.exists()+" "+f.isDirectory()+" ");
-		if (!(f.exists() && !f.isDirectory())) {  
-			NormalResponse nr = new NormalResponse("error", ErrorMessage.PUBLISH_REMOVE_RESOURCE_INCORRECT);
-			result.add(nr.toJSON());
+			if (!(f.exists() && !f.isDirectory())) {  
+				NormalResponse nr = new NormalResponse("error", ErrorMessage.PUBLISH_REMOVE_RESOURCE_INCORRECT);
+				result.add(nr.toJSON());
 			return result;
-		}
-		int status = server.addDelResource(share.getResource(), true);
-		if (status > 0) {
-			NormalResponse nr = new NormalResponse("success");
-			result.add(nr.toJSON());
-		} else {  //error 4
-			NormalResponse nr = new NormalResponse("error",ErrorMessage.SHARE_BROKEN);
-			result.add(nr.toJSON());
+			}
+			int status = server.addDelResource(share.getResource(), true);
+			if (status > 0) {
+				NormalResponse nr = new NormalResponse("success");
+				result.add(nr.toJSON());
+			} else {  //error 4
+				NormalResponse nr = new NormalResponse("error",ErrorMessage.SHARE_BROKEN);
+				result.add(nr.toJSON());
+			}
 		}
 		return result;
 	}
@@ -312,20 +344,19 @@ public class Operation {
 	
 	/**
 	 * checking publish parameters are valid or not 
-	 * 1. resource is not a JSON  --- invalid resource TO DO 
+	 * 1. resource is not a JSON  --- invalid resource 
 	 * 2. uri is not valid or ""   ---- cannot publish resource
-	 * 3. owner just "*"  and string contains "/0" and missing resource(TO DO)-----missing resource
+	 * 3. owner just "*"  and string contains "/0" and missing resource-----missing resource
 	 * 4. the same channel ,the same uri the same owner -- cannot publish resource
 	 */
 	public String checkServerPublish(Publish publish){
 		Resource resource = publish.getResource();
-		String errorMessage = null;
 		if (resource.uri.equals("") || !resource.isUriVaild()){ //2
-			errorMessage = ErrorMessage.PUBLISH_BROKEN;
-			return errorMessage;
-		} else if (!resource.isOwnerValid() || !resource.isArgValid()){
-			errorMessage = ErrorMessage.PUBLISH_REMOVE_RESOURCE_INCORRECT; //3
-			return errorMessage;
+			NormalResponse nr = new NormalResponse("error",ErrorMessage.PUBLISH_BROKEN);
+			return nr.toJSON();
+		} else if (!resource.isOwnerValid() || !resource.isArgValid()){ //3
+			NormalResponse nr = new NormalResponse("error",ErrorMessage.PUBLISH_REMOVE_RESOURCE_INCORRECT);
+			return nr.toJSON();
 		}
 		return null;
 	}
@@ -335,74 +366,70 @@ public class Operation {
 	 * 1. missing resource or owner just "*" or string is not valid ----missing resource
 	 * 2. uri is not valid or ""  ---- cannot remove resource
 	 * 3. the resource did not exist  --- cannot remove resource
-	 * 4. resource is not a JSON (TO DO) --- invalid resource
+	 * 4. resource is not a JSON  --- invalid resource
 	 */
 	public String checkServerRemove(Remove remove){
 		Resource resource = remove.getResource();
-		String errorMessage = null;
 		if (resource.uri.equals("")||resource.isUriVaild()){             //2
-			errorMessage = ErrorMessage.REMOVE_RESOURCE_NOT_EXIST;
-			return errorMessage;
+			NormalResponse nr = new NormalResponse("error",ErrorMessage.REMOVE_RESOURCE_NOT_EXIST);
+			return nr.toJSON();
 		} else if (!resource.isOwnerValid()||!resource.isArgValid()){  // 1
-			errorMessage = ErrorMessage.PUBLISH_REMOVE_RESOURCE_MISSING;
-			return errorMessage;
+			NormalResponse nr = new NormalResponse("error",ErrorMessage.PUBLISH_REMOVE_RESOURCE_MISSING);
+			return nr.toJSON();
 		}
 		return null;
 	}
 	
 	/**
 	 * checking query parameters are valid or not 
-	 * 1. resource is not a JSON(TO DO) ---- invalid resourceTemplate
-	 * 2. uri is not valid or "" or missing resource(TO DO) 
+	 * 1. resource is not a JSON ---- invalid resourceTemplate
+	 * 2. uri is not valid or "" or missing resource
 	 *    or owner is "*" or string not valid ---- missing resourceTemplate
 	 */
 	public String checkServerQuery(Query query){
 		Resource resource = query.getResource();
-		String errorMessage = null;
 		if(resource.uri.equals("")||!resource.isUriVaild()||
 				!resource.isArgValid() || !resource.isOwnerValid()){  //2
-			errorMessage = ErrorMessage.QUERY_FETCH_EXCHANGE_RESOURCETEMPLATE_MISSING;
-			return errorMessage;
+			NormalResponse nr = new NormalResponse("error",ErrorMessage.QUERY_FETCH_EXCHANGE_RESOURCETEMPLATE_MISSING);
+			return nr.toJSON();
 		}
 		return null;
 	}
 	
 	/**
 	 * checking fetch parameters are valid or not 
-	 * 1. resource is not a JSON(TO DO) ---- invalid resourceTemplate
-	 * 2. uri is not valid or "" or missing resource(TO DO) 
+	 * 1. resource is not a JSON ---- invalid resourceTemplate
+	 * 2. uri is not valid or "" or missing resource
 	 *    or owner is "*" or string not valid ---- missing resourceTemplate
 	 */
 	public String checkServerFetch(Fetch fetch){
 		Resource resource = fetch.getResource();
-		String errorMessage = null;
 		if(resource.uri.equals("")||!resource.isUriVaild()||
 				!resource.isArgValid() || !resource.isOwnerValid()){  //2
-			errorMessage = ErrorMessage.QUERY_FETCH_EXCHANGE_RESOURCETEMPLATE_MISSING;
-			return errorMessage;
+			NormalResponse nr = new NormalResponse("error",ErrorMessage.QUERY_FETCH_EXCHANGE_RESOURCETEMPLATE_MISSING);
+			return nr.toJSON();
 		}
 		return null;
 	}
 	
 	/**
 	 * checking share parameters are valid or not 
-	 * 1. resource is not a JSON (TO DO)---- invalid resource
+	 * 1. resource is not a JSON ---- invalid resource
 	 * 2. uri is not valid or "" ---- cannot share resource
 	 * 3. owner is "*" or string not valid or missing secret 
-	 *    or missing resource(TO DO)---- missing resourceTemplate
-	 * 4. the same channel the same uri different owner(TO DO) --- cannot share resource
+	 *    or missing resource---- missing resourceTemplate
+	 * 4. the same channel the same uri different owner --- cannot share resource
 	 * 5. incorrect secret --- incorrect secret  
 	 */
 	public String checkServerShare(Share share){
 		Resource resource = share.getResource();
 		String secret = share.getSecret();
-		String errorMessage = null;
 		if(resource.uri.equals("")||(!resource.isUriShare())){    //2
-			errorMessage = ErrorMessage.SHARE_BROKEN;
-			return errorMessage;
-		} else if(!resource.isOwnerValid()||!resource.isArgValid()) {        //3
-			errorMessage = ErrorMessage.SHARE_MISSING;
-			return errorMessage;
+			NormalResponse nr = new NormalResponse("error",ErrorMessage.SHARE_BROKEN);
+			return nr.toJSON();
+		} else if(!resource.isOwnerValid()||!resource.isArgValid()) { //3
+			NormalResponse nr = new NormalResponse("error",ErrorMessage.SHARE_MISSING);
+			return nr.toJSON();
 		} 
 		return null;
 	}
@@ -417,6 +444,87 @@ public class Operation {
 		return null;
 	}
 	
+	public String checkValidMissing(String op, String json){
+		String result = null;
+		switch (op) {
+		case "PUBLISH":
+		case "REMOVE":
+			if(checkResourceMissing(json)){
+				NormalResponse nr = new NormalResponse("error",ErrorMessage.PUBLISH_REMOVE_RESOURCE_MISSING);
+				result = nr.toJSON();
+			} else if(!checkResourceValid(json)){
+				NormalResponse nr = new NormalResponse("error",ErrorMessage.PUBLISH_REMOVE_RESOURCE_INCORRECT);
+				result = nr.toJSON();
+			}
+			break;
+		case "SHARE":
+			if(checkResourceMissing(json)){
+				NormalResponse nr = new NormalResponse("error",ErrorMessage.SHARE_MISSING);
+				result = nr.toJSON();
+			} else if(!checkResourceValid(json)){
+				NormalResponse nr = new NormalResponse("error",ErrorMessage.PUBLISH_REMOVE_RESOURCE_INCORRECT);
+				result = nr.toJSON();
+			}
+			break;
+		case "QUERY":
+		case "FETCH":
+			if(checkResourceMissing(json)){
+				NormalResponse nr = new NormalResponse("error",ErrorMessage.QUERY_FETCH_EXCHANGE_RESOURCETEMPLATE_MISSING);
+				result = nr.toJSON();
+			} else if(!checkResourceValid(json)){
+				NormalResponse nr = new NormalResponse("error",ErrorMessage.QUERY_FETCH_RESOURCETEMPLATE_INVALID);
+				result = nr.toJSON();
+			}
+			break;
+		case "EXCHANGE":
+			if(checkServerListMissing(json)){
+				NormalResponse nr = new NormalResponse("error",ErrorMessage.EXCHANGE_SERVERLIST_MISSING);
+				result = nr.toJSON();
+			} else if(!checkServerlistValid(json)){
+				NormalResponse nr = new NormalResponse("error",ErrorMessage.EXCHANGE_SERVERLIST_MISSING);
+				result = nr.toJSON();
+			}
+			break;
+		default:
+			result = null;
+			break;
+		}
+		return result;
+	}
+	
+	public boolean checkResourceValid(String json){
+		Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
+		Matcher m = p.matcher(json);
+		if(m.find()){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean checkServerlistValid(String json){
+		Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
+		Matcher m = p.matcher(json);
+		if(m.find()){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean checkResourceMissing(String json){
+		if(json.indexOf("\"resource\" :")==-1 ||json.indexOf("\"resourceTemplate\" :")==-1 ){
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean checkServerListMissing(String json){
+		if(json.indexOf("\"serverList\" :")==-1 ){
+			return true;
+		}
+		return false;
+	}
 	
 	
 }

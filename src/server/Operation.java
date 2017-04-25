@@ -27,6 +27,7 @@ public class Operation {
 		String op = Common.getOperationfromJson(json);
 		ArrayList<String> result = null;
 		if(op==null){
+			result = new ArrayList<String>();
 			NormalResponse nr = new NormalResponse("error",ErrorMessage.GENERIC_INVALID);
 			result.add(nr.toJSON());
 			return result;
@@ -247,7 +248,8 @@ public class Operation {
 			NormalResponse nr = new NormalResponse("success");
 			result.add(nr.toJSON());
 		} else {  //error 4
-			// Temporary only return 1
+			NormalResponse nr = new NormalResponse("error",ErrorMessage.SHARE_BROKEN);
+			result.add(nr.toJSON());
 		}
 		return result;
 	}

@@ -1,11 +1,11 @@
+/** Course: COMP90015 2017-SM1 Distributed Systems
+ *  Project: Project1-EZShare Resource Sharing Network
+ *  Group Name: Alpha Panthers
+ */
 package model;
 
 import java.net.Socket;
 import java.util.ArrayList;
-
-/**
-	 * Created by Tim Luo on 2017/3/27.
-	 */
 
 public class ClientModel {
 	public String ip;

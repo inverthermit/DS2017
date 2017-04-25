@@ -1,6 +1,14 @@
+/** Course: COMP90015 2017-SM1 Distributed Systems
+ *  Project: Project1-EZShare Resource Sharing Network
+ *  Group Name: Alpha Panthers
+ */
 package tool;
+
 /**
- * Created by Tim Luo on 2017/3/27.
+ * This class sets the configurations of the system.
+ * 
+ * @author  Group - Alpha Panthers
+ * @version 3.1
  */
 public class Config {
 	public static final int MAX_CONNECTION = 10;

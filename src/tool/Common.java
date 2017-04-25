@@ -1,10 +1,12 @@
+/** Course: COMP90015 2017-SM1 Distributed Systems
+ *  Project: Project1-EZShare Resource Sharing Network
+ *  Group Name: Alpha Panthers
+ */
 package tool;
 
 import java.security.SecureRandom;
 import java.util.*;
-/**
-	 * Created by Tim Luo on 2017/3/27.
-	 */
+
 public class Common {
 	public static String SECRET = "2os41f58vkd9e1q4ua6ov5emlv";
 	public static final String[] LOGGIN_LEVEL = {"SEVERE","WARNING","INFO","CONFIG","FINE","FINER","FINEST"};

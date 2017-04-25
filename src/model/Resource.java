@@ -17,7 +17,7 @@ import com.google.gson.Gson;
  * including all of attributes such as name, description and uri. It also
  * can transmit a Resource object to a JSON string by using the function - 
  * toJSON and transmit a JSON string to a Resource object by utilizing the
- * function called fromJSON. The objective of the class is to makes Resource
+ * function called fromJSON. The objective of the class is to make Resource
  * instances stored, looked up and transmitted more efficiently.
  * 
  * @author  Group - Alpha Panthers

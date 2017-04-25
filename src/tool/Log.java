@@ -1,6 +1,12 @@
+/** Course: COMP90015 2017-SM1 Distributed Systems
+ *  Project: Project1-EZShare Resource Sharing Network
+ *  Group Name: Alpha Panthers
+ */
 package tool;
+
 import java.text.*;
 import java.util.*;
+
 public class Log{
 	public static boolean debug = false;
 	public static void log(String msg){

@@ -8,10 +8,9 @@ import org.apache.commons.cli.*;
 import model.ServerModel;
 
 /**
- * This class is implemented to get command and arguments from the command line of server 
- * and turn the command and arguments into JSON string which will be sent to the server. 
- * And this class also check whether the context from the command line is valid or not and
- * get host and port from the client command line. 
+ * This class is implemented to add server command line options  and initialize
+ * the server.To be noticed,the default advertised host name will be the operating 
+ * system supplied hostname.
  * 
  * @author  Group - Alpha Panthers
  * @version 1.1

@@ -225,10 +225,10 @@ public class Operation {
 				String forwardQuery = relayQuery.toJSON();
 				for (int i = 0; i < server.serverList.size(); i++) {
 					ServerModel tempServer = server.serverList.get(i);
-					if(server.hostname.equals(tempServer.hostname)&&server.port==tempServer.port){
+					if(server.hostName.equals(tempServer.hostName)&&server.port==tempServer.port){
 					continue;
 					}
-					Client.doSend(tempServer.hostname, tempServer.port, forwardQuery,result,Log.debug);
+					Client.doSend(tempServer.hostName, tempServer.port, forwardQuery,result,Log.debug);
 				}
 			}
 			result.add("{\"resultSize\":" + (result.size()-1) + "}");
@@ -293,13 +293,13 @@ public class Operation {
 		for (int i = 0; i < server.serverList.size(); i++) {
 			ServerModel tempServer = server.serverList.get(i);
 			//System.out.println(server.hostname+" "+(tempServer.hostname)+" "+server.port+" "+tempServer.port);
-			if(server.hostname.equals(tempServer.hostname)&&server.port==tempServer.port){
+			if(server.hostName.equals(tempServer.hostName)&&server.port==tempServer.port){
 				continue;
 			}
 			//Log.log(Common.getMethodName(), "INFO", "Starting server exchange with:" + tempServer.hostname +":"+ tempServer.port);
 			// java.net.ConnectException Then Delete the address (Add a return to doSend)
 			//TODO: Needed test
-			boolean success = Client.doSend(tempServer.hostname, tempServer.port, Common.queryExample,null,false);
+			boolean success = Client.doSend(tempServer.hostName, tempServer.port, Common.queryExample,null,false);
 			if(!success){
 				//Log.log(Common.getMethodName(), "INFO", "Server unreachable, deleting server from list:" + tempServer.hostname +":"+ tempServer.port);
 				server.addDelServer(server.serverList.get(i),false);
@@ -312,10 +312,10 @@ public class Operation {
 			String query = server.toServerListJson();
 			int randomNum = ThreadLocalRandom.current().nextInt(0, server.serverList.size());
 			ServerModel tempServer = server.serverList.get(randomNum);
-			if(server.hostname.equals(tempServer.hostname)&&server.port==tempServer.port){
+			if(server.hostName.equals(tempServer.hostName)&&server.port==tempServer.port){
 				return null;
 			}
-			boolean success = Client.doSend(tempServer.hostname, tempServer.port, query,null,Log.debug);
+			boolean success = Client.doSend(tempServer.hostName, tempServer.port, query,null,Log.debug);
 			if(!success){
 				server.addDelServer(server.serverList.get(randomNum),false);
 			}

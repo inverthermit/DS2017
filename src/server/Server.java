@@ -1,3 +1,7 @@
+/** Course: COMP90015 2017-SM1 Distributed Systems
+ *  Project: Project1-EZShare Resource Sharing Network
+ *  Group Name: Alpha Panthers
+ */
 package server;
 import java.net.*;
 import java.text.SimpleDateFormat;
@@ -11,9 +15,7 @@ import tool.Log;
 import tool.ServerCommandLine;
 import model.ClientModel;
 import model.ServerModel;
-/**
-	 * Created by Tim Luo on 2017/3/27.
-	 */
+
 /*
 -advertisedhostname server1 -connectionintervallimit 0 -exchangeinterval 20 -port 10000 -secret asdfwefwasdf -debug
 */
@@ -31,14 +33,14 @@ public class Server {
 		if(selfModel.port == 0){
 			selfModel.port = Config.DEFAULT_PORT;
 		}
-		if(selfModel.advertisedhostname == null){
-			selfModel.advertisedhostname = Config.DEFAULT_ADVERTISED_HOSTNAME;
+		if(selfModel.advertisedHostName == null){
+			selfModel.advertisedHostName = Config.DEFAULT_ADVERTISED_HOSTNAME;
 		}
 		if(selfModel.secret == null){
 			selfModel.secret = Common.SECRET;
 		}
-		if(selfModel.hostname == null){
-			selfModel.hostname = "127.0.0.1";
+		if(selfModel.hostName == null){
+			selfModel.hostName = "127.0.0.1";
 		}
 		if(selfModel.exchangeInterval!=null){
 			//to int catch exception
@@ -52,10 +54,10 @@ public class Server {
 				return;
 			}
 		}
-		if(selfModel.intervallimit!=null){
+		if(selfModel.intervalLimit!=null){
 			//to int catch exception
 			try{
-				int interval = Integer.parseInt(selfModel.intervallimit);
+				int interval = Integer.parseInt(selfModel.intervalLimit);
 				Config.CONNECTION_LIMIT_INTERVAL = interval;
 			}
 			catch(Exception ee){
@@ -68,7 +70,7 @@ public class Server {
 		int port = selfModel.port;
 		//System.out.println(selfModel.hostname+":"+selfModel.port+" "+selfModel.exchangeInterval+" "+selfModel.intervallimit+" "+selfModel.secret);
 		Log.log(Common.getMethodName(), "INFO", "Starting the EZShare Server");
-		Log.log(Common.getMethodName(), "INFO", "using advertised hostname: "+selfModel.advertisedhostname);
+		Log.log(Common.getMethodName(), "INFO", "using advertised hostname: "+selfModel.advertisedHostName);
 		Log.log(Common.getMethodName(), "INFO", "using secret: "+selfModel.secret);
 		//int port = 10001;
 		//int port = 10002;

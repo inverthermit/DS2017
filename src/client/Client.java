@@ -71,9 +71,10 @@ public class Client {
 
 	public static boolean doSend(String hostname, int port, String query, ArrayList<String> resultArr, boolean printLog) {
 		String op = Common.getOperationfromJson(query);
+		// to do 
 		if(op==null){
 			NormalResponse nr = new NormalResponse("error",ErrorMessage.GENERIC_INVALID);
-			Log.log(Common.getMethodName(), "FINE", nr.toJSON());
+			Log.log(Common.getMethodName(), "FINE", "CHECK:"+nr.toJSON());
 			return false;
 		}
 		try {
@@ -86,7 +87,7 @@ public class Client {
 			// This stops the request from dragging on after connection succeeds.
 			socket.setSoTimeout(Config.CONNECTION_TIMEOUT);
 			if(printLog)
-			Log.log(Common.getMethodName(), "FINE", "Connection Established("+hostname+":"+port+")");
+			Log.log(Common.getMethodName(), "FINE", op.toLowerCase()+"ing to "+hostname+":"+port);
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			DataOutputStream out = new DataOutputStream(
 					socket.getOutputStream());

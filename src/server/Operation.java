@@ -21,6 +21,7 @@ import tool.ErrorMessage;
 import tool.Log;
 
 public class Operation {
+	
 	public ArrayList<String> dispatcher(String json, ServerModel server, ClientModel client) {
 		// 1.get the command of json
 		String op = Common.getOperationfromJson(json);
@@ -147,7 +148,7 @@ public class Operation {
 		if (status > 0) {
 			NormalResponse nr = new NormalResponse("success");
 			result.add(nr.toJSON());
-		} else {
+		} else {  // error 4
 			NormalResponse nr = new NormalResponse("error",ErrorMessage.PUBLISH_BROKEN);
 			result.add(nr.toJSON());
 		}
@@ -218,7 +219,7 @@ public class Operation {
 		if (status > 0) {
 			NormalResponse nr = new NormalResponse("success");
 			result.add(nr.toJSON());
-		} else {
+		} else {    // 3 
 			NormalResponse nr = new NormalResponse("error", ErrorMessage.REMOVE_RESOURCE_NOT_EXIST);
 			result.add(nr.toJSON());
 		}
@@ -228,7 +229,7 @@ public class Operation {
 	public ArrayList<String> doClientShare(Share share, ServerModel server) {
 		ArrayList<String> result = new ArrayList<String>();
 		//System.out.println(share.getSecret()+"--"+server.secret);
-		if (!share.getSecret().equals(server.secret)) {
+		if (!share.getSecret().equals(server.secret)) {  // error 5
 			NormalResponse nr = new NormalResponse("error", ErrorMessage.SHARE_SECRET_INCORRECT);
 			result.add(nr.toJSON());
 			return result;
@@ -236,7 +237,7 @@ public class Operation {
 		// Check if the resource uri is a file which exists
 		File f = new File(share.getResource().uri);
 		//System.out.println(share.getResource().uri+" "+f.exists()+" "+f.isDirectory()+" ");
-		if (!(f.exists() && !f.isDirectory())) {
+		if (!(f.exists() && !f.isDirectory())) {  
 			NormalResponse nr = new NormalResponse("error", ErrorMessage.PUBLISH_REMOVE_RESOURCE_INCORRECT);
 			result.add(nr.toJSON());
 			return result;
@@ -245,7 +246,7 @@ public class Operation {
 		if (status > 0) {
 			NormalResponse nr = new NormalResponse("success");
 			result.add(nr.toJSON());
-		} else {
+		} else {  //error 4
 			// Temporary only return 1
 		}
 		return result;
@@ -306,4 +307,114 @@ public class Operation {
 		}*/
 		return null;
 	}
+	
+	/**
+	 * checking publish parameters are valid or not 
+	 * 1. resource is not a JSON  --- invalid resource TO DO 
+	 * 2. uri is not valid or ""   ---- cannot publish resource
+	 * 3. owner just "*"  and string contains "/0" and missing resource(TO DO)-----missing resource
+	 * 4. the same channel ,the same uri the same owner -- cannot publish resource
+	 */
+	public String checkServerPublish(Publish publish){
+		Resource resource = publish.getResource();
+		String errorMessage = null;
+		if (resource.uri.equals("") || !resource.isUriVaild()){ //2
+			errorMessage = ErrorMessage.PUBLISH_BROKEN;
+			return errorMessage;
+		} else if (!resource.isOwnerValid() || !resource.isArgValid()){
+			errorMessage = ErrorMessage.PUBLISH_REMOVE_RESOURCE_INCORRECT; //3
+			return errorMessage;
+		}
+		return null;
+	}
+	
+	/**
+	 * checking remove parameters are valid or not 
+	 * 1. missing resource or owner just "*" or string is not valid ----missing resource
+	 * 2. uri is not valid or ""  ---- cannot remove resource
+	 * 3. the resource did not exist  --- cannot remove resource
+	 * 4. resource is not a JSON (TO DO) --- invalid resource
+	 */
+	public String checkServerRemove(Remove remove){
+		Resource resource = remove.getResource();
+		String errorMessage = null;
+		if (resource.uri.equals("")||resource.isUriVaild()){             //2
+			errorMessage = ErrorMessage.REMOVE_RESOURCE_NOT_EXIST;
+			return errorMessage;
+		} else if (!resource.isOwnerValid()||!resource.isArgValid()){  // 1
+			errorMessage = ErrorMessage.PUBLISH_REMOVE_RESOURCE_MISSING;
+			return errorMessage;
+		}
+		return null;
+	}
+	
+	/**
+	 * checking query parameters are valid or not 
+	 * 1. resource is not a JSON(TO DO) ---- invalid resourceTemplate
+	 * 2. uri is not valid or "" or missing resource(TO DO) 
+	 *    or owner is "*" or string not valid ---- missing resourceTemplate
+	 */
+	public String checkServerQuery(Query query){
+		Resource resource = query.getResource();
+		String errorMessage = null;
+		if(resource.uri.equals("")||!resource.isUriVaild()||
+				!resource.isArgValid() || !resource.isOwnerValid()){  //2
+			errorMessage = ErrorMessage.QUERY_FETCH_EXCHANGE_RESOURCETEMPLATE_MISSING;
+			return errorMessage;
+		}
+		return null;
+	}
+	
+	/**
+	 * checking fetch parameters are valid or not 
+	 * 1. resource is not a JSON(TO DO) ---- invalid resourceTemplate
+	 * 2. uri is not valid or "" or missing resource(TO DO) 
+	 *    or owner is "*" or string not valid ---- missing resourceTemplate
+	 */
+	public String checkServerFetch(Fetch fetch){
+		Resource resource = fetch.getResource();
+		String errorMessage = null;
+		if(resource.uri.equals("")||!resource.isUriVaild()||
+				!resource.isArgValid() || !resource.isOwnerValid()){  //2
+			errorMessage = ErrorMessage.QUERY_FETCH_EXCHANGE_RESOURCETEMPLATE_MISSING;
+			return errorMessage;
+		}
+		return null;
+	}
+	
+	/**
+	 * checking share parameters are valid or not 
+	 * 1. resource is not a JSON (TO DO)---- invalid resource
+	 * 2. uri is not valid or "" ---- cannot share resource
+	 * 3. owner is "*" or string not valid or missing secret 
+	 *    or missing resource(TO DO)---- missing resourceTemplate
+	 * 4. the same channel the same uri different owner(TO DO) --- cannot share resource
+	 * 5. incorrect secret --- incorrect secret  
+	 */
+	public String checkServerShare(Share share){
+		Resource resource = share.getResource();
+		String secret = share.getSecret();
+		String errorMessage = null;
+		if(resource.uri.equals("")||(!resource.isUriShare())){    //2
+			errorMessage = ErrorMessage.SHARE_BROKEN;
+			return errorMessage;
+		} else if(!resource.isOwnerValid()||!resource.isArgValid()) {        //3
+			errorMessage = ErrorMessage.SHARE_MISSING;
+			return errorMessage;
+		} 
+		return null;
+	}
+	
+	/**
+	 * checking exchange parameters are valid or not 
+	 * 1. serverlist is not a JSON or missing (TO DO) ---- missing or invalid server list 
+	 * 2. server record is found to be valid (TO DO)  --- missing resourceTemplate
+	 */
+	public String checkServerExchange(Exchange exchange){
+		
+		return null;
+	}
+	
+	
+	
 }

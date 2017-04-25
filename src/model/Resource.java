@@ -4,6 +4,10 @@
  */
 package model;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Arrays;
 import model.command.Share;
 import com.google.gson.Gson;
@@ -154,4 +158,74 @@ public class Resource {
 		this.EZserver = obj.EZserver;
 		this.resourceSize = obj.resourceSize;
 	}
+	
+	/**
+	 * check the uri is valid or not
+	 */
+	public boolean isUriVaild(){
+		try {
+			URI uri = new URI(this.uri);
+				return true;
+		} catch (URISyntaxException e) {
+				e.printStackTrace();
+				return false;
+		}
+	}
+	
+	/**
+	 * check the uri is valid or not for share
+	 */
+	public boolean isUriShare(){
+		try {
+			URI uri = new URI(this.uri);
+			if(uri.isAbsolute() && uri.getScheme().equals("file") ){
+				return true;
+			} else {
+				return false;
+			}
+		} catch (URISyntaxException e) {
+				e.printStackTrace();
+				return false;
+		}
+	}
+	
+	/**
+	 * check the owner is "*" or not
+	 */
+	public boolean isOwnerValid(){
+		if(this.owner.equals("*")){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean isArgValid(){
+		if(isStringValid(this.name) && isStringValid(this.channel) && isStringValid(this.owner)&&
+				isStringValid(this.uri)&&isStringValid(this.description)&&
+				isStringValid(this.EZserver) && isTagsValid()){
+			return true;
+		} else {
+		return false;
+		}
+	}
+	
+	public boolean isStringValid(String str){
+		if(str.contains("\0")||str.charAt(0)==' ' || str.charAt(str.length()-1)==' '){
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	public boolean isTagsValid(){
+		boolean flag = true;
+		for(int i =0 ; i<this.tags.length;i++){
+			if(!isStringValid(tags[i])){
+				flag = false;
+			}
+		}
+		return flag;
+	}
+	
 }

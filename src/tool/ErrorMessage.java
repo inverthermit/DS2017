@@ -13,7 +13,7 @@ import com.google.gson.GsonBuilder;
  * function called toJSON.
  * 
  * @author  Group - Alpha Panthers
- * @version 3.1
+ * @version 1.1
  */
 public class ErrorMessage
 {

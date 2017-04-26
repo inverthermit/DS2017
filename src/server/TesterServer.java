@@ -9,7 +9,12 @@ import java.util.concurrent.Executors;
 
 import model.ClientModel;
 import model.ServerModel;
-
+/**
+ * This class is for testing server.
+ * 
+ * @author  Group - Alpha Panthers
+ * @version 1.1
+ */
 public class TesterServer {
 	private static ServerModel selfModel = new ServerModel();
 	public static void main(String[] args){

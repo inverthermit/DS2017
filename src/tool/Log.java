@@ -9,11 +9,21 @@ import java.util.*;
 
 public class Log{
 	public static boolean debug = false;
+	/**
+	 * This method outputs an message.
+	 * @param msg A message to be output.
+	 * 
+	 */
 	public static void log(String msg){
 		if(debug){
 			System.out.println(msg);
 		}
 	}
+	/**
+	 * This method outputs an message in the form of system log.
+	 * @param msg A message to be output in a log form.
+	 * 
+	 */
 	public static void log(String className, String level, String content){
 		if(debug){
 			//get dd/MM/yyyy HH:mm:ss.SSS

@@ -28,9 +28,23 @@ import tool.Common;
 import tool.Config;
 import tool.ErrorMessage;
 import tool.Log;
-
+/**
+ * This class is a set of method doing server operations according to
+ * different client requesets.
+ * 
+ * @author  Group - Alpha Panthers
+ * @version 1.1
+ */
 public class Operation {
-	
+	/**
+	 * This method is dispatch the json to different methods based on operation types of json.
+	 * @param 
+	 * json The json string which is needed to check.
+	 * server  The ServerModel of current server.
+	 * client The ClentModel of current connected client
+	 * 
+	 * @return ArrayList of output strings
+	 */
 	public ArrayList<String> dispatcher(String json, ServerModel server, ClientModel client) {
 		// 1.get the command of json
 		String op = Common.getOperationfromJson(json);
@@ -85,6 +99,13 @@ public class Operation {
 		return result;
 	}
 
+	/**
+	 * This method handles exchange operation.
+	 * @param exchange The Exchange model.
+	 * 		  server  The current server model  
+	 * 
+	 * @return ArrayList of output strings
+	 */
 	public ArrayList<String> doClientExchange(Exchange exchange, ServerModel server) {
 		//System.out.println("doClientExchange:" + exchange.toJSON());
 		ArrayList<String> result = new ArrayList<String>();
@@ -97,7 +118,14 @@ public class Operation {
 		result.add(nr.toJSON());
 		return result;
 	}
-
+	/**
+	 * This method handles fetch operation.
+	 * @param fetch The Fetch model.
+	 * 		  server  The current server model 
+	 * 		  client The current client model 
+	 * 
+	 * @return ArrayList of output strings
+	 */
 	public ArrayList<String> doClientFetch(Fetch fetch, ServerModel server, ClientModel client) {
 		ArrayList<String> result = new ArrayList<String>();
 		if(checkServerFetch(fetch)!=null){
@@ -162,7 +190,14 @@ public class Operation {
 		}
 			return null;
 	}
-
+	
+	/**
+	 * This method handles publish operation.
+	 * @param exchange The Publish model.
+	 * 		  server  The current server model  
+	 * 
+	 * @return ArrayList of output strings
+	 */
 	public ArrayList<String> doClientPublish(Publish publish, ServerModel server) {
 		ArrayList<String> result = new ArrayList<String>();
 		if(checkServerPublish(publish)!=null){
@@ -180,7 +215,13 @@ public class Operation {
 		}
 		return result;
 	}
-
+	/**
+	 * This method handles query operation.
+	 * @param exchange The Query model.
+	 * 		  server  The current server model  
+	 * 
+	 * @return ArrayList of output strings
+	 */
 	public ArrayList<String> doClientQuery(Query query, ServerModel server) {
 		ArrayList<String> result = new ArrayList<String>();
 		if(checkServerQuery(query)!=null){
@@ -243,7 +284,13 @@ public class Operation {
 		}
 		return result;
 	}
-
+	/**
+	 * This method handles remove operation.
+	 * @param exchange The Remove model.
+	 * 		  server  The current server model  
+	 * 
+	 * @return ArrayList of output strings
+	 */
 	public ArrayList<String> doClientRemove(Remove remove, ServerModel server) {
 		ArrayList<String> result = new ArrayList<String>();
 		if(checkServerRemove(remove)!=null){
@@ -261,7 +308,13 @@ public class Operation {
 		}
 		return result;
 	}
-
+	/**
+	 * This method handles share operation.
+	 * @param exchange The Share model.
+	 * 		  server  The current server model  
+	 * 
+	 * @return ArrayList of output strings
+	 */
 	public ArrayList<String> doClientShare(Share share, ServerModel server) {
 		ArrayList<String> result = new ArrayList<String>();
 		if(checkServerShare(share)!=null){
@@ -295,6 +348,14 @@ public class Operation {
 	}
 
 	// Send using the EXCHANGE request to other servers in server.serverList
+	/**
+	 * This method checks if the servers are available in the server list
+	 * by using QUERY command;
+	 * and send a exchange command to a random server in the server list.
+	 * @param server  The current server model  
+	 * 
+	 * @return ArrayList of output strings
+	 */
 	public ArrayList<String> doServerExchange(ServerModel server) {
 		
 		//Check which servers are available

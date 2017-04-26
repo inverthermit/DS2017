@@ -12,7 +12,15 @@ import model.command.Exchange;
 
 import com.google.gson.Gson;
 
-
+/**
+ * This class is model of clients.
+ * It contains settings of advertisedHostName, hostName, port,
+ * intervalLimit, exchangeInterval, secret,
+ * and resources of socket, serverList, resourceList, clientList and ipTimeList.
+ * 
+ * @author  Group - Alpha Panthers
+ * @version 1.1
+ */
 public class ServerModel {
 	/** All of attributes of server command line and initialize them. */
 	public String advertisedHostName;
@@ -140,8 +148,12 @@ public class ServerModel {
 	}
 	
 	/**
-	 * addDelResource Parameters: Resource(including resource template),
-	 * isAdd(true for add operation, false for delete operation) Return:
+	 * This method returns the validation of resource template.
+	 * @param 
+	 * Resource Resource template
+	 * isAdd True for add operation, false for delete operation.  
+	 * 
+	 * @return 
 	 * Integer(1:Successfully added;-1:Resource with same primary key found, add
 	 * failed;2:Successfully deleted;-2:No such resource to delete)
 	 */

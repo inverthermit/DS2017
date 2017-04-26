@@ -5,7 +5,12 @@
 package client;
 
 import tool.Log;
-
+/**
+ * This class is for testing client.
+ * 
+ * @author  Group - Alpha Panthers
+ * @version 1.1
+ */
 public class TesterClient {
 	public static void main(String[] args){
 		int serverPort = 10000;//3780;

@@ -6,7 +6,14 @@ package model;
 
 import java.net.Socket;
 import java.util.ArrayList;
-
+/**
+ * This class is model of clients.
+ * It contains ip, port, socket, serverList, resourceList
+ * and the time stamp of the client's last query.
+ * 
+ * @author  Group - Alpha Panthers
+ * @version 1.1
+ */
 public class ClientModel {
 	public String ip;
 	public String port;

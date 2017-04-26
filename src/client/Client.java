@@ -33,8 +33,23 @@ import java.util.*;
 *
 */
 
-
+/**
+ * This class is the client main class which basically runs the clent.
+ * It deals with server connection, request and response. 
+ * 
+ * @author  Group - Alpha Panthers
+ * @version 1.1
+ */
 public class Client {
+	/**
+	 * This method runs the client according to different arguments.
+	 * It does the following jobs
+	 * 1. Check if parameters are valid
+	 * 2.Translate cli to query
+	 * 3.Send the query to the server
+	 * 
+	 * @param args commandline arguments  
+	 */
 	public static void main(String[] args) {
 		int serverPort = Config.DEFAULT_PORT;
 		String serverHostname = "127.0.0.1";
@@ -67,7 +82,16 @@ public class Client {
 			Log.log(Common.getMethodName(), "FINE", "Nothing to send to server.");
 		}
 	}
-
+	/**
+	 * This method sends the query to the server and deal with response.
+	 * @param 
+	 * hostname The host name of server
+	 * port The port of server
+	 * resultArr If it is not null, then it is stores the result strings of this funciton
+	 * printLog If it is true, it controls the output of log.
+	 * 
+	 * @return boolean send successful:true; send failed:false
+	 */
 	public static boolean doSend(String hostname, int port, String query, ArrayList<String> resultArr, boolean printLog) {
 		String op = Common.getOperationfromJson(query);
 		// to do 
@@ -219,7 +243,13 @@ public class Client {
 		}
 		return true;
 	}
-
+	/**
+	 * This method sets the chunk size of input stream.
+	 * @param 
+	 * fileSizeRemaining The size of remaining stream size.
+	 * 
+	 * @return int The size of current chunk.
+	 */
 	public static int setChunkSize(long fileSizeRemaining) {
 		// Determine the chunkSize
 		int chunkSize = Config.TRUNK_SIZE;

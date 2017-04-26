@@ -29,6 +29,17 @@ import model.ServerModel;
  */
 public class Server {
 	private static ServerModel selfModel = new ServerModel();
+	
+	/**
+	 * This method runs the server according to different arguments.
+	 * It does the following jobss
+	 * 1.Check if parameters are valid
+	 * 2.Create a heartbeat thread
+	 * 3.Accept connections from clients
+	 * 4.Dispatch clients to different server threads
+	 * 
+	 * @param args commandline arguments  
+	 */
 	public static void main(String[] args){
 		ServerModel sm = ServerCommandLine.ServerCommandLine(args);
 		if(sm == null){
@@ -37,7 +48,6 @@ public class Server {
 		else{
 			selfModel = sm;
 		}
-		//TODO: Get port from command line?
 		if(selfModel.port == 0){
 			selfModel.port = Config.DEFAULT_PORT;
 		}

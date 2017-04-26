@@ -39,6 +39,7 @@ public class Operation {
 			return result;
 		}
 		if(checkValidMissing(op,json)!=null){
+			result = new ArrayList<String>();
 			result.add(checkValidMissing(op,json));
 			return result;
 		} else {

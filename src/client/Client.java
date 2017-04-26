@@ -10,7 +10,6 @@ import java.io.*;
 
 import model.Resource;
 import model.Response.NormalResponse;
-import model.command.Fetch;
 import tool.ClientCommandLine;
 import tool.Common;
 import tool.Config;

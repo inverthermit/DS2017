@@ -19,6 +19,14 @@ import model.ServerModel;
 /*
 -advertisedhostname server1 -connectionintervallimit 0 -exchangeinterval 20 -port 10000 -secret asdfwefwasdf -debug
 */
+/**
+ * This class is the server main class which basically runs the server.
+ * It deals with client connection, request and response. 
+ * It also controls the heartbeat process.
+ * 
+ * @author  Group - Alpha Panthers
+ * @version 1.1
+ */
 public class Server {
 	private static ServerModel selfModel = new ServerModel();
 	public static void main(String[] args){

@@ -20,6 +20,9 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import client.Client;
 import tool.Common;
 import tool.Config;
@@ -529,6 +532,43 @@ public class Operation {
 			return true;
 		}
 		return false;
+	}
+	
+	
+	/**
+	 * This method returns the validation of resource template.
+	 * @param json The json string which is needed to check.
+	 * 		  key  In PUBLISH, it is "resource"; in others, it is "resourceTemplate"  
+	 * 
+	 * @return -1(The input json string is not in a json form)
+	 * -2(The json string is in json form but does not have "resourceTemplate"/"resource")
+	 * -3(The json string is in json from, it has "resourceTemplate"/"resource",
+	 *     but "resourceTemplate"/"resource" is not in json form)
+	 * -1(The json string has valid "resourceTemplate"/"resource")
+	 */
+	public static int checkResource(String json,String key){
+		JSONParser parser = new JSONParser();
+		JSONObject command = null;
+		try {
+			command = (JSONObject) parser.parse(json);//invalid command
+		} 	catch (Exception e) {
+			return -1;
+		}
+		String resource = "";
+		try {
+			resource = command.get(key).toString();
+		} 	catch (Exception e) {
+			return -2;
+			
+		}
+		try {
+			JSONObject reTemplate = (JSONObject) parser.parse(resource);
+		} 	catch (Exception e) {
+			return -3;
+			
+		}
+		return 1;
+		
 	}
 	
 	

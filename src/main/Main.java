@@ -14,11 +14,42 @@ import tool.ErrorMessage;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import com.google.gson.Gson;
 
 public class Main {
 
+	public static int isValidResource(String json){
+		JSONParser parser = new JSONParser();
+		JSONObject command = null;
+		try {
+			command = (JSONObject) parser.parse(json);//invalid command
+		} 	catch (Exception e) {
+			return -1;
+		}
+		String resource = "";
+		try {
+			resource = command.get("resourceTemplate").toString();
+		} 	catch (Exception e) {
+			return -2;
+			
+		}
+		try {
+			JSONObject reTemplate = (JSONObject) parser.parse(resource);
+		} 	catch (Exception e) {
+			return -3;
+			
+		}
+		return 1;
+		
+	}
+	
 	public static void main(String[] args) {
+		System.out.println(isValidResource("{\"resourceTemplate\":{}}"));
+		
 		/*
 		Resource resource = new Resource();
 		resource.setName("teng");
@@ -72,7 +103,7 @@ public class Main {
 		System.out.println(response1.toJSON());
 		System.out.println("=============================");
 		*/
-		String queryExample = "{\"command\": \"QUERY\",    \"relay\": true, \"resourceTemplate\": {\"name\": \"\",\"tags\": [],\"description\": \"\",\"uri\": \"\",\"channel\": \"\",\"owner\": \"\",\"ezserver\": null}}";
+		/*String queryExample = "{\"command\": \"QUERY\",    \"relay\": true, \"resourceTemplate\": {\"name\": \"\",\"tags\": [],\"description\": \"\",\"uri\": \"\",\"channel\": \"\",\"owner\": \"\",\"ezserver\": null}}";
 	    String publishExample = "{ \"command\": \"PUBLISH\", \"resource\" : { \"name\" : \"Unimelb website 6667\", \"tags\" : [\"web\", \"html\"], \"description\" : \"The main page for the University of Melbournee\", \"uri\" : \"http://www.unimelb1.edu.au\", \"channel\" : \"\", \"owner\" : \"\", \"ezserver\" : null } }";
 	    String shareExample = "{ \"command\": \"SHARE\", \"secret\": \"2os41f58vkd9e1q4ua6ov5emlv\", \"resource\": { \"name\": \"EZShare JAR\", \"tags\": [ \"jar\" ], \"description\": \"The jar file for EZShare. Use with caution.\", \"uri\":\"file:\\/\\/\\/\\/home\\/aaron\\/EZShare\\/ezshare.jar\", \"channel\": \"my_private_channel\", \"owner\": \"aaron010\", \"ezserver\": null } }";
 	    String removeExample = "{ \"command\": \"REMOVE\", \"resource\": { \"name\": \"aaa\", \"tags\": [], \"description\": \"\", \"uri\": \"http:\\/\\/www.unimelb1.edu.au\", \"channel\": \"\", \"owner\": \"\", \"ezserver\": null } }";
@@ -90,7 +121,7 @@ public class Main {
 	    
 	    Exchange exchange  = new Exchange();
 	    exchange.fromJSON(exchangeExample);
-	    System.out.println(exchange.toJSON());
+	    System.out.println(exchange.toJSON());*/
 	}
 
 }

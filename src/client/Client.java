@@ -36,8 +36,8 @@ import java.util.*;
 
 public class Client {
 	public static void main(String[] args) {
-		int serverPort = 3780;
-		String serverHostname = "sunrise.cis.unimelb.edu.au";
+		int serverPort = Config.DEFAULT_PORT;
+		String serverHostname = "127.0.0.1";
 		// 1. Check if parameters are valid
 		// 2.Translate cli to query
 		// translate cli to query and if the commanline is unvalid will print

@@ -7,6 +7,9 @@ package tool;
 import java.security.SecureRandom;
 import java.util.*;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 public class Common {
 	public static String SECRET = "2os41f58vkd9e1q4ua6ov5emlv";
 	public static final String[] LOGGIN_LEVEL = {"SEVERE","WARNING","INFO","CONFIG","FINE","FINER","FINEST"};
@@ -16,11 +19,22 @@ public class Common {
 	private static SecureRandom rnd = new SecureRandom();
 	
 	public static String getOperationfromJson(String json){
-		//System.out.println(json);
+		JSONParser parser = new JSONParser();
+		JSONObject command = null;
+		try {
+			command = (JSONObject) parser.parse(json);//invalid command
+		} 	catch (Exception e) {
+			return null;
+		}
+		String resource = "";
+		try {
+			resource = command.get("command").toString();
+		} 	catch (Exception e) {
+			return null;
+			
+		}
 		for(int i=0;i<BASIC_OP.length;i++){
-			//if(json.matches("\"command\"( )?:( )?\""+BASIC_OP[i]+"\""))
-			//TODO: Optimize the command
-			if(json.contains("\""+BASIC_OP[i]+"\"")){
+			if(resource.equals(BASIC_OP[i])){
 				return BASIC_OP[i];
 			}
 		}

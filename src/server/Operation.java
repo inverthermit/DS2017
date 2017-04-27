@@ -448,7 +448,7 @@ public class Operation {
 	public String checkServerShare(Share share){
 		Resource resource = share.getResource();
 		String secret = share.getSecret();
-		if(resource.uri.equals("")||(!resource.isUriShare())){    //2
+		if(resource.uri.equals("")){    //2 ||(!resource.isUriShare())
 			NormalResponse nr = new NormalResponse("error",ErrorMessage.SHARE_BROKEN);
 			return nr.toJSON();
 		} else if(!resource.isOwnerValid()||!resource.isArgValid()) { //3

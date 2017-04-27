@@ -428,7 +428,7 @@ public class Operation {
 	 */
 	public String checkServerFetch(Fetch fetch){
 		Resource resource = fetch.getResource();
-		if(resource.uri.equals("")||!resource.isUriShare()||
+		if(resource.uri.equals("")||//!resource.isUriShare()||
 				!resource.isArgValid() || !resource.isOwnerValid()){  //2
 			NormalResponse nr = new NormalResponse("error",ErrorMessage.QUERY_FETCH_EXCHANGE_RESOURCETEMPLATE_MISSING);
 			return nr.toJSON();

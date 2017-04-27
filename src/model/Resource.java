@@ -226,7 +226,7 @@ public class Resource {
 	
 	public boolean isStringValid(String str){
 		if(str.length()>=1){
-			if(str.contains("\0")||str.charAt(0)==' ' || str.charAt(str.length()-1)==' '){
+			if(str.equals("\0")||str.charAt(0)==' ' || str.charAt(str.length()-1)==' '){
 				return false;
 			} else {
 				return true;

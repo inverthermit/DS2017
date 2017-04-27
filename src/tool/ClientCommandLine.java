@@ -34,6 +34,7 @@ public class ClientCommandLine {
 	public static final int RESOURCE_ARGS_NUM = 6;
 	private static boolean valid = true;
 	public static Option[] allcommandline;
+	public static int errorSet = 0; 
 	
 	/**
      * The function of this method is to transmit command line arguments into JSON string
@@ -43,8 +44,8 @@ public class ClientCommandLine {
      * @return a JSON string
      */
 	public static String ClientCommandLine(String[] args) {
-		Resource resource = new Resource();
 		String request = null;
+		Resource resource = new Resource();
         Options opt = addOptions();
         CommandLineParser parser = new  DefaultParser();
         CommandLine commandLine = null;
@@ -54,7 +55,7 @@ public class ClientCommandLine {
             allcommandline = commandline;
             if(commandline.length==0){
             	ErrorMessage error = new ErrorMessage();
-        		NormalResponse response = new NormalResponse("error", error.GENERIC_MISS_INCORRECT);
+        		NormalResponse response = new NormalResponse("error", error.GENERIC_INVALID);
         		Log.log(Common.getMethodName(), "FINE", "CHECK: "+response.toJSON());
             } else {
             	String command = commandline[0].getOpt();
@@ -89,16 +90,19 @@ public class ClientCommandLine {
             	return request;
             }
         } catch (ParseException e) {
-            System.out.println(e.getMessage());
+           // System.out.println(e.getMessage());
             ErrorMessage error = new ErrorMessage();
-    		NormalResponse response = new NormalResponse("error", error.GENERIC_MISS_INCORRECT);
+    		NormalResponse response = new NormalResponse("error", error.GENERIC_INVALID);
     		Log.log(Common.getMethodName(), "FINE", "CHECK: "+response.toJSON());
+    		return request;
         }
-		return request;      
+		return request;
+		  
     }
 	
 	/**
-     * The function of this method is to add command line options.
+     * The function of this method is to add command line options
+     * @return it will return the options that can be identified in command line 
      */
 	public static Options addOptions(){
 		Options opt = new Options();
@@ -266,6 +270,7 @@ public class ClientCommandLine {
 				flag = true;
 			} 
 		}
+		// missing secret
 		if(!flag){
 			ErrorMessage error = new ErrorMessage();
         	NormalResponse response = new NormalResponse("error", error.SHARE_MISSING);
@@ -327,9 +332,11 @@ public class ClientCommandLine {
 	public static Resource cliResource(Option[] commandline, int[] command, String commandName) {
 		Resource resource = new Resource();
 		int[] arg = new int[RESOURCE_ARGS_NUM];
-		String resourceFeature;
+		String resourceFeature,resourceValue;
 		for (int i = 1; i < commandline.length; i++) {
 			resourceFeature = commandline[i].getOpt();
+			resourceValue = commandline[i].getValue();
+			if(resourceValue!=null){
 			switch (resourceFeature) {
 			case "name":
 			   checkString(commandline[i].getValue());
@@ -350,6 +357,7 @@ public class ClientCommandLine {
 			    break;
 			case "uri":
 				checkString(commandline[i].getValue());
+				//checkUri(commandline[i].getValue());
 			    resource.setUri(commandline[i].getValue());
 			    arg[3]=1;
 			    break;
@@ -372,6 +380,7 @@ public class ClientCommandLine {
 			default:
 			   break;
 			}
+			}
 		}
 		checkArg(arg,command,commandName);
 		return resource;
@@ -383,8 +392,10 @@ public class ClientCommandLine {
 	 */
 	public static String getHost(){
 		for(int i=0;i<allcommandline.length;i++){
+			if(allcommandline[i].getOpt()!=null){
 			if(allcommandline[i].getOpt().equals("host")){
 				return allcommandline[i].getValue();
+			}
 			}
 		}
 		return null;
@@ -396,8 +407,10 @@ public class ClientCommandLine {
 	 */
 	public static int getPort(){
 		for(int i=0;i<allcommandline.length;i++){
+			if(allcommandline[i].getOpt()!=null){
 			if(allcommandline[i].getOpt().equals("port")){
 				return Integer.parseInt(allcommandline[i].getValue());
+			}
 			}
 		}
 		return 0;
@@ -407,14 +420,27 @@ public class ClientCommandLine {
 	 * The function of this method is to check whether the command line has
 	 * -debug
 	 */
+	
 	public static boolean getDebug(){
+		try{
 		for(int i=0;i<allcommandline.length;i++){
 			if(allcommandline[i].getOpt().equals("debug")){
 				return true;
 			}
 		}
+		} catch (Exception e){
+			e.printStackTrace();
+			Log.debug=true;
+			ErrorMessage error = new ErrorMessage();
+	    	NormalResponse response = new NormalResponse("error", error.GENERIC_MISS_INCORRECT);
+	    	Log.log(Common.getMethodName(), "FINE", "CHECK: "+response.toJSON());
+	    	Log.debug=false;
+	    	errorSet = 1;
+		}
+		
 		return false;
 	}
+    
 	
 	/**
 	 * The method is to check whether there are enough parameters for the command
@@ -456,7 +482,7 @@ public class ClientCommandLine {
 	public static boolean checkString(String str) {
 		if(str.contains("\0")||str.charAt(0)==' ' || str.charAt(str.length()-1)==' '){
 			ErrorMessage error = new ErrorMessage();
-    		NormalResponse response = new NormalResponse("error", error.GENERIC_INVALID);
+    		NormalResponse response = new NormalResponse("error", error.GENERIC_MISS_INCORRECT);
     		Log.log(Common.getMethodName(), "FINE", "CHECK: "+response.toJSON());
     		valid = false;
     		return true;
@@ -467,7 +493,7 @@ public class ClientCommandLine {
 	public static void checkOwner(String owner){
 		if(owner.equals("*")){
 			ErrorMessage error = new ErrorMessage();
-    		NormalResponse response = new NormalResponse("error", error.GENERIC_INVALID);
+    		NormalResponse response = new NormalResponse("error", error.GENERIC_MISS_INCORRECT);
     		Log.log(Common.getMethodName(), "FINE", "CHECK: "+response.toJSON());
     		valid = false;
 		}
@@ -479,10 +505,10 @@ public class ClientCommandLine {
 			URL uri1 = new URL(uri);
 		} catch (MalformedURLException e) {
 			ErrorMessage error = new ErrorMessage();
-    		NormalResponse response = new NormalResponse("error", error.GENERIC_INVALID);
+    		NormalResponse response = new NormalResponse("error", error.GENERIC_MISS_INCORRECT);
     		Log.log(Common.getMethodName(), "FINE", "CHECK: "+response.toJSON());
 			valid = false;
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 	

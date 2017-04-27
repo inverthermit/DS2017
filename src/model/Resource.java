@@ -165,10 +165,10 @@ public class Resource {
 	public boolean isUriVaild(){
 		try {
 			URI uri = new URI(this.uri);
-				return true;
+			return true;
 		} catch (URISyntaxException e) {
-				e.printStackTrace();
-				return false;
+			//e.printStackTrace();
+			return false;
 		}
 	}
 	
@@ -184,7 +184,21 @@ public class Resource {
 				return false;
 			}
 		} catch (URISyntaxException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
+				return false;
+		}
+	}
+	
+	public boolean isUriPublish(){
+		try {
+			URI uri = new URI(this.uri);
+			if(uri.isAbsolute() && !uri.getScheme().equals("file") ){
+				return true;
+			} else {
+				return false;
+			}
+		} catch (URISyntaxException e) {
+				//e.printStackTrace();
 				return false;
 		}
 	}
@@ -194,9 +208,9 @@ public class Resource {
 	 */
 	public boolean isOwnerValid(){
 		if(this.owner.equals("*")){
-			return true;
-		} else {
 			return false;
+		} else {
+			return true;
 		}
 	}
 	
@@ -211,8 +225,12 @@ public class Resource {
 	}
 	
 	public boolean isStringValid(String str){
-		if(str.contains("\0")||str.charAt(0)==' ' || str.charAt(str.length()-1)==' '){
-			return false;
+		if(str.length()>=1){
+			if(str.contains("\0")||str.charAt(0)==' ' || str.charAt(str.length()-1)==' '){
+				return false;
+			} else {
+				return true;
+			}
 		} else {
 			return true;
 		}
@@ -227,5 +245,6 @@ public class Resource {
 		}
 		return flag;
 	}
+	
 	
 }

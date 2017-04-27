@@ -28,27 +28,18 @@ import tool.Common;
 import tool.Config;
 import tool.ErrorMessage;
 import tool.Log;
-/**
- * This class is a set of method doing server operations according to
- * different client requesets.
- * 
- * @author  Group - Alpha Panthers
- * @version 1.1
- */
+
 public class Operation {
-	/**
-	 * This method is dispatch the json to different methods based on operation types of json.
-	 * @param 
-	 * json The json string which is needed to check.
-	 * server  The ServerModel of current server.
-	 * client The ClentModel of current connected client
-	 * 
-	 * @return ArrayList of output strings
-	 */
+	
 	public ArrayList<String> dispatcher(String json, ServerModel server, ClientModel client) {
 		// 1.get the command of json
-		String op = Common.getOperationfromJson(json);
 		ArrayList<String> result = null;
+		if(checkResource(json,"")==-1){
+			result = new ArrayList<String>();
+			NormalResponse nr = new NormalResponse("error",ErrorMessage.GENERIC_INVALID);
+			result.add(nr.toJSON());
+		} else {
+		String op = Common.getOperationfromJson(json);
 		if(op==null){
 			result = new ArrayList<String>();
 			NormalResponse nr = new NormalResponse("error",ErrorMessage.GENERIC_INVALID);
@@ -96,16 +87,10 @@ public class Operation {
 			break;
 		}
 		}
+		}
 		return result;
 	}
 
-	/**
-	 * This method handles exchange operation.
-	 * @param exchange The Exchange model.
-	 * 		  server  The current server model  
-	 * 
-	 * @return ArrayList of output strings
-	 */
 	public ArrayList<String> doClientExchange(Exchange exchange, ServerModel server) {
 		//System.out.println("doClientExchange:" + exchange.toJSON());
 		ArrayList<String> result = new ArrayList<String>();
@@ -118,20 +103,15 @@ public class Operation {
 		result.add(nr.toJSON());
 		return result;
 	}
-	/**
-	 * This method handles fetch operation.
-	 * @param fetch The Fetch model.
-	 * 		  server  The current server model 
-	 * 		  client The current client model 
-	 * 
-	 * @return ArrayList of output strings
-	 */
+
 	public ArrayList<String> doClientFetch(Fetch fetch, ServerModel server, ClientModel client) {
 		ArrayList<String> result = new ArrayList<String>();
+		
 		if(checkServerFetch(fetch)!=null){
 			result.add(checkServerFetch(fetch));
 			return result;
 		} else {
+		
 			boolean hasResource = false;
 			Resource fetchResource = fetch.getResource();
 			for(int i=0;i<server.resourceList.size();i++){
@@ -190,20 +170,15 @@ public class Operation {
 		}
 			return null;
 	}
-	
-	/**
-	 * This method handles publish operation.
-	 * @param exchange The Publish model.
-	 * 		  server  The current server model  
-	 * 
-	 * @return ArrayList of output strings
-	 */
+
 	public ArrayList<String> doClientPublish(Publish publish, ServerModel server) {
 		ArrayList<String> result = new ArrayList<String>();
+		
 		if(checkServerPublish(publish)!=null){
 			result.add(checkServerPublish(publish));
 			return result;
 		} else {
+		
 			int status = server.addDelResource(publish.getResource(), true);
 			if (status > 0) {
 				NormalResponse nr = new NormalResponse("success");
@@ -215,19 +190,15 @@ public class Operation {
 		}
 		return result;
 	}
-	/**
-	 * This method handles query operation.
-	 * @param exchange The Query model.
-	 * 		  server  The current server model  
-	 * 
-	 * @return ArrayList of output strings
-	 */
+
 	public ArrayList<String> doClientQuery(Query query, ServerModel server) {
 		ArrayList<String> result = new ArrayList<String>();
+		
 		if(checkServerQuery(query)!=null){
 			result.add(checkServerQuery(query));
 			return result;
 		} else {
+		
 			NormalResponse nr = new NormalResponse("success");
 			result.add(nr.toJSON());
 			int count = 0;
@@ -284,19 +255,15 @@ public class Operation {
 		}
 		return result;
 	}
-	/**
-	 * This method handles remove operation.
-	 * @param exchange The Remove model.
-	 * 		  server  The current server model  
-	 * 
-	 * @return ArrayList of output strings
-	 */
+
 	public ArrayList<String> doClientRemove(Remove remove, ServerModel server) {
 		ArrayList<String> result = new ArrayList<String>();
+		
 		if(checkServerRemove(remove)!=null){
 			result.add(checkServerRemove(remove));
 			return result;
 		} else {
+		
 			int status = server.addDelResource(remove.getResource(), false);
 			if (status > 0) {
 				NormalResponse nr = new NormalResponse("success");
@@ -308,19 +275,15 @@ public class Operation {
 		}
 		return result;
 	}
-	/**
-	 * This method handles share operation.
-	 * @param exchange The Share model.
-	 * 		  server  The current server model  
-	 * 
-	 * @return ArrayList of output strings
-	 */
+
 	public ArrayList<String> doClientShare(Share share, ServerModel server) {
 		ArrayList<String> result = new ArrayList<String>();
+		
 		if(checkServerShare(share)!=null){
 			result.add(checkServerShare(share));
 			return result;
 		} else {
+		
 		//System.out.println(share.getSecret()+"--"+server.secret);
 			if (!share.getSecret().equals(server.secret)) {  // error 5
 				NormalResponse nr = new NormalResponse("error", ErrorMessage.SHARE_SECRET_INCORRECT);
@@ -348,14 +311,6 @@ public class Operation {
 	}
 
 	// Send using the EXCHANGE request to other servers in server.serverList
-	/**
-	 * This method checks if the servers are available in the server list
-	 * by using QUERY command;
-	 * and send a exchange command to a random server in the server list.
-	 * @param server  The current server model  
-	 * 
-	 * @return ArrayList of output strings
-	 */
 	public ArrayList<String> doServerExchange(ServerModel server) {
 		
 		//Check which servers are available
@@ -420,11 +375,11 @@ public class Operation {
 	 */
 	public String checkServerPublish(Publish publish){
 		Resource resource = publish.getResource();
-		if (resource.uri.equals("") || !resource.isUriVaild()){ //2
+		if (resource.uri.equals("") || !resource.isUriPublish()){ //2
 			NormalResponse nr = new NormalResponse("error",ErrorMessage.PUBLISH_BROKEN);
 			return nr.toJSON();
-		} else if (!resource.isOwnerValid() || !resource.isArgValid()){ //3
-			NormalResponse nr = new NormalResponse("error",ErrorMessage.PUBLISH_REMOVE_RESOURCE_INCORRECT);
+		} else if (!resource.isOwnerValid()||!resource.isArgValid()){ //3
+			NormalResponse nr = new NormalResponse("error",ErrorMessage.PUBLISH_REMOVE_RESOURCE_MISSING);
 			return nr.toJSON();
 		}
 		return null;
@@ -439,7 +394,7 @@ public class Operation {
 	 */
 	public String checkServerRemove(Remove remove){
 		Resource resource = remove.getResource();
-		if (resource.uri.equals("")||resource.isUriVaild()){             //2
+		if (resource.uri.equals("") || !resource.isUriVaild()){             //2
 			NormalResponse nr = new NormalResponse("error",ErrorMessage.REMOVE_RESOURCE_NOT_EXIST);
 			return nr.toJSON();
 		} else if (!resource.isOwnerValid()||!resource.isArgValid()){  // 1
@@ -452,12 +407,12 @@ public class Operation {
 	/**
 	 * checking query parameters are valid or not 
 	 * 1. resource is not a JSON ---- invalid resourceTemplate
-	 * 2. uri is not valid or "" or missing resource
+	 * 2. uri is not valid  or missing resource
 	 *    or owner is "*" or string not valid ---- missing resourceTemplate
 	 */
 	public String checkServerQuery(Query query){
 		Resource resource = query.getResource();
-		if(resource.uri.equals("")||!resource.isUriVaild()||
+		if(!resource.isUriVaild()||
 				!resource.isArgValid() || !resource.isOwnerValid()){  //2
 			NormalResponse nr = new NormalResponse("error",ErrorMessage.QUERY_FETCH_EXCHANGE_RESOURCETEMPLATE_MISSING);
 			return nr.toJSON();
@@ -473,7 +428,7 @@ public class Operation {
 	 */
 	public String checkServerFetch(Fetch fetch){
 		Resource resource = fetch.getResource();
-		if(resource.uri.equals("")||!resource.isUriVaild()||
+		if(resource.uri.equals("")||!resource.isUriShare()||
 				!resource.isArgValid() || !resource.isOwnerValid()){  //2
 			NormalResponse nr = new NormalResponse("error",ErrorMessage.QUERY_FETCH_EXCHANGE_RESOURCETEMPLATE_MISSING);
 			return nr.toJSON();
@@ -518,38 +473,35 @@ public class Operation {
 		switch (op) {
 		case "PUBLISH":
 		case "REMOVE":
-			if(checkResourceMissing(json)){
+			if(checkResource(json,"resource")==-2){
 				NormalResponse nr = new NormalResponse("error",ErrorMessage.PUBLISH_REMOVE_RESOURCE_MISSING);
 				result = nr.toJSON();
-			} else if(!checkResourceValid(json)){
+			} else if(checkResource(json,"resource")==-3){
 				NormalResponse nr = new NormalResponse("error",ErrorMessage.PUBLISH_REMOVE_RESOURCE_INCORRECT);
 				result = nr.toJSON();
 			}
 			break;
 		case "SHARE":
-			if(checkResourceMissing(json)){
+			if(checkResource(json,"resource")==-2){
 				NormalResponse nr = new NormalResponse("error",ErrorMessage.SHARE_MISSING);
 				result = nr.toJSON();
-			} else if(!checkResourceValid(json)){
+			} else if(checkResource(json,"resource")==-3){
 				NormalResponse nr = new NormalResponse("error",ErrorMessage.PUBLISH_REMOVE_RESOURCE_INCORRECT);
 				result = nr.toJSON();
 			}
 			break;
 		case "QUERY":
 		case "FETCH":
-			if(checkResourceMissing(json)){
+			if(checkResource(json,"resourceTemplate")==-2){
 				NormalResponse nr = new NormalResponse("error",ErrorMessage.QUERY_FETCH_EXCHANGE_RESOURCETEMPLATE_MISSING);
 				result = nr.toJSON();
-			} else if(!checkResourceValid(json)){
+			} else if(checkResource(json,"resourceTemplate")==-3){
 				NormalResponse nr = new NormalResponse("error",ErrorMessage.QUERY_FETCH_RESOURCETEMPLATE_INVALID);
 				result = nr.toJSON();
 			}
 			break;
 		case "EXCHANGE":
 			if(checkServerListMissing(json)){
-				NormalResponse nr = new NormalResponse("error",ErrorMessage.EXCHANGE_SERVERLIST_MISSING);
-				result = nr.toJSON();
-			} else if(!checkServerlistValid(json)){
 				NormalResponse nr = new NormalResponse("error",ErrorMessage.EXCHANGE_SERVERLIST_MISSING);
 				result = nr.toJSON();
 			}
@@ -561,25 +513,6 @@ public class Operation {
 		return result;
 	}
 	
-	public boolean checkResourceValid(String json){
-		Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
-		Matcher m = p.matcher(json);
-		if(m.find()){
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	public boolean checkServerlistValid(String json){
-		Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
-		Matcher m = p.matcher(json);
-		if(m.find()){
-			return true;
-		} else {
-			return false;
-		}
-	}
 	
 	public boolean checkResourceMissing(String json){
 		if(json.indexOf("\"resource\" :")==-1 ||json.indexOf("\"resourceTemplate\" :")==-1 ){
@@ -589,11 +522,22 @@ public class Operation {
 	}
 	
 	public boolean checkServerListMissing(String json){
-		if(json.indexOf("\"serverList\" :")==-1 ){
-			return true;
-		}
-		return false;
-	}
+		  JSONParser parser = new JSONParser();
+		  JSONObject command = null;
+		  try {
+		   command = (JSONObject) parser.parse(json);//invalid command
+		  }  catch (Exception e) {
+		   return true;
+		  }
+		  String resource = "";
+		  try {
+		   resource = command.get("serverList").toString();
+		  }  catch (Exception e) {
+		   return true;
+		   
+		  }
+		  return false;
+		 }
 	
 	
 	/**
@@ -605,7 +549,7 @@ public class Operation {
 	 * -2(The json string is in json form but does not have "resourceTemplate"/"resource")
 	 * -3(The json string is in json from, it has "resourceTemplate"/"resource",
 	 *     but "resourceTemplate"/"resource" is not in json form)
-	 * -1(The json string has valid "resourceTemplate"/"resource")
+	 * 1(The json string has valid "resourceTemplate"/"resource")
 	 */
 	public static int checkResource(String json,String key){
 		JSONParser parser = new JSONParser();

@@ -285,7 +285,7 @@ public class Operation {
 		} else {
 		
 		//System.out.println(share.getSecret()+"--"+server.secret);
-			if (!share.getSecret().equals(server.secret)) {  // error 5
+			if (share.getSecret()!=null&!share.getSecret().equals(server.secret)) {  // error 5
 				NormalResponse nr = new NormalResponse("error", ErrorMessage.SHARE_SECRET_INCORRECT);
 				result.add(nr.toJSON());
 				return result;
@@ -448,7 +448,7 @@ public class Operation {
 	public String checkServerShare(Share share){
 		Resource resource = share.getResource();
 		String secret = share.getSecret();
-		if(resource.uri.equals("")){    //2 ||(!resource.isUriShare())
+		if(resource.uri.equals("")||(!resource.isUriShare())){    //2 ||(!resource.isUriShare())
 			NormalResponse nr = new NormalResponse("error",ErrorMessage.SHARE_BROKEN);
 			return nr.toJSON();
 		} else if(!resource.isOwnerValid()||!resource.isArgValid()) { //3
@@ -514,12 +514,6 @@ public class Operation {
 	}
 	
 	
-	public boolean checkResourceMissing(String json){
-		if(json.indexOf("\"resource\" :")==-1 ||json.indexOf("\"resourceTemplate\" :")==-1 ){
-			return true;
-		}
-		return false;
-	}
 	
 	public boolean checkServerListMissing(String json){
 		  JSONParser parser = new JSONParser();

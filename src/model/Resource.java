@@ -178,7 +178,7 @@ public class Resource {
 	public boolean isUriShare(){
 		try {
 			URI uri = new URI(this.uri);
-			if(uri.isAbsolute() && uri.getScheme().equals("file") ){
+			if(uri.isAbsolute() ){// && uri.getScheme().equals("file")
 				return true;
 			} else {
 				return false;
@@ -192,7 +192,7 @@ public class Resource {
 	public boolean isUriPublish(){
 		try {
 			URI uri = new URI(this.uri);
-			if(!uri.getScheme().equals("file") ){
+			if(uri.getScheme()!=null&&!uri.getScheme().equals("file") ){
 				return true;
 			} else {
 				return false;

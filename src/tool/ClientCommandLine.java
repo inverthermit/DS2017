@@ -89,13 +89,13 @@ public class ClientCommandLine {
             	}
             	return request;
             }
-        } catch (ParseException e) {
+        } catch (Exception e) {
            // System.out.println(e.getMessage());
             ErrorMessage error = new ErrorMessage();
     		NormalResponse response = new NormalResponse("error", error.GENERIC_INVALID);
     		Log.log(Common.getMethodName(), "FINE", "CHECK: "+response.toJSON());
     		return request;
-        }
+        } 
 		return request;
 		  
     }
@@ -264,7 +264,7 @@ public class ClientCommandLine {
 		Resource resource = new Resource();
 		resource = cliResource(commandline, SHARE, "share");
 		for(int i =1;i<commandline.length;i++){
-			if (commandline[i].getOpt().equals("secret")){
+			if (commandline[i].getOpt()!=null&&commandline[i].getOpt().equals("secret")){
 				secret = commandline[i].getValue();
 				checkString(secret);
 				flag = true;
@@ -297,7 +297,7 @@ public class ClientCommandLine {
 		boolean flag = false;
 		ArrayList<ServerModel> serverList = new ArrayList<ServerModel>();
 		for(int i =1;i<commandline.length;i++){
-			if (commandline[i].getOpt().equals("servers")){
+			if (commandline[i].getOpt()!=null&&commandline[i].getOpt().equals("servers")){
 				servers = commandline[i].getValue();
 				flag =true;
 			}
@@ -424,7 +424,7 @@ public class ClientCommandLine {
 	public static boolean getDebug(){
 		try{
 		for(int i=0;i<allcommandline.length;i++){
-			if(allcommandline[i].getOpt().equals("debug")){
+			if(allcommandline[i].getOpt()!=null&&allcommandline[i].getOpt().equals("debug")){
 				return true;
 			}
 		}
@@ -491,7 +491,7 @@ public class ClientCommandLine {
 	
 	/** check the owner is "*" or not */
 	public static void checkOwner(String owner){
-		if(owner.equals("*")){
+		if(owner!=null&&owner.equals("*")){
 			ErrorMessage error = new ErrorMessage();
     		NormalResponse response = new NormalResponse("error", error.GENERIC_MISS_INCORRECT);
     		Log.log(Common.getMethodName(), "FINE", "CHECK: "+response.toJSON());

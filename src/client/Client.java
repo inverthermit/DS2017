@@ -66,7 +66,7 @@ public class Client {
 		}
 		else{
 			//System.out.println("query==null");
-			Log.log(Common.getMethodName(), "FINE", "Not connecting server");
+			Log.log(Common.getMethodName(), "FINE", "Not connecting to server. Please check your command.");
 		}
 		}
 	}

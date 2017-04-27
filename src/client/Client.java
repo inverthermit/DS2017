@@ -51,6 +51,7 @@ public class Client {
 			Log.debug = true;
 			Log.log(Common.getMethodName(), "INFO", "setting debug on");
 		}
+		if(ClientCommandLine.errorSet==0){
 		query = ClientCommandLine.ClientCommandLine(args);
 		if(ClientCommandLine.getPort()!=0){
 			serverPort = ClientCommandLine.getPort();
@@ -66,6 +67,7 @@ public class Client {
 		else{
 			//System.out.println("query==null");
 			Log.log(Common.getMethodName(), "FINE", "Not connecting server");
+		}
 		}
 	}
 

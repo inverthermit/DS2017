@@ -429,7 +429,7 @@ public class ClientCommandLine {
 			}
 		}
 		} catch (Exception e){
-			e.printStackTrace();
+			//e.printStackTrace();
 			Log.debug=true;
 			ErrorMessage error = new ErrorMessage();
 	    	NormalResponse response = new NormalResponse("error", error.GENERIC_MISS_INCORRECT);

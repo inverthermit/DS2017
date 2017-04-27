@@ -192,7 +192,7 @@ public class Resource {
 	public boolean isUriPublish(){
 		try {
 			URI uri = new URI(this.uri);
-			if(uri.isAbsolute() && !uri.getScheme().equals("file") ){
+			if(!uri.getScheme().equals("file") ){
 				return true;
 			} else {
 				return false;

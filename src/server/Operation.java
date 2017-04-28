@@ -216,7 +216,7 @@ public class Operation {
 			 * 6.The candidate description contains the template description as a substring (for non "" template descriptions) OR
 			 * 7.The template description and name are both ""))
 			 */
-			/*System.out.println("1"+query.getResource().channel.equals(resource.channel));
+		    /*System.out.println("1"+query.getResource().channel.equals(resource.channel));
 			System.out.println("2"+(query.getResource().owner.equals("") || ((!query.getResource().owner.equals(""))
 					&& query.getResource().owner.equals(resource.owner))));
 			System.out.println("3"+(Common.arrayInArray(query.getResource().tags, resource.tags)));
@@ -229,8 +229,8 @@ public class Operation {
 								&& query.getResource().owner.equals(resource.owner))) && // 2
 						(Common.arrayInArray(query.getResource().tags, resource.tags)) && // 3
 						(query.getResource().uri.equals("")||((!query.getResource().uri.equals(""))&&query.getResource().uri.equals(resource.uri))) && // 4
-						(resource.name.contains(query.getResource().name) || // 5
-								(query.getResource().description.equals("") || resource.description.contains(query.getResource().description)) || // 6
+						(!query.getResource().name.equals("") &&resource.name.contains(query.getResource().name) || // 5
+								(!query.getResource().description.equals("") && resource.description.contains(query.getResource().description)) || // 6
 								(query.getResource().description.equals("") && query.getResource().name.equals(""))// 7
 								)) {
 					result.add(resource.toJSON());

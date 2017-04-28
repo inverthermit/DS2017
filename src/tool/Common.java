@@ -81,13 +81,21 @@ public class Common {
 	 * @return Random string.
 	 */
 	public static boolean arrayInArray(String[] arrSmall, String[] arrBig){
+		/*System.out.println("arrSmall");
+		for(int i=0;i<arrSmall.length;i++){
+			System.out.println(arrSmall[i]);
+		}
+		System.out.println("arrBig");
+		for(int i=0;i<arrBig.length;i++){
+			System.out.println(arrBig[i]);
+		}
 		if(arrSmall.length>arrBig.length){
 			return false;
-		}
+		}*/
 		for(int i=0;i<arrSmall.length;i++){
 			boolean containFlag = false;
 			for(int j=0;j<arrBig.length;j++){
-				if(arrSmall[i].equals(arrBig)){
+				if(arrSmall[i].equals(arrBig[j])){
 					containFlag = true;
 					break;
 				}

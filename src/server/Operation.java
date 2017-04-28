@@ -132,6 +132,9 @@ public class Operation {
 				return result;
 			}
 			String fileName = (String) fetch.getResource().uri;
+			if(fileName.startsWith("file:")){
+				fileName=fileName.replace("file:", "");
+			}
 		// Check if file exists
 			File f = new File(fileName);
 			if (f.exists()) {
@@ -291,7 +294,11 @@ public class Operation {
 				return result;
 			}
 		// Check if the resource uri is a file which exists
-			File f = new File(share.getResource().uri);
+			String uri = share.getResource().uri;
+			if(uri.startsWith("file:")){
+				uri=uri.replace("file:", "");
+			}
+			File f = new File(uri);
 		//System.out.println(share.getResource().uri+" "+f.exists()+" "+f.isDirectory()+" ");
 			if (!(f.exists() && !f.isDirectory())) {  
 				NormalResponse nr = new NormalResponse("error", ErrorMessage.PUBLISH_REMOVE_RESOURCE_INCORRECT);

@@ -32,22 +32,9 @@ public class ErrorMessage
   
   public void checkPublish() {}
   
-<<<<<<< HEAD
 //  public String toJSON()
 //  {
 //    Gson gson = new GsonBuilder().setPrettyPrinting().create();
 //    return gson.toJson(this);
 //  }
-=======
-  /**
-   * This function is used to transmit the current Resource instance to JSON.
-   * 
-   * @return A JSON string contains all of information of the current object
-   */
-  public String toJSON()
-  {
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    return gson.toJson(this);
-  }
->>>>>>> c290471ec160369ac32fff28e7578123d5e13520
 }

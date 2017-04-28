@@ -52,12 +52,13 @@ public class ClientCommandLine {
         try {
             commandLine = parser.parse(opt,args);
             Option[] commandline = commandLine.getOptions();
-            allcommandline = commandline;
+            System.out.println("commanddline length"+commandline.length);
             if(commandline.length==0){
             	ErrorMessage error = new ErrorMessage();
         		NormalResponse response = new NormalResponse("error", error.GENERIC_INVALID);
         		Log.log(Common.getMethodName(), "FINE", "CHECK: "+response.toJSON());
             } else {
+                allcommandline = commandline;
             	String command = commandline[0].getOpt();
             	switch (command){
             	case "publish":
@@ -90,7 +91,7 @@ public class ClientCommandLine {
             	return request;
             }
         } catch (Exception e) {
-           // System.out.println(e.getMessage());
+            //e.printStackTrace();
             ErrorMessage error = new ErrorMessage();
     		NormalResponse response = new NormalResponse("error", error.GENERIC_INVALID);
     		Log.log(Common.getMethodName(), "FINE", "CHECK: "+response.toJSON());
@@ -423,6 +424,9 @@ public class ClientCommandLine {
 	
 	public static boolean getDebug(){
 		try{
+			//System.out.println(allcommandline);
+			
+				
 		for(int i=0;i<allcommandline.length;i++){
 			if(allcommandline[i].getOpt()!=null&&allcommandline[i].getOpt().equals("debug")){
 				return true;
@@ -436,6 +440,7 @@ public class ClientCommandLine {
 	    	Log.log(Common.getMethodName(), "FINE", "CHECK: "+response.toJSON());
 	    	Log.debug=false;
 	    	errorSet = 1;
+	    	System.exit(0);
 		}
 		
 		return false;

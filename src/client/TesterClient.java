@@ -5,6 +5,7 @@
 package client;
 
 import tool.Log;
+
 /**
  * This class is for testing client.
  * 

@@ -17,9 +17,7 @@ import tool.ErrorMessage;
 import tool.Log;
 
 import java.util.*;
-/**
- * Created by Tim Luo on 2017/3/27.
- */
+
 /*
 -query -channel myprivatechannel -debug
 -exchange -servers 115.146.85.165:3780,115.146.85.24:3780 -debug
@@ -128,10 +126,12 @@ public class Client {
 							// output file.
 							File file = new File(resource.uri);
 							String filename = file.getName();
-							String pathString = "/ezdownload/";
+							String pathString = "./ezdownload/";
 							File path = new File(pathString);
 							path.mkdirs();
 							String absolutePath = path.getAbsolutePath()+"/"+filename;
+							//File cFile = new File(absolutePath);
+							//cFile.createNewFile();
 							Log.log(Common.getMethodName(), "FINE", "Downloading to Destination: "+absolutePath);
 							RandomAccessFile downloadingFile = new RandomAccessFile(
 									pathString+filename, "rw");
@@ -219,7 +219,7 @@ public class Client {
 			in.close();
 			out.close();
 		} catch (Exception ee) {
-			//ee.printStackTrace();
+			ee.printStackTrace();
 			Log.log(Common.getMethodName(), "FINE", "CONNECTION ERROR: Please check the network or server("+hostname+":"+port+"). Timeout or connection refused.");
 			return false;
 		}

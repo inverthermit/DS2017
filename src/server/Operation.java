@@ -229,8 +229,8 @@ public class Operation {
 								&& query.getResource().owner.equals(resource.owner))) && // 2
 						(Common.arrayInArray(query.getResource().tags, resource.tags)) && // 3
 						(query.getResource().uri.equals("")||((!query.getResource().uri.equals(""))&&query.getResource().uri.equals(resource.uri))) && // 4
-						(resource.name.contains(query.getResource().name) || // 5
-								(query.getResource().description.equals("") || resource.description.contains(query.getResource().description)) || // 6
+						(!query.getResource().name.equals("") &&resource.name.contains(query.getResource().name) || // 5
+								(!query.getResource().description.equals("") && resource.description.contains(query.getResource().description)) || // 6
 								(query.getResource().description.equals("") && query.getResource().name.equals(""))// 7
 								)) {
 					result.add(resource.toJSON());

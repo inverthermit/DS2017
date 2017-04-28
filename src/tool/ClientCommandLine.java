@@ -52,7 +52,6 @@ public class ClientCommandLine {
         try {
             commandLine = parser.parse(opt,args);
             Option[] commandline = commandLine.getOptions();
-            System.out.println("commanddline length"+commandline.length);
             if(commandline.length==0){
             	ErrorMessage error = new ErrorMessage();
         		NormalResponse response = new NormalResponse("error", error.GENERIC_INVALID);

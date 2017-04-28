@@ -33,8 +33,19 @@ import java.util.*;
 *
 */
 
-
+/**
+ * This class is the client main class which basically runs the client.
+ * It deals with server connection, request and response. 
+ * 
+ * @author  Group - Alpha Panthers
+ * @version 1.1
+ */
 public class Client {
+	/**
+	 * This method reads and parse the command line into json string.
+	 * 
+	 * @param args CLI parameters  
+	 */
 	public static void main(String[] args) {
 		int serverPort = Config.DEFAULT_PORT;
 		String serverHostname = "127.0.0.1";
@@ -70,7 +81,18 @@ public class Client {
 		}
 		}
 	}
-
+	/**
+	 * This method handles sending json to server and getting response based on 
+	 * different operations.
+	 * 
+	 * @param 
+	 * hostname Hostname of server
+	 * port Port of server
+	 * query Json string needed to send to server
+	 * resultArr If not null, it is for returning results.
+	 * printlog Log control for server use, true for print log, false for not
+	 * @return true for success, false for not
+	 */
 	public static boolean doSend(String hostname, int port, String query, ArrayList<String> resultArr, boolean printLog) {
 		String op = Common.getOperationfromJson(query);
 		// to do 
@@ -225,7 +247,12 @@ public class Client {
 		}
 		return true;
 	}
-
+	/**
+	 * This method sets the size of current chunk based on remaining file size.
+	 * 
+	 * @param fileSizeRemaining Remaining file size  
+	 * @return Length of current chunk size
+	 */
 	public static int setChunkSize(long fileSizeRemaining) {
 		// Determine the chunkSize
 		int chunkSize = Config.TRUNK_SIZE;

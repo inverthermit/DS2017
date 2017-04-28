@@ -1,3 +1,7 @@
+/** Course: COMP90015 2017-SM1 Distributed Systems
+ *  Project: Project1-EZShare Resource Sharing Network
+ *  Group Name: Alpha Panthers
+ */
 package server;
 import java.net.*;
 import java.util.concurrent.ExecutorService;
@@ -6,8 +10,11 @@ import java.util.concurrent.Executors;
 import model.ClientModel;
 import model.ServerModel;
 /**
-	 * Created by Tim Luo on 2017/3/27.
-	 */
+ * This class is for testing server.
+ * 
+ * @author  Group - Alpha Panthers
+ * @version 1.1
+ */
 public class TesterServer {
 	private static ServerModel selfModel = new ServerModel();
 	public static void main(String[] args){

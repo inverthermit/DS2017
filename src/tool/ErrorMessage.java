@@ -1,8 +1,20 @@
+/** Course: COMP90015 2017-SM1 Distributed Systems
+ *  Project: Project1-EZShare Resource Sharing Network
+ *  Group Name: Alpha Panthers
+ */
 package tool;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+/**
+ * This class configures all the possible error messages when different 
+ * types of error occur.And transmit them to Json Sting by utilizing the
+ * function called toJSON.
+ * 
+ * @author  Group - Alpha Panthers
+ * @version 1.1
+ */
 public class ErrorMessage
 {
   public static final String GENERIC_INVALID = "invalid command";
@@ -20,9 +32,22 @@ public class ErrorMessage
   
   public void checkPublish() {}
   
+<<<<<<< HEAD
 //  public String toJSON()
 //  {
 //    Gson gson = new GsonBuilder().setPrettyPrinting().create();
 //    return gson.toJson(this);
 //  }
+=======
+  /**
+   * This function is used to transmit the current Resource instance to JSON.
+   * 
+   * @return A JSON string contains all of information of the current object
+   */
+  public String toJSON()
+  {
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    return gson.toJson(this);
+  }
+>>>>>>> c290471ec160369ac32fff28e7578123d5e13520
 }

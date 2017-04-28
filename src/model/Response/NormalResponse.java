@@ -1,11 +1,17 @@
+/** Course: COMP90015 2017-SM1 Distributed Systems
+ *  Project: Project1-EZShare Resource Sharing Network
+ *  Group Name: Alpha Panthers
+ */
 package model.Response;
 
-import model.Resource;
-import model.command.Share;
-
 import com.google.gson.Gson;
-//import com.google.gson.GsonBuilder;
-
+/**
+ * This class is a common response model which has response(success or error).
+ * If it is an error response, then the errorType indicates which kind of error it is.
+ * 
+ * @author  Group - Alpha Panthers
+ * @version 1.1
+ */
 public class NormalResponse {
 	private String response;
 	private String errorType;

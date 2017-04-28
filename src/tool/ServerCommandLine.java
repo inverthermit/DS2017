@@ -1,13 +1,26 @@
+/** Course: COMP90015 2017-SM1 Distributed Systems
+ *  Project: Project1-EZShare Resource Sharing Network
+ *  Group Name: Alpha Panthers
+ */
 package tool;
 
 import org.apache.commons.cli.*;
-
 import model.ServerModel;
 
 /**
- * Created by Tim Luo on 2017/3/27.
+ * This class is implemented to add server command line options  and initialize
+ * the server.To be noticed,the default advertised host name will be the operating 
+ * system supplied hostname.
+ * 
+ * @author  Group - Alpha Panthers
+ * @version 1.1
  */
 public class ServerCommandLine {
+	
+	/**
+     * The function of this method is to add server command line options and
+     * initialize the sever
+     */
 	public static ServerModel ServerCommandLine(String[] args) {
 		Options opt = new Options();
 		// add command line option to options
@@ -51,7 +64,7 @@ public class ServerCommandLine {
 			if (commandLine.hasOption("advertisedhostname")) {
 				String hostName = commandLine
 						.getOptionValue("advertisedhostname");
-				server.advertisedhostname=(hostName);
+				server.advertisedHostName=(hostName);
 				//System.out.println("has advertisedhostname and its arg is "+ hostName);
 			}
 

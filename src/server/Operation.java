@@ -285,7 +285,7 @@ public class Operation {
 		} else {
 		
 		//System.out.println(share.getSecret()+"--"+server.secret);
-			if (share.getSecret()!=null&!share.getSecret().equals(server.secret)) {  // error 5
+			if (share.getSecret()==null||(share.getSecret()!=null&&!share.getSecret().equals(server.secret))) {  // error 5
 				NormalResponse nr = new NormalResponse("error", ErrorMessage.SHARE_SECRET_INCORRECT);
 				result.add(nr.toJSON());
 				return result;

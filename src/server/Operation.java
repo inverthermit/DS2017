@@ -216,7 +216,7 @@ public class Operation {
 			 * 6.The candidate description contains the template description as a substring (for non "" template descriptions) OR
 			 * 7.The template description and name are both ""))
 			 */
-			/*System.out.println("1"+query.getResource().channel.equals(resource.channel));
+		    /*System.out.println("1"+query.getResource().channel.equals(resource.channel));
 			System.out.println("2"+(query.getResource().owner.equals("") || ((!query.getResource().owner.equals(""))
 					&& query.getResource().owner.equals(resource.owner))));
 			System.out.println("3"+(Common.arrayInArray(query.getResource().tags, resource.tags)));

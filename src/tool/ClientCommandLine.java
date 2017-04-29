@@ -20,7 +20,7 @@ import model.command.*;
  * get host and port from the client command line. 
  * 
  * @author  Group - Alpha Panthers
- * @version 3.1
+ * @version 1.1
  */
 public class ClientCommandLine {
 	

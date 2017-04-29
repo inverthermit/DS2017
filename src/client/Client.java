@@ -241,7 +241,7 @@ public class Client {
 			in.close();
 			out.close();
 		} catch (Exception ee) {
-			ee.printStackTrace();
+			//ee.printStackTrace();
 			Log.log(Common.getMethodName(), "FINE", "CONNECTION ERROR: Please check the network or server("+hostname+":"+port+"). Timeout or connection refused.");
 			return false;
 		}

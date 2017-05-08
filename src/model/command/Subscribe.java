@@ -17,9 +17,11 @@ import model.Resource;
  * @version 1.1
  */
 public class Subscribe extends Request {
+	private static final int ID_LEN = 5;
 	private String command;
 	private boolean relay = true;
 	private Resource resourceTemplate;	
+	private String id;
 
 	public Subscribe() {
 	}
@@ -28,6 +30,7 @@ public class Subscribe extends Request {
 		this.command = command;
 		this.relay = relay;
 		this.resourceTemplate = resourceTemplate;
+		this.id = tool.Common.randomString(ID_LEN);
 	}
 
 	@Override
@@ -36,6 +39,7 @@ public class Subscribe extends Request {
 		Subscribe obj = gson.fromJson(json, Subscribe.class);
 		this.command = obj.command;
 		this.relay = obj.relay;
+		this.id = obj.id;
 		this.resourceTemplate = new Resource(obj.resourceTemplate);
 	}
 
@@ -53,6 +57,15 @@ public class Subscribe extends Request {
 
 	public void setRelay(boolean relay) {
 		this.relay = relay;
+	}
+	
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public Resource getResource() {

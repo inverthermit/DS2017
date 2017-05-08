@@ -13,7 +13,7 @@ import model.command.Exchange;
 import com.google.gson.Gson;
 
 /**
- * This class is model of clients.
+ * This class is model of servers.
  * It contains settings of advertisedHostName, hostName, port,
  * intervalLimit, exchangeInterval, secret,
  * and resources of socket, serverList, resourceList, clientList and ipTimeList.

@@ -6,6 +6,7 @@ package tool;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.OpenOption;
 import java.util.ArrayList;
 import org.apache.commons.cli.*;
 import model.Resource;
@@ -52,6 +53,8 @@ public class ClientCommandLine {
         try {
             commandLine = parser.parse(opt,args);
             Option[] commandline = commandLine.getOptions();
+            checkError(commandline);
+            //check error here
             if(commandline.length==0){
             	ErrorMessage error = new ErrorMessage();
         		NormalResponse response = new NormalResponse("error", error.GENERIC_INVALID);
@@ -112,7 +115,7 @@ public class ClientCommandLine {
         		.desc("print debug informaton")
         		.build();
         opt.addOption(debug);
-       
+        opt.addOption("subscribe", false, "ddf");
         Option description = Option.builder("description")
         		.hasArg()
         		.desc("rescource description")
@@ -421,27 +424,12 @@ public class ClientCommandLine {
 	 * -debug
 	 */
 	
-	public static boolean getDebug(){
-		try{
-			//System.out.println(allcommandline);
-			
-				
+	public static boolean getDebug(){		
 		for(int i=0;i<allcommandline.length;i++){
 			if(allcommandline[i].getOpt()!=null&&allcommandline[i].getOpt().equals("debug")){
 				return true;
 			}
 		}
-		} catch (Exception e){
-			//e.printStackTrace();
-			Log.debug=true;
-			ErrorMessage error = new ErrorMessage();
-	    	NormalResponse response = new NormalResponse("error", error.GENERIC_MISS_INCORRECT);
-	    	Log.log(Common.getMethodName(), "FINE", "CHECK: "+response.toJSON());
-	    	Log.debug=false;
-	    	errorSet = 1;
-	    	System.exit(0);
-		}
-		
 		return false;
 	}
     
@@ -514,6 +502,31 @@ public class ClientCommandLine {
 			valid = false;
 			//e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * The function of this method is to check whether the command line has
+	 * -debug
+	 */
+	
+	public static boolean checkError(Option[] commandline){
+		try{
+		for(int i=0;i<allcommandline.length;i++){
+			if(allcommandline[i].getOpt()!=null&&allcommandline[i].getOpt().equals("debug")){
+				return true;
+			}
+		}
+		} catch (Exception e){
+			Log.debug=true;
+			ErrorMessage error = new ErrorMessage();
+	    	NormalResponse response = new NormalResponse("error", error.GENERIC_MISS_INCORRECT);
+	    	Log.log(Common.getMethodName(), "FINE", "CHECK: "+response.toJSON());
+	    	Log.debug=false;
+	    	errorSet = 1;
+	    	System.exit(0);
+		}
+		
+		return false;
 	}
 	
 }

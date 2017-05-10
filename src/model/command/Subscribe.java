@@ -5,23 +5,26 @@
 package model.command;
 
 import com.google.gson.Gson;
+
+import model.ClientModel;
 import model.Resource;
 
 /**
- * This class inherits the Request class and it is utilized to create a
- * Query object which contains its server command "QUERY", a boolean relay
- * and a resource instance. The relay field sets as true then the server
- * sends a QUERY command to each of the servers in its serverList.
+ * This class inherits the Request class and it is utilized to create a Query
+ * object which contains its server command "QUERY", a boolean relay and a
+ * resource instance. The relay field sets as true then the server sends a QUERY
+ * command to each of the servers in its serverList.
  * 
- * @author  Group - Alpha Panthers
+ * @author Group - Alpha Panthers
  * @version 1.1
  */
 public class Subscribe extends Request {
 	private static final int ID_LEN = 5;
 	private String command;
 	private boolean relay = true;
-	private Resource resourceTemplate;	
+	private Resource resourceTemplate;
 	private String id;
+	private transient ClientModel client;
 
 	public Subscribe() {
 	}
@@ -58,7 +61,6 @@ public class Subscribe extends Request {
 	public void setRelay(boolean relay) {
 		this.relay = relay;
 	}
-	
 
 	public String getId() {
 		return id;
@@ -74,6 +76,13 @@ public class Subscribe extends Request {
 
 	public void setResource(Resource resourceTemplate) {
 		this.resourceTemplate = resourceTemplate;
+	}
 
+	public ClientModel getClient() {
+		return client;
+	}
+
+	public void setClient(ClientModel client) {
+		this.client = client;
 	}
 }

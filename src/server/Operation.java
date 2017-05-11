@@ -8,6 +8,7 @@ import model.ClientModel;
 import model.Resource;
 import model.ServerModel;
 import model.Response.NormalResponse;
+import model.Response.SubscribeResponse;
 import model.command.*;
 
 import java.io.DataInputStream;
@@ -24,8 +25,10 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import client.Client;
 import tool.Common;
@@ -93,6 +96,11 @@ public class Operation {
 					Subscribe subscribe = new Subscribe();
 					subscribe.fromJSON(json);
 					result = doClientSubscribe(subscribe, server, client);
+					break;
+				case "UNSUBSCRIBE":
+					Unsubscribe unsubscribe = new Unsubscribe();
+					unsubscribe.fromJSON(json);
+					result = doClientUnsubscribe(unsubscribe, server, client);
 					break;
 				default:
 					result = null;
@@ -272,8 +280,12 @@ public class Operation {
 	public ArrayList<String> doClientSubscribe(Subscribe subscribe,
 			ServerModel server, ClientModel client) {
 		ArrayList<String> result = new ArrayList<String>();
-		NormalResponse nr = new NormalResponse("success");
-		result.add(nr.toJSON());
+
+		// TODO: checkServerQuery(query)
+
+		SubscribeResponse sr = new SubscribeResponse("success",
+				subscribe.getId());
+		result.add(sr.toJSON());
 
 		// first check if already exists subscribed resource in the
 		// resourceList, just like query.
@@ -283,14 +295,14 @@ public class Operation {
 			result.add(resource.toJSON());
 		}
 		subscribe.setClient(client);
-		int status = server.addDelSubscribe(subscribe, true);
+		subscribe.setNumOfHits(matchedResource.size());
+		server.addDelSubscribe(subscribe, true);
 
 		if (subscribe.isRelay()) {
 			Subscribe relaySubscribe = new Subscribe();
 			relaySubscribe.fromJSON(subscribe.toJSON());
 			relaySubscribe.setId(subscribe.getId());
 			relaySubscribe.setRelay(false);
-			String forwardSubscribe = relaySubscribe.toJSON();
 
 			for (ServerModel forwardServer : server.serverList) {
 				if (server.hostName.equals(forwardServer.hostName)
@@ -298,20 +310,25 @@ public class Operation {
 					continue;
 				}
 				ExecutorService pool = Executors.newCachedThreadPool();
-				pool.execute(new forwardSubscribeThread(client, forwardServer, forwardSubscribe, Log.debug));
-				
-//				forwardSubscribe(client, forwardServer.hostName,
-//						forwardServer.port, forwardSubscribe, result, Log.debug);
+				pool.execute(new Runnable() {
+					@Override
+					public void run() {
+						forwardSubscribe(client, forwardServer,
+								relaySubscribe.toJSON());
+					}
+				});
 			}
 		}
 
 		return result;
 	}
 
-	public void forwardSubscribe(ClientModel clientModel, String hostname, int port,
-			String query, boolean printLog) {
+	public void forwardSubscribe(ClientModel client, ServerModel forwardServer,
+			String query) {
 		try {
 			Socket socket = new Socket();
+			String hostname = forwardServer.hostName;
+			int port = forwardServer.port;
 			socket.connect(new InetSocketAddress(hostname, port),
 					Config.CONNECTION_TIMEOUT);
 			Log.log(Common.getMethodName(), "FINE", "SENT: " + query);
@@ -319,75 +336,103 @@ public class Operation {
 			DataOutputStream out = new DataOutputStream(
 					socket.getOutputStream());
 			out.writeUTF(query);
-			long start = Common.getCurrentSecTimestamp();
-			// 5.Listen for the results and output to log. End the listening
-			// based on commands
-			boolean endFlag = false;
-			while (!endFlag) {
+
+			while (true) {
 				if (in.available() > 0) {
 					String messageResponse = in.readUTF();
-					if (printLog)
-						Log.log(Common.getMethodName(), "FINE", "RECEIVED: "
-								+ messageResponse);
-					NormalResponse nr = new NormalResponse();
-					nr.fromJSON(messageResponse);
-					if (nr.getResponse().equals("success")) {
+					Log.log(Common.getMethodName(), "FINE", "RECEIVED: "
+							+ messageResponse);
+					SubscribeResponse sr = new SubscribeResponse();
+					sr.fromJSON(messageResponse);
+					if (sr.getResponse().equals("success")) {
+						DataOutputStream outClient = new DataOutputStream(
+								client.socket.getOutputStream());
 						while (true) {
 							String message = in.readUTF();
-							if (printLog)
+							Log.log(Common.getMethodName(), "FINE",
+									"RECEIVED: " + message);
+							ArrayList<String> resultSet = new ArrayList<String>();
+							resultSet.add(message);
+							for (int i = 0; i < resultSet.size(); i++) {
+								outClient.writeUTF(resultSet.get(i));
 								Log.log(Common.getMethodName(), "FINE",
-										"RECEIVED: " + message);
-							Socket client = clientModel.socket;
-							try {
-								DataOutputStream outClient = new DataOutputStream(client.getOutputStream());
-								ArrayList<String> resultSet = new ArrayList<String>();
-								resultSet.add(message);
-								for (int i = 0; i < resultSet.size(); i++) {
-									outClient.writeUTF(resultSet.get(i));
-									Log.log(Common.getMethodName(), "FINE", "SENDING: "
-											+ resultSet.get(i));
-								}
-							} catch (IOException e) {
-								e.printStackTrace();
+										"SENDING: " + resultSet.get(i));
 							}
-							// if (message.contains("{\"resultSize\":")) {
-							// break;
-							// } else {
-							// if (resultArr != null) {
-							// resultArr.add(message);
-							// }
-							// }
 						}
 					}
 					break;
 				}
 			}
-			// 6.Close connection
-			socket.close();
-			in.close();
-			out.close();
+			// in.close();
+			// out.flush();
+			// out.close();
+			// socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public class forwardSubscribeThread implements Runnable {
-		private ClientModel client;
-		private ServerModel server;
-		private String query;
-		private boolean pringLog;
 
-		public forwardSubscribeThread(ClientModel client, ServerModel server, String query, boolean printLog) {
-			this.client = client;
-			this.server = server;
-			this.query = query;
-			this.pringLog = printLog;
+	public ArrayList<String> doClientUnsubscribe(Unsubscribe unsubscribe,
+			ServerModel server, ClientModel client) {
+		ArrayList<String> result = new ArrayList<String>();
+		String id = unsubscribe.getId();
+		Subscribe subscribe = server.removeSubscribe(id);
+		if (subscribe == null) {
+			return null;
+		}
+		int numOfHits = subscribe.getNumOfHits();
+		if (server.serverList != null) {
+			for (ServerModel subscribedServer : server.serverList) {
+				if (server.hostName.equals(subscribedServer.hostName)
+						&& server.port == subscribedServer.port) {
+					continue;
+				}
+				numOfHits += getRelayNumOfHits(subscribedServer,
+						unsubscribe.toJSON(), Log.debug);
+			}
+		}
+		result.add("{\"resultSize\":" + numOfHits + "}");
+		return result;
+	}
+
+	public int getRelayNumOfHits(ServerModel forwardServer, String query,
+			boolean printLog) {
+		int relayNumOfHits = 0;
+		Socket socket = new Socket();
+		String hostname = forwardServer.hostName;
+		int port = forwardServer.port;
+		try {
+			socket.connect(new InetSocketAddress(hostname, port),
+					Config.CONNECTION_TIMEOUT);
+			Log.log(Common.getMethodName(), "FINE", "SENT: " + query);
+			DataInputStream in = new DataInputStream(socket.getInputStream());
+			DataOutputStream out = new DataOutputStream(
+					socket.getOutputStream());
+			out.writeUTF(query);
+			while (true) {
+				if (in.available() > 0) {
+					String messageResponse = in.readUTF();
+					Log.log(Common.getMethodName(), "FINE", "RECEIVED: "
+							+ messageResponse);
+					org.json.JSONObject json = new org.json.JSONObject(
+							messageResponse);
+					relayNumOfHits = json.getInt("resultSize");
+					if (messageResponse.contains("resultSize")) {
+						break;
+					}
+				}
+			}
+			// in.close();
+			// out.flush();
+			// out.close();
+			// socket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
 
-		@Override
-		public void run() {
-			forwardSubscribe(client, server.hostName, server.port, query, pringLog);
-		}
+		return relayNumOfHits;
 	}
 
 	public ArrayList<String> doClientRemove(Remove remove, ServerModel server) {

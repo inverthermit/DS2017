@@ -61,6 +61,7 @@ public class ServerThread implements Runnable {
 					String message = in.readUTF();
 					String option = Common.getOperationfromJson(message);
 					boolean persistentConnFlag = option == "SUBSCRIBE";
+					boolean unsubscribe = option == "UNSUBSCRIBE";
 					// Print out log
 					// System.out.println(message);
 					Log.log(Common.getMethodName(), "FINE", "RECEIVED: "
@@ -81,7 +82,7 @@ public class ServerThread implements Runnable {
 						Log.log(Common.getMethodName(), "FINE", "SENDING: "
 								+ resultSet.get(i));
 					}
-					if (!persistentConnFlag) {
+					if (!persistentConnFlag || unsubscribe) {
 						break;
 					}
 				}
@@ -89,6 +90,7 @@ public class ServerThread implements Runnable {
 			// 4.Close the socket and quit the thread and leave it to be dealt
 			// by the threadpool
 			in.close();
+			out.flush();
 			out.close();
 			client.close();
 		} catch (Exception ee) {

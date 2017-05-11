@@ -24,16 +24,20 @@ public class Subscribe extends Request {
 	private boolean relay = true;
 	private Resource resourceTemplate;
 	private String id;
+
+	// These two fields are actually related to the subscriber
 	private transient ClientModel client;
+	private transient int numOfHits;
 
 	public Subscribe() {
+		this.id = tool.Common.randomString(ID_LEN);
 	}
 
 	public Subscribe(String command, boolean relay, Resource resourceTemplate) {
+		super();
 		this.command = command;
 		this.relay = relay;
 		this.resourceTemplate = resourceTemplate;
-		this.id = tool.Common.randomString(ID_LEN);
 	}
 
 	@Override
@@ -84,5 +88,13 @@ public class Subscribe extends Request {
 
 	public void setClient(ClientModel client) {
 		this.client = client;
+	}
+
+	public int getNumOfHits() {
+		return numOfHits;
+	}
+
+	public void setNumOfHits(int numOfHits) {
+		this.numOfHits = numOfHits;
 	}
 }

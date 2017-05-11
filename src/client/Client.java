@@ -10,6 +10,8 @@ import java.io.*;
 
 import model.Resource;
 import model.Response.NormalResponse;
+import model.Response.SubscribeResponse;
+import model.command.Unsubscribe;
 import tool.ClientCommandLine;
 import tool.Common;
 import tool.Config;
@@ -17,6 +19,10 @@ import tool.ErrorMessage;
 import tool.Log;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.json.JSONObject;
 
 /*
  -query -channel myprivatechannel -debug
@@ -114,10 +120,9 @@ public class Client {
 					Config.CONNECTION_TIMEOUT);
 			// This stops the request from dragging on after connection
 			// succeeds.
-//			socket.setSoTimeout(Config.CONNECTION_TIMEOUT);
-			if (printLog)
-				Log.log(Common.getMethodName(), "FINE", op.toLowerCase()
-						+ "ing to " + hostname + ":" + port);
+			// socket.setSoTimeout(Config.CONNECTION_TIMEOUT);
+			Log.log(Common.getMethodName(), "FINE", op.toLowerCase()
+					+ "ing to " + hostname + ":" + port);
 			Log.log(Common.getMethodName(), "FINE", "SENT: " + query);
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			DataOutputStream out = new DataOutputStream(
@@ -240,18 +245,44 @@ public class Client {
 						}
 					} else if (op.equals("SUBSCRIBE")) {
 						String messageResponse = in.readUTF();
-						if (printLog)
-							Log.log(Common.getMethodName(), "FINE",
-									"RECEIVED: " + messageResponse);
-						NormalResponse nr = new NormalResponse();
-						nr.fromJSON(messageResponse);
-						if (nr.getResponse().equals("success")) {
+						Log.log(Common.getMethodName(), "FINE", "RECEIVED: "
+								+ messageResponse);
+						SubscribeResponse sr = new SubscribeResponse();
+						sr.fromJSON(messageResponse);
+						if (sr.getResponse().equals("success")) {
+							// listen unsubscribe event
+							ExecutorService pool = Executors
+									.newCachedThreadPool();
+							pool.execute(new Runnable() {
+								@Override
+								public void run() {
+									BufferedReader br = new BufferedReader(
+											new InputStreamReader(System.in));
+									try {
+										while (true) {
+											char input = (char) br.read();
+											if (input == '\n') {
+												Unsubscribe unsubscribe = new Unsubscribe(
+														"UNSUBSCRIBE", sr
+																.getId());
+												out.writeUTF(unsubscribe
+														.toJSON());
+												pool.shutdown();
+												break;
+											}
+										}
+										br.close();
+									} catch (IOException e) {
+										e.printStackTrace();
+										System.exit(0);
+									}
+								}
+							});
+
 							while (true) {
 								String message = in.readUTF();
-								if (printLog)
-									Log.log(Common.getMethodName(), "FINE",
-											"RECEIVED: " + message);
-								// TODO: set {"resultSize":6} as end flag
+								Log.log(Common.getMethodName(), "FINE",
+										"RECEIVED: " + message);
 								if (message.contains("{\"resultSize\":")) {
 									break;
 								} else {
@@ -277,9 +308,10 @@ public class Client {
 				}
 			}
 			// 6.Close connection
-			socket.close();
 			in.close();
+			out.flush();
 			out.close();
+			socket.close();
 		} catch (Exception ee) {
 			// ee.printStackTrace();
 			Log.log(Common.getMethodName(), "FINE",

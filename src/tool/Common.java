@@ -23,7 +23,7 @@ public class Common {
 	public static final String[] LOGGIN_LEVEL = { "SEVERE", "WARNING", "INFO",
 			"CONFIG", "FINE", "FINER", "FINEST" };
 	public static final String[] BASIC_OP = { "EXCHANGE", "FETCH", "SHARE",
-			"PUBLISH", "QUERY", "REMOVE", "SUBSCRIBE" };
+			"PUBLISH", "QUERY", "REMOVE", "SUBSCRIBE", "UNSUBSCRIBE" };
 	public static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 	public static String queryExample = "{\"command\": \"QUERY\",    \"reply\": false, \"resourceTemplate\": {\"name\": \"randomname\",\"tags\": [],\"description\": \"\",\"uri\": \"randomurl\",\"channel\": \"\",\"owner\": \"randomowner\",\"ezserver\": null}}";
 	private static SecureRandom rnd = new SecureRandom();

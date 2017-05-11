@@ -43,7 +43,7 @@ public class ServerModel {
 
 	/** Default constructor of the class ServerModel. */
 	public ServerModel() {
-
+		init();
 	}
 
 	public void init() {
@@ -56,6 +56,7 @@ public class ServerModel {
 	public ServerModel(String hostname, int port) {
 		this.hostName = hostname;
 		this.port = port;
+		init();
 	}
 
 	/**
@@ -203,9 +204,10 @@ public class ServerModel {
 			for (Subscribe subscribe : subscribeList) {
 				if (Common.isMatchedResource(subscribe.getResource(), resource)) {
 					ClientModel clientModel = subscribe.getClient();
-					Socket client = clientModel.socket;
+					subscribe.setNumOfHits(subscribe.getNumOfHits() + 1);
 					try {
-						DataOutputStream out = new DataOutputStream(client.getOutputStream());
+						DataOutputStream out = new DataOutputStream(
+								clientModel.socket.getOutputStream());
 						ArrayList<String> resultSet = new ArrayList<String>();
 						resultSet.add(resource.toJSON());
 						for (int i = 0; i < resultSet.size(); i++) {
@@ -218,7 +220,7 @@ public class ServerModel {
 					}
 				}
 			}
-			
+
 			return 1;
 		} else {
 			int flag = 0;// Record if there's a successful deletion
@@ -244,10 +246,29 @@ public class ServerModel {
 
 	public synchronized int addDelSubscribe(Subscribe subscribe, boolean isAdd) {
 		if (isAdd) {
-			subscribeList.add(subscribe);	
+			subscribeList.add(subscribe);
 		}
 
 		return 0;
+	}
+
+	public Subscribe getSubscribe(String id) {
+		for (Subscribe subscribe : subscribeList) {
+			System.out.println(subscribe.getId());
+			if (subscribe.getId().equals(id)) {
+				return subscribe;
+			}
+		}
+		return null;
+	}
+
+	public Subscribe removeSubscribe(String id) {
+		for (int i = 0; i < subscribeList.size(); i++) {
+			if (subscribeList.get(i).getId().equals(id)) {
+				return subscribeList.remove(i);
+			}
+		}
+		return null;
 	}
 
 	/**

@@ -48,7 +48,8 @@ public class Server {
 			selfModel = sm;
 		}
 		if (selfModel.port == 0) {
-			selfModel.port = Config.DEFAULT_PORT;
+//			selfModel.port = Config.DEFAULT_PORT;
+			selfModel.port = 10001;
 		}
 		if (selfModel.advertisedHostName == null) {
 			selfModel.advertisedHostName = Config.DEFAULT_ADVERTISED_HOSTNAME;

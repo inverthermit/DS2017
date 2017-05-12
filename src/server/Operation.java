@@ -231,7 +231,7 @@ public class Operation {
 			ArrayList<Resource> resourceList) {
 		ArrayList<Resource> matchedResource = new ArrayList<Resource>();
 		for (Resource resource : resourceList) {
-			if (Common.isMatchedResource(queryResource, resource)) {
+			if (Common.isMatchedResource(queryResource, resource)) { // queryresource is resource template
 				matchedResource.add(resource);
 			}
 		}

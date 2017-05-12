@@ -81,8 +81,7 @@ public class Client {
 				doSend(serverHostname, serverPort, query, null, Log.debug);
 			} else {
 				// System.out.println("query==null");
-				Log.log(Common.getMethodName(), "FINE",
-						"Not connecting to server. Please check your command.");
+				Log.log(Common.getMethodName(), "FINE", "Not connecting to server. Please check your command.");
 			}
 		}
 	}
@@ -98,14 +97,13 @@ public class Client {
 	 *            for print log, false for not
 	 * @return true for success, false for not
 	 */
-	public static boolean doSend(String hostname, int port, String query,
-			ArrayList<String> resultArr, boolean printLog) {
+	public static boolean doSend(String hostname, int port, String query, ArrayList<String> resultArr,
+			boolean printLog) {
 		String op = Common.getOperationfromJson(query);
 		// to do
 
 		if (op == null) {
-			NormalResponse nr = new NormalResponse("error",
-					ErrorMessage.GENERIC_INVALID);
+			NormalResponse nr = new NormalResponse("error", ErrorMessage.GENERIC_INVALID);
 			Log.log(Common.getMethodName(), "FINE", "CHECK:" + nr.toJSON());
 			return false;
 		}
@@ -116,17 +114,14 @@ public class Client {
 			if (op.equals("QUERY")) {
 				// Config.CONNECTION_TIMEOUT = Config.CONNECTION_TIMEOUT*5;
 			}
-			socket.connect(new InetSocketAddress(hostname, port),
-					Config.CONNECTION_TIMEOUT);
+			socket.connect(new InetSocketAddress(hostname, port), Config.CONNECTION_TIMEOUT);
 			// This stops the request from dragging on after connection
 			// succeeds.
 			// socket.setSoTimeout(Config.CONNECTION_TIMEOUT);
-			Log.log(Common.getMethodName(), "FINE", op.toLowerCase()
-					+ "ing to " + hostname + ":" + port);
+			Log.log(Common.getMethodName(), "FINE", op.toLowerCase() + "ing to " + hostname + ":" + port);
 			Log.log(Common.getMethodName(), "FINE", "SENT: " + query);
 			DataInputStream in = new DataInputStream(socket.getInputStream());
-			DataOutputStream out = new DataOutputStream(
-					socket.getOutputStream());
+			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 			// 4.Send the query to the server
 			out.writeUTF(query);
 			long start = Common.getCurrentSecTimestamp();
@@ -142,16 +137,14 @@ public class Client {
 						String message = in.readUTF();
 						// Output result
 						// System.out.println(message);
-						Log.log(Common.getMethodName(), "FINE", "RECEIVED: "
-								+ message);
+						Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + message);
 						NormalResponse nr = new NormalResponse();
 						nr.fromJSON(message);
 						if (nr.getResponse().equals("success")) {
 							String resourceStr = in.readUTF();
 							// Output result
 							// System.out.println(resourceStr);
-							Log.log(Common.getMethodName(), "FINE",
-									"RECEIVED: " + resourceStr);
+							Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + resourceStr);
 							if (resourceStr.equals("{\"resultSize\":0}")) {
 								break;
 							}
@@ -165,15 +158,11 @@ public class Client {
 							String pathString = "./ezdownload/";
 							File path = new File(pathString);
 							path.mkdirs();
-							String absolutePath = path.getAbsolutePath() + "/"
-									+ filename;
+							String absolutePath = path.getAbsolutePath() + "/" + filename;
 							// File cFile = new File(absolutePath);
 							// cFile.createNewFile();
-							Log.log(Common.getMethodName(), "FINE",
-									"Downloading to Destination: "
-											+ absolutePath);
-							RandomAccessFile downloadingFile = new RandomAccessFile(
-									pathString + filename, "rw");
+							Log.log(Common.getMethodName(), "FINE", "Downloading to Destination: " + absolutePath);
+							RandomAccessFile downloadingFile = new RandomAccessFile(pathString + filename, "rw");
 
 							// Find out how much size is remaining to get from
 							// the server.
@@ -191,13 +180,11 @@ public class Client {
 							// System.out.println("Downloading " + resource.uri+
 							// " of size " + fileSizeRemaining);
 							Log.log(Common.getMethodName(), "FINE",
-									"Downloading " + resource.uri + " of size "
-											+ fileSizeRemaining);
+									"Downloading " + resource.uri + " of size " + fileSizeRemaining);
 							while ((num = in.read(receiveBuffer)) > 0) {
 								// Write the received bytes into the
 								// RandomAccessFile
-								downloadingFile.write(Arrays.copyOf(
-										receiveBuffer, num));
+								downloadingFile.write(Arrays.copyOf(receiveBuffer, num));
 
 								// Reduce the file size left to read..
 								fileSizeRemaining -= num;
@@ -212,8 +199,7 @@ public class Client {
 								}
 							}
 							// System.out.println("File received!");
-							Log.log(Common.getMethodName(), "FINE",
-									"FILE RECEIVED.");
+							Log.log(Common.getMethodName(), "FINE", "FILE RECEIVED.");
 							downloadingFile.close();
 						}
 
@@ -221,8 +207,7 @@ public class Client {
 					} else if (op.equals("QUERY")) {
 						String messageResponse = in.readUTF();
 						if (printLog)
-							Log.log(Common.getMethodName(), "FINE",
-									"RECEIVED: " + messageResponse);
+							Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + messageResponse);
 						NormalResponse nr = new NormalResponse();
 						nr.fromJSON(messageResponse);
 						if (nr.getResponse().equals("success")) {
@@ -231,8 +216,7 @@ public class Client {
 								// TODO: Output result
 								// System.out.println(message);
 								if (printLog)
-									Log.log(Common.getMethodName(), "FINE",
-											"RECEIVED: " + message);
+									Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + message);
 								// TODO: set {"resultSize":6} as end flag
 								if (message.contains("{\"resultSize\":")) {
 									break;
@@ -245,28 +229,22 @@ public class Client {
 						}
 					} else if (op.equals("SUBSCRIBE")) {
 						String messageResponse = in.readUTF();
-						Log.log(Common.getMethodName(), "FINE", "RECEIVED: "
-								+ messageResponse);
+						Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + messageResponse);
 						SubscribeResponse sr = new SubscribeResponse();
 						sr.fromJSON(messageResponse);
 						if (sr.getResponse().equals("success")) {
 							// listen unsubscribe event
-							ExecutorService pool = Executors
-									.newCachedThreadPool();
+							ExecutorService pool = Executors.newCachedThreadPool();
 							pool.execute(new Runnable() {
 								@Override
 								public void run() {
-									BufferedReader br = new BufferedReader(
-											new InputStreamReader(System.in));
+									BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 									try {
 										while (true) {
 											char input = (char) br.read();
-											if (input == '\n') {
-												Unsubscribe unsubscribe = new Unsubscribe(
-														"UNSUBSCRIBE", sr
-																.getId());
-												out.writeUTF(unsubscribe
-														.toJSON());
+											if (input == '\n' || input == '\r') {
+												Unsubscribe unsubscribe = new Unsubscribe("UNSUBSCRIBE", sr.getId());
+												out.writeUTF(unsubscribe.toJSON());
 												pool.shutdown();
 												break;
 											}
@@ -281,8 +259,7 @@ public class Client {
 
 							while (true) {
 								String message = in.readUTF();
-								Log.log(Common.getMethodName(), "FINE",
-										"RECEIVED: " + message);
+								Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + message);
 								if (message.contains("{\"resultSize\":")) {
 									break;
 								} else {
@@ -296,8 +273,7 @@ public class Client {
 						String message = in.readUTF();
 						// Output result
 						// System.out.println(message);
-						Log.log(Common.getMethodName(), "FINE", "RECEIVED: "
-								+ message);
+						Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + message);
 						// set response as end flag
 						if (message.contains("{\"response\":\"")) {
 							break;
@@ -314,10 +290,8 @@ public class Client {
 			socket.close();
 		} catch (Exception ee) {
 			// ee.printStackTrace();
-			Log.log(Common.getMethodName(), "FINE",
-					"CONNECTION ERROR: Please check the network or server("
-							+ hostname + ":" + port
-							+ "). Timeout or connection refused.");
+			Log.log(Common.getMethodName(), "FINE", "CONNECTION ERROR: Please check the network or server(" + hostname
+					+ ":" + port + "). Timeout or connection refused.");
 			return false;
 		}
 		return true;

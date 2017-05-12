@@ -48,8 +48,8 @@ public class Server {
 			selfModel = sm;
 		}
 		if (selfModel.port == 0) {
-//			selfModel.port = Config.DEFAULT_PORT;
-			selfModel.port = 10001;
+			selfModel.port = Config.DEFAULT_PORT;
+//			selfModel.port = 10001;
 		}
 		if (selfModel.advertisedHostName == null) {
 			selfModel.advertisedHostName = Config.DEFAULT_ADVERTISED_HOSTNAME;
@@ -91,8 +91,8 @@ public class Server {
 		Log.log(Common.getMethodName(), "INFO", "using advertised hostname: " + selfModel.advertisedHostName);
 		Log.log(Common.getMethodName(), "INFO", "using secret: " + selfModel.secret);
 		
-//		ServerModel sm1 = new ServerModel("127.0.0.1", 10001);
-//		selfModel.serverList.add(sm1);
+		ServerModel sm1 = new ServerModel("127.0.0.1", 10001);
+		selfModel.serverList.add(sm1);
 		
 		ExecutorService pool = Executors.newCachedThreadPool();
 		pool.execute(new HeartbeatThread(selfModel));

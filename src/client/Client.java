@@ -62,6 +62,7 @@ public class Client {
 		/*
 		 * for(int i=0;i<args.length;i++){ System.out.println(args[i]); }
 		 */
+		ClientCommandLine.checkError(args);
 		String query = ClientCommandLine.ClientCommandLine(args);
 		if (ClientCommandLine.getDebug()) {
 			Log.debug = true;

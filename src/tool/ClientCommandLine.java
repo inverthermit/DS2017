@@ -56,7 +56,7 @@ public class ClientCommandLine {
 		try {
 			commandLine = parser.parse(opt, args);
 			Option[] commandline = commandLine.getOptions();
-//			checkError(commandline);
+			checkError(commandline);
 			// check error here
 			if (commandline.length == 0) {
 				ErrorMessage error = new ErrorMessage();
@@ -492,7 +492,7 @@ public class ClientCommandLine {
 	 * The function of this method is to check whether the command line has
 	 * -debug
 	 */
-
+	
 	public static boolean checkError(Option[] commandline) {
 		try {
 			for (int i = 0; i < allcommandline.length; i++) {
@@ -510,6 +510,27 @@ public class ClientCommandLine {
 			System.exit(0);
 		}
 		return false;
+	}
+	
+	public static void checkError(String[] args) {
+		String request = null;
+		Resource resource = new Resource();
+		Options opt = addOptions();
+		CommandLineParser parser = new DefaultParser();
+		CommandLine commandLine = null;
+		try {
+			commandLine = parser.parse(opt, args);
+			Option[] commandline = commandLine.getOptions();
+			checkError(commandline);
+		} catch (Exception e) {
+			Log.debug = true;
+			ErrorMessage error = new ErrorMessage();
+			NormalResponse response = new NormalResponse("error", error.GENERIC_MISS_INCORRECT);
+			Log.log(Common.getMethodName(), "FINE", "CHECK: " + response.toJSON());
+			Log.debug = false;
+			errorSet = 1;
+			System.exit(0);
+		}
 	}
 
 }

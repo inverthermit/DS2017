@@ -29,7 +29,7 @@ public class TesterClient {
 	    String SubscribeExample = "{ \"command\": \"SUBSCRIBE\", \"relay\": true, \"resource\" : {  \"tags\" : [\"web\", \"html\"], \"description\" : \"The main page for the University of Melbournee\", \"uri\" : \"www.baidu.com\" , \"channel\" : \"\", \"owner\" : \"\", \"ezserver\" : null } }";
 	    Log.debug =true;
 	    String query = SubscribeExample;//Translated query
-	    Client.doSend(serverHostname,serverPort,query,null,Log.debug);
+	    Client.doSend(serverHostname,serverPort,query,null,Log.debug,true);
 	}
 
 }

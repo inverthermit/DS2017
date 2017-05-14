@@ -22,6 +22,9 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+
 import org.json.JSONObject;
 
 
@@ -80,17 +83,14 @@ public class Client {
 			// System.out.println("Client Main Print:"+query);
 
 			if (query != null) {
-				if (ClientCommandLine.getSecure()){
-					
-				} else {
-					doSend(serverHostname, serverPort, query, null, Log.debug);
-				}
+				doSend(serverHostname, serverPort,query,null,Log.debug,ClientCommandLine.getSecure());
 			} else {
 				// System.out.println("query==null");
 				Log.log(Common.getMethodName(), "FINE", "Not connecting to server. Please check your command.");
 			}
 		}
 	}
+	
 
 	/**
 	 * This method handles sending json to server and getting response based on
@@ -104,7 +104,7 @@ public class Client {
 	 * @return true for success, false for not
 	 */
 	public static boolean doSend(String hostname, int port, String query, ArrayList<String> resultArr,
-			boolean printLog) {
+			boolean printLog, boolean secure) {
 		String op = Common.getOperationfromJson(query);
 		// to do
 
@@ -113,8 +113,24 @@ public class Client {
 			Log.log(Common.getMethodName(), "FINE", "CHECK:" + nr.toJSON());
 			return false;
 		}
-
+		DataInputStream in;
+		DataOutputStream out;
 		try {
+			if (secure) {
+				System.setProperty("javax.net.ssl.trustStore", "clientKeyStore/myGreatName");
+				SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+				SSLSocket sslsocket = (SSLSocket) sslsocketfactory.createSocket(hostname, port);
+				/*
+				InputStream inputstream = System.in;
+				InputStreamReader inputstreamreader = new InputStreamReader(inputstream);
+				BufferedReader bufferedreader = new BufferedReader(inputstreamreader);
+				*/
+				Log.log(Common.getMethodName(), "FINE", op.toLowerCase() + "ing to " + hostname + ":" + port);
+				Log.log(Common.getMethodName(), "FINE", "SENT: " + query);
+				in = new DataInputStream(sslsocket.getInputStream());
+				out = new DataOutputStream(sslsocket.getOutputStream());
+				out.writeUTF(query);
+			} else {
 			// 3.Create socket/input/output
 			Socket socket = new Socket();
 			if (op.equals("QUERY")) {
@@ -126,10 +142,11 @@ public class Client {
 			// socket.setSoTimeout(Config.CONNECTION_TIMEOUT);
 			Log.log(Common.getMethodName(), "FINE", op.toLowerCase() + "ing to " + hostname + ":" + port);
 			Log.log(Common.getMethodName(), "FINE", "SENT: " + query);
-			DataInputStream in = new DataInputStream(socket.getInputStream());
-			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+			in = new DataInputStream(socket.getInputStream());
+			out = new DataOutputStream(socket.getOutputStream());
 			// 4.Send the query to the server
 			out.writeUTF(query);
+			}
 			long start = Common.getCurrentSecTimestamp();
 			// 5.Listen for the results and output to log. End the listening
 			// based on commands
@@ -293,7 +310,8 @@ public class Client {
 			in.close();
 			out.flush();
 			out.close();
-			socket.close();
+			
+			//socket.close();
 		} catch (Exception ee) {
 			// ee.printStackTrace();
 			Log.log(Common.getMethodName(), "FINE", "CONNECTION ERROR: Please check the network or server(" + hostname

@@ -41,6 +41,9 @@ public class ServerCommandLine {
 		Option debug = Option.builder("debug").desc("print debug informaton")
 				.build();
 		opt.addOption(debug);
+		Option sport = Option.builder("sport").hasArg()
+				.desc("the secure port number").build();
+		opt.addOption(sport);
 		opt.addOption("h", "help", false, "help");
 
 		ServerModel server = new ServerModel();
@@ -102,6 +105,16 @@ public class ServerCommandLine {
 				// ServerModel server = new ServerModel();
 				server.setSecret(secretName);
 				//System.out.println("has secret and its arg is " + secretName);
+			}
+			
+			// if command line has -sport
+			if (commandLine.hasOption("sport")) {
+				String sportName = commandLine.getOptionValue("sport");
+				int sportNum;
+				sportNum = Integer.parseInt(sportName);
+				// ServerModel server = new ServerModel();
+				server.setPort(sportNum);
+				//System.out.println("has port and its arg is " + portNum);
 			}
 
 			// if command line has -debug

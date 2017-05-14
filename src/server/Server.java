@@ -51,6 +51,10 @@ public class Server {
 			selfModel.port = Config.DEFAULT_PORT;
 //			selfModel.port = 10001;
 		}
+		if (selfModel.sport == 0) {
+			selfModel.sport = Config.DEFAULT_SECURE_PORT;
+//			selfModel.port = 3781;
+		}
 		if (selfModel.advertisedHostName == null) {
 			selfModel.advertisedHostName = Config.DEFAULT_ADVERTISED_HOSTNAME;
 		}

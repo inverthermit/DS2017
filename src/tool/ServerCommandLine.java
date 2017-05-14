@@ -113,7 +113,7 @@ public class ServerCommandLine {
 				int sportNum;
 				sportNum = Integer.parseInt(sportName);
 				// ServerModel server = new ServerModel();
-				server.setPort(sportNum);
+				server.setSport(sportNum);
 				//System.out.println("has port and its arg is " + portNum);
 			}
 

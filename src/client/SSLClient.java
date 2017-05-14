@@ -10,7 +10,7 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
 public class SSLClient {
-	
+	//
 	public static void main(String[] arstring) {
 		
 		try {

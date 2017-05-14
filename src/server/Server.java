@@ -8,6 +8,10 @@ import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+
 import java.util.*;
 
 import tool.Common;
@@ -88,6 +92,7 @@ public class Server {
 		}
 		selfModel.init();
 		int port = selfModel.port;
+		int sport = selfModel.sport;
 		// System.out.println(selfModel.hostname+":"+selfModel.port+"
 		// "+selfModel.exchangeInterval+" "+selfModel.intervallimit+"
 		// "+selfModel.secret);
@@ -104,6 +109,11 @@ public class Server {
 			Log.log(Common.getMethodName(), "INFO", "bound to port " + port);
 			Log.log(Common.getMethodName(), "INFO", "started");
 			ServerSocket server = new ServerSocket(port);
+			
+			SSLServerSocketFactory sslserversocketfactory = (SSLServerSocketFactory) SSLServerSocketFactory
+					.getDefault();
+			SSLServerSocket sslserversocket = (SSLServerSocket) sslserversocketfactory.createServerSocket(sport);
+			
 			boolean bool = true;
 			while (bool) {
 				ClientModel client = new ClientModel();

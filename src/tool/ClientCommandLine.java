@@ -56,7 +56,7 @@ public class ClientCommandLine {
 		try {
 			commandLine = parser.parse(opt, args);
 			Option[] commandline = commandLine.getOptions();
-			checkError(commandline);
+			checkErrorOptions(commandline);
 			// check error here
 			if (commandline.length == 0) {
 				ErrorMessage error = new ErrorMessage();
@@ -410,6 +410,20 @@ public class ClientCommandLine {
 		}
 		return false;
 	}
+	
+	/**
+	 * The funciton of this method is to check whether the command line has -secure
+	 * @return true has
+	 *         false not
+	 */
+	public static boolean getSecure() {
+		for (int i = 0; i < allcommandline.length; i++) {
+			if (allcommandline[i].getOpt() != null && allcommandline[i].getOpt().equals("secure")) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * The method is to check whether there are enough parameters for the
@@ -495,7 +509,7 @@ public class ClientCommandLine {
 	 * -debug
 	 */
 	
-	public static boolean checkError(Option[] commandline) {
+	public static boolean checkErrorOptions(Option[] commandline) {
 		try {
 			for (int i = 0; i < allcommandline.length; i++) {
 				if (allcommandline[i].getOpt() != null && allcommandline[i].getOpt().equals("debug")) {
@@ -514,6 +528,9 @@ public class ClientCommandLine {
 		return false;
 	}
 	
+	
+	
+	// check the command line has error or not 
 	public static void checkError(String[] args) {
 		String request = null;
 		Resource resource = new Resource();
@@ -523,7 +540,7 @@ public class ClientCommandLine {
 		try {
 			commandLine = parser.parse(opt, args);
 			Option[] commandline = commandLine.getOptions();
-			checkError(commandline);
+			checkErrorOptions(commandline);
 		} catch (Exception e) {
 			Log.debug = true;
 			ErrorMessage error = new ErrorMessage();

@@ -33,9 +33,11 @@ public class ServerModel {
 	public String intervalLimit;
 	public String exchangeInterval;
 	public int port;
+	public int sport;
 	public String secret;
 	public Socket socket;
 	public ArrayList<ServerModel> serverList;
+	public ArrayList<ServerModel> secureServerLisrt;
 	public ArrayList<ClientModel> clientList;
 	public ArrayList<Resource> resourceList;
 	public ArrayList<Subscribe> subscribeList;
@@ -99,6 +101,10 @@ public class ServerModel {
 	 */
 	public void setPort(int port) {
 		this.port = port;
+	}
+	
+	public void setSport(int sport){
+		this.sport = sport;
 	}
 
 	/**

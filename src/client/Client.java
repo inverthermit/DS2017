@@ -24,6 +24,7 @@ import java.util.concurrent.Executors;
 
 import org.json.JSONObject;
 
+
 /*
  -query -channel myprivatechannel -debug
  -exchange -servers 115.146.85.165:3780,115.146.85.24:3780 -debug
@@ -79,7 +80,11 @@ public class Client {
 			// System.out.println("Client Main Print:"+query);
 
 			if (query != null) {
-				doSend(serverHostname, serverPort, query, null, Log.debug);
+				if (ClientCommandLine.getSecure()){
+					
+				} else {
+					doSend(serverHostname, serverPort, query, null, Log.debug);
+				}
 			} else {
 				// System.out.println("query==null");
 				Log.log(Common.getMethodName(), "FINE", "Not connecting to server. Please check your command.");

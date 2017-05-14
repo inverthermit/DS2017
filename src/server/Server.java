@@ -90,7 +90,7 @@ public class Server {
 		Log.log(Common.getMethodName(), "INFO", "Starting the EZShare Server");
 		Log.log(Common.getMethodName(), "INFO", "using advertised hostname: " + selfModel.advertisedHostName);
 		Log.log(Common.getMethodName(), "INFO", "using secret: " + selfModel.secret);
-		
+		// comment this
 		ServerModel sm1 = new ServerModel("127.0.0.1", 10001);
 		selfModel.serverList.add(sm1);
 		

@@ -151,6 +151,8 @@ public class ClientCommandLine {
 		opt.addOption(uri);
 		Option relay = Option.builder("relay").hasArg().desc("query relay").build();
 		opt.addOption(relay);
+		Option secure = Option.builder("secure").desc("attempt to make a secure connection").build();
+		opt.addOption(secure);
 		opt.addOption("h", "help", false, "help");
 		return opt;
 	}

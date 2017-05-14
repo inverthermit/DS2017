@@ -33,7 +33,7 @@ public class ServerSocketSSLThread implements Runnable {
 		ExecutorService pool = Executors.newCachedThreadPool();
 		pool.execute(new HeartbeatThread(selfModel));
 		try {
-			Log.log(Common.getMethodName(), "INFO", "bound to port " + sport);
+			
 			Log.log(Common.getMethodName(), "INFO", "started");
 			
 			SSLServerSocketFactory sslserversocketfactory = (SSLServerSocketFactory) SSLServerSocketFactory

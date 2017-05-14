@@ -34,7 +34,7 @@ public class ServerSocketThread implements Runnable {
 		ExecutorService pool = Executors.newCachedThreadPool();
 		pool.execute(new HeartbeatThread(selfModel));
 		try {
-			Log.log(Common.getMethodName(), "INFO", "bound to port " + port);
+			
 			Log.log(Common.getMethodName(), "INFO", "started");
 			
 			ServerSocket server = new ServerSocket(port);

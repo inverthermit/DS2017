@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
 
 import java.util.*;
 
@@ -102,23 +103,33 @@ public class Server {
 		// comment this
 		ServerModel sm1 = new ServerModel("127.0.0.1", 10001);
 		selfModel.serverList.add(sm1);
-		
+		Log.log(Common.getMethodName(), "INFO", "bound to port " + port);
+		Log.log(Common.getMethodName(), "INFO", "bound to sport " + sport);
+		ServerSocketThread unsecure=new ServerSocketThread(port,selfModel);
+		ServerSocketSSLThread secure=new ServerSocketSSLThread(sport,selfModel);
+	    Thread t1 = new Thread(unsecure);
+	    Thread t2 = new Thread(secure);
+	    t1.start();
+	    t2.start();
+		/*
 		ExecutorService pool = Executors.newCachedThreadPool();
 		pool.execute(new HeartbeatThread(selfModel));
 		try {
 			Log.log(Common.getMethodName(), "INFO", "bound to port " + port);
 			Log.log(Common.getMethodName(), "INFO", "started");
+			
 			ServerSocket server = new ServerSocket(port);
 			
-			SSLServerSocketFactory sslserversocketfactory = (SSLServerSocketFactory) SSLServerSocketFactory
-					.getDefault();
-			SSLServerSocket sslserversocket = (SSLServerSocket) sslserversocketfactory.createServerSocket(sport);
+			//SSLServerSocketFactory sslserversocketfactory = (SSLServerSocketFactory) SSLServerSocketFactory
+			//		.getDefault();
+			//SSLServerSocket sslserversocket = (SSLServerSocket) sslserversocketfactory.createServerSocket(sport);
 			
 			boolean bool = true;
 			while (bool) {
 				ClientModel client = new ClientModel();
 				// Log.log(Common.getMethodName(), "INFO", "started");
 				client.socket = server.accept();
+				//client.sslsocket = (SSLSocket) sslserversocket.accept();
 				client.ip = client.socket.getRemoteSocketAddress().toString().split(":")[0];
 				long timestamp = Common.getCurrentSecTimestamp();
 				if (selfModel.ipTimeList == null) {
@@ -148,5 +159,7 @@ public class Server {
 			Log.log(Common.getMethodName(), "INFO", "Server fail to start: Port already in used(" + port + ")");
 			System.exit(0);
 		}
+		*/
+		
 	}
 }

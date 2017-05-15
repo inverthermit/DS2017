@@ -117,7 +117,7 @@ public class OperationSecure {
 		ArrayList<String> result = new ArrayList<String>();
 		ArrayList<ServerModel> queryServerList = exchange.getServerList();
 		for (int i = 0; i < queryServerList.size(); i++) {
-			server.addDelServer(queryServerList.get(i), true);
+			server.addDelServerSecure(queryServerList.get(i), true);
 		}
 		System.out.println("Server List in server after ADD:"
 				+ server.toServerListJson());
@@ -504,11 +504,11 @@ public class OperationSecure {
 	public ArrayList<String> doServerExchange(ServerModel server) {
 
 		// Check which servers are available
-		for (int i = 0; i < server.serverList.size(); i++) {
-			ServerModel tempServer = server.serverList.get(i);
+		for (int i = 0; i < server.secureServerList.size(); i++) {
+			ServerModel tempServer = server.secureServerList.get(i);
 			// System.out.println(server.hostname+" "+(tempServer.hostname)+" "+server.port+" "+tempServer.port);
 			if (server.hostName.equals(tempServer.hostName)
-					&& server.port == tempServer.port) {
+					&& server.sport == tempServer.sport) {
 				continue;
 			}
 			// Log.log(Common.getMethodName(), "INFO",
@@ -517,13 +517,13 @@ public class OperationSecure {
 			// java.net.ConnectException Then Delete the address (Add a return
 			// to doSend)
 			// TODO: Needed test
-			boolean success = Client.doSend(tempServer.hostName,
-					tempServer.port, Common.queryExample, null, false);
+			boolean success = Client.doSendSecure(tempServer.hostName,
+					tempServer.sport, Common.queryExample, null, false);
 			if (!success) {
 				// Log.log(Common.getMethodName(), "INFO",
 				// "Server unreachable, deleting server from list:" +
 				// tempServer.hostname +":"+ tempServer.port);
-				server.addDelServer(server.serverList.get(i), false);
+				server.addDelServerSecure(server.secureServerList.get(i), false);
 				// System.out.println("Server List in server after DELETE:"+server.toServerListJson());
 				i--;
 			}
@@ -531,19 +531,19 @@ public class OperationSecure {
 			// "Finished server exchange with:" + tempServer.hostname +":"+
 			// tempServer.port);
 		}
-		if (server.serverList.size() > 0) {
+		if (server.secureServerList.size() > 0) {
 			String query = server.toServerListJson();
 			int randomNum = ThreadLocalRandom.current().nextInt(0,
-					server.serverList.size());
-			ServerModel tempServer = server.serverList.get(randomNum);
+					server.secureServerList.size());
+			ServerModel tempServer = server.secureServerList.get(randomNum);
 			if (server.hostName.equals(tempServer.hostName)
-					&& server.port == tempServer.port) {
+					&& server.sport == tempServer.sport) {
 				return null;
 			}
-			boolean success = Client.doSend(tempServer.hostName,
-					tempServer.port, query, null, Log.debug);
+			boolean success = Client.doSendSecure(tempServer.hostName,
+					tempServer.sport, query, null, Log.debug);
 			if (!success) {
-				server.addDelServer(server.serverList.get(randomNum), false);
+				server.addDelServerSecure(server.secureServerList.get(randomNum), false);
 			}
 		}
 		// System.out.println("In doServerExchange" + query);

@@ -170,6 +170,38 @@ public class ServerModel {
 			}
 		}
 	}
+	
+	public synchronized int addDelServerSecure(ServerModel server, boolean isAdd) {
+		if (isAdd) {
+			for (int i = 0; i < this.secureServerList.size(); i++) {
+				ServerModel element = this.secureServerList.get(i);
+				if (server.hostName.equals(element.hostName)
+						&& server.sport == element.sport) {
+					this.secureServerList.remove(i);
+					break;
+				}
+			}
+			this.secureServerList.add(server);
+			// System.out.println("Server List in server after ADD:"+this.toServerListJson());
+			return 1;
+		} else {
+			int flag = 0;// Record if there's a successful deletion
+			for (int i = 0; i < this.secureServerList.size(); i++) {
+				ServerModel element = this.secureServerList.get(i);
+				if (server.hostName.equals(element.hostName)
+						&& server.sport == element.sport) {
+					this.secureServerList.remove(i);
+					flag = 1;
+				}
+			}
+			// System.out.println("Server List in server after DELETE:"+this.toServerListJson());
+			if (flag == 1) {
+				return 2;
+			} else {
+				return -2;
+			}
+		}
+	}
 
 	/**
 	 * This method returns the validation of resource template.

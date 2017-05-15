@@ -35,7 +35,7 @@ public class SecureServerThread implements Runnable {
 	 */
 	public SecureServerThread(ClientModel client, ServerModel selfModel) {
 		this.clientModel = client;
-		this.client = client.socket;
+		this.client = client.sslsocket;
 		this.selfModel = selfModel;
 		try {
 			this.in = new DataInputStream(this.client.getInputStream());

@@ -120,7 +120,7 @@ public class OperationSecure {
 			server.addDelServerSecure(queryServerList.get(i), true);
 		}
 		System.out.println("Server List in server after ADD:"
-				+ server.toServerListJson());
+				+ server.toSecureServerListJson());
 		NormalResponse nr = new NormalResponse("success");
 		result.add(nr.toJSON());
 		return result;
@@ -532,7 +532,7 @@ public class OperationSecure {
 			// tempServer.port);
 		}
 		if (server.secureServerList.size() > 0) {
-			String query = server.toServerListJson();
+			String query = server.toSecureServerListJson();
 			int randomNum = ThreadLocalRandom.current().nextInt(0,
 					server.secureServerList.size());
 			ServerModel tempServer = server.secureServerList.get(randomNum);

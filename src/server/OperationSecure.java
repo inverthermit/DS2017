@@ -327,6 +327,7 @@ public class OperationSecure {
 	public void forwardSubscribe(ClientModel client, ServerModel forwardServer,
 			String query) {
 		try {
+			// change to secure socket
 			Socket socket = new Socket();
 			String hostname = forwardServer.hostName;
 			int port = forwardServer.sport;

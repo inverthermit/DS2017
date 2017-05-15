@@ -56,7 +56,7 @@ public class ClientCommandLine {
 		try {
 			commandLine = parser.parse(opt, args);
 			Option[] commandline = commandLine.getOptions();
-			checkErrorOptions(commandline);
+			//checkErrorOptions(commandline);
 			// check error here
 			if (commandline.length == 0) {
 				ErrorMessage error = new ErrorMessage();

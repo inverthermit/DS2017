@@ -305,9 +305,9 @@ public class OperationSecure {
 			relaySubscribe.setId(subscribe.getId());
 			relaySubscribe.setRelay(false);
 
-			for (ServerModel forwardServer : server.serverList) {
+			for (ServerModel forwardServer : server.secureServerList) {
 				if (server.hostName.equals(forwardServer.hostName)
-						&& server.port == forwardServer.port) {
+						&& server.sport == forwardServer.sport) {
 					continue;
 				}
 				ExecutorService pool = Executors.newCachedThreadPool();
@@ -329,7 +329,7 @@ public class OperationSecure {
 		try {
 			Socket socket = new Socket();
 			String hostname = forwardServer.hostName;
-			int port = forwardServer.port;
+			int port = forwardServer.sport;
 			socket.connect(new InetSocketAddress(hostname, port),
 					Config.CONNECTION_TIMEOUT);
 			Log.log(Common.getMethodName(), "FINE", "SENT: " + query);
@@ -382,10 +382,10 @@ public class OperationSecure {
 			return null;
 		}
 		int numOfHits = subscribe.getNumOfHits();
-		if (server.serverList != null) {
-			for (ServerModel subscribedServer : server.serverList) {
+		if (server.secureServerList != null) {
+			for (ServerModel subscribedServer : server.secureServerList) {
 				if (server.hostName.equals(subscribedServer.hostName)
-						&& server.port == subscribedServer.port) {
+						&& server.sport == subscribedServer.sport) {
 					continue;
 				}
 				numOfHits += getRelayNumOfHits(subscribedServer,
@@ -401,7 +401,7 @@ public class OperationSecure {
 		int relayNumOfHits = 0;
 		Socket socket = new Socket();
 		String hostname = forwardServer.hostName;
-		int port = forwardServer.port;
+		int port = forwardServer.sport;
 		try {
 			socket.connect(new InetSocketAddress(hostname, port),
 					Config.CONNECTION_TIMEOUT);

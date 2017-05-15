@@ -152,6 +152,10 @@ public class Client {
 			DataOutputStream out = new DataOutputStream(sslsocket.getOutputStream());
 			out.writeUTF(query);
 			doIN(in,op,printLog,resultArr,out,port,hostname);
+			in.close();
+			out.flush();
+			out.close();
+			sslsocket.close();
 		} catch (Exception ee){
 			Log.log(Common.getMethodName(), "FINE", "CONNECTION ERROR: Please check the network or server(" + hostname
 					+ ":" + port + "). Timeout or connection refused.");

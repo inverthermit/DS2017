@@ -36,7 +36,7 @@ import tool.Config;
 import tool.ErrorMessage;
 import tool.Log;
 
-public class Operation {
+public class OperationSecure {
 
 	public ArrayList<String> dispatcher(String json, ServerModel server,
 			ClientModel client) {

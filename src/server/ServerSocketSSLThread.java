@@ -38,9 +38,8 @@ public class ServerSocketSSLThread implements Runnable {
 		pool.execute(new HeartbeatThread(selfModel));
 		System.setProperty("javax.net.ssl.keyStore","serverKeystore/server.jks");
 		System.setProperty("javax.net.ssl.keyStorePassword","ezshare");
-		System.setProperty("javax.net.debug","all");
 		try {
-			
+			System.out.println("abb");
 			Log.log(Common.getMethodName(), "INFO", "started");
 			
 			SSLServerSocketFactory sslserversocketfactory = (SSLServerSocketFactory) SSLServerSocketFactory
@@ -75,6 +74,7 @@ public class ServerSocketSSLThread implements Runnable {
 				// Timeout
 				client.sslsocket.setSoTimeout(Config.CONNECTION_TIMEOUT);
 				// System.out.println(client.socket.getSoTimeout());
+				System.out.println("dddd");
 				selfModel.clientList.add(client);
 				// TODO: Output client connection log
 				// System.out.println("Connected");

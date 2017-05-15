@@ -101,8 +101,8 @@ public class Server {
 		Log.log(Common.getMethodName(), "INFO", "using advertised hostname: " + selfModel.advertisedHostName);
 		Log.log(Common.getMethodName(), "INFO", "using secret: " + selfModel.secret);
 		// comment this
-		ServerModel sm1 = new ServerModel("127.0.0.1", 10001);
-		selfModel.serverList.add(sm1);
+		//ServerModel sm1 = new ServerModel("127.0.0.1", 10001);
+		//selfModel.serverList.add(sm1);
 		Log.log(Common.getMethodName(), "INFO", "bound to port " + port);
 		Log.log(Common.getMethodName(), "INFO", "bound to sport " + sport);
 		ServerSocketThread unsecure=new ServerSocketThread(port,selfModel);

@@ -1,6 +1,8 @@
 package server;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -39,22 +41,15 @@ public class ServerSocketSSLThread implements Runnable {
 		System.setProperty("javax.net.ssl.keyStore","serverKeystore/server.jks");
 		System.setProperty("javax.net.ssl.keyStorePassword","ezshare");
 		try {
-			System.out.println("abb");
+			//System.out.println("start to conneting through secure socket");
 			Log.log(Common.getMethodName(), "INFO", "started");
 			
 			SSLServerSocketFactory sslserversocketfactory = (SSLServerSocketFactory) SSLServerSocketFactory
 					.getDefault();
 			SSLServerSocket sslserversocket = (SSLServerSocket) sslserversocketfactory.createServerSocket(sport);
-			SSLSocket sslSocket = (SSLSocket)sslserversocket.accept();
-			boolean bool =true;
-			while(bool){
-				PrintWriter printwriter=new PrintWriter(sslSocket.getOutputStream(),true);
-				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(sslSocket.getInputStream()));
-				BufferedReader commandPromptBufferedReader=new BufferedReader(new InputStreamReader(System.in));
-				
-			}
+			//SSLSocket sslSocket = (SSLSocket)sslserversocket.accept();
 			
-			//boolean bool = true;
+			boolean bool = true;
 			while (bool) {
 				ClientModel client = new ClientModel();
 				// Log.log(Common.getMethodName(), "INFO", "started");
@@ -74,13 +69,14 @@ public class ServerSocketSSLThread implements Runnable {
 				// Timeout
 				client.sslsocket.setSoTimeout(Config.CONNECTION_TIMEOUT);
 				// System.out.println(client.socket.getSoTimeout());
-				System.out.println("dddd");
+				//System.out.println("add clients");
 				selfModel.clientList.add(client);
 				// TODO: Output client connection log
 				// System.out.println("Connected");
 				Log.log(Common.getMethodName(), "INFO",
 						"New Connection:" + client.sslsocket.getRemoteSocketAddress().toString().split(":")[0] + ":"
 								+ client.sslsocket.getPort());
+				System.out.println("doing the operation thread");
 				pool.execute(new SecureServerThread(client, selfModel));
 			}
 			sslserversocket.close();

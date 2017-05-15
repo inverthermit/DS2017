@@ -54,6 +54,7 @@ public class SecureServerThread implements Runnable {
 	 */
 	@Override
 	public void run() {
+		System.out.println("run a thread for opreation");
 		try {
 			while (true) {
 				if (in.available() > 0) {
@@ -68,6 +69,7 @@ public class SecureServerThread implements Runnable {
 							+ message);
 					// 2.Parse message, do operations, return ArrayList<String>
 					// to send back to client
+					System.out.println("sop");
 					OperationSecure sop = new OperationSecure();
 					ArrayList<String> resultSet = sop.dispatcher(message,
 							selfModel, clientModel);

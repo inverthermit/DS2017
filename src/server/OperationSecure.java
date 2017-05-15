@@ -240,7 +240,7 @@ public class OperationSecure {
 
 	public ArrayList<String> doClientQuery(Query query, ServerModel server) {
 		ArrayList<String> result = new ArrayList<String>();
-
+		System.out.println("doing query");
 		if (checkServerQuery(query) != null) {
 			result.add(checkServerQuery(query));
 			return result;

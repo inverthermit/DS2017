@@ -37,7 +37,7 @@ public class ServerModel {
 	public String secret;
 	public Socket socket;
 	public ArrayList<ServerModel> serverList;
-	public ArrayList<ServerModel> secureServerLisrt;
+	public ArrayList<ServerModel> secureServerList;
 	public ArrayList<ClientModel> clientList;
 	public ArrayList<Resource> resourceList;
 	public ArrayList<Subscribe> subscribeList;
@@ -50,6 +50,7 @@ public class ServerModel {
 
 	public void init() {
 		serverList = new ArrayList<ServerModel>();
+		secureServerList = new ArrayList<ServerModel>();
 		clientList = new ArrayList<ClientModel>();
 		resourceList = new ArrayList<Resource>();
 		subscribeList = new ArrayList<Subscribe>();

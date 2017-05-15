@@ -81,7 +81,7 @@ public class ServerSocketSSLThread implements Runnable {
 				Log.log(Common.getMethodName(), "INFO",
 						"New Connection:" + client.sslsocket.getRemoteSocketAddress().toString().split(":")[0] + ":"
 								+ client.sslsocket.getPort());
-				pool.execute(new ServerThread(client, selfModel));
+				pool.execute(new SecureServerThread(client, selfModel));
 			}
 			sslserversocket.close();
 		} catch (IOException e) {

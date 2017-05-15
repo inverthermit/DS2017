@@ -262,13 +262,13 @@ public class OperationSecure {
 				relayQuery.getResource().channel = "";
 				relayQuery.getResource().owner = "";
 				String forwardQuery = relayQuery.toJSON();
-				for (int i = 0; i < server.serverList.size(); i++) {
-					ServerModel tempServer = server.serverList.get(i);
+				for (int i = 0; i < server.secureServerList.size(); i++) {
+					ServerModel tempServer = server.secureServerList.get(i);
 					if (server.hostName.equals(tempServer.hostName)
-							&& server.port == tempServer.port) {
+							&& server.sport == tempServer.sport) {
 						continue;
 					}
-					Client.doSend(tempServer.hostName, tempServer.port,
+					Client.doSendSecure(tempServer.hostName, tempServer.sport,
 							forwardQuery, result, Log.debug);
 				}
 			}

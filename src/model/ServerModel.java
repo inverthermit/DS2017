@@ -335,5 +335,12 @@ public class ServerModel {
 		String json = exchange.toJSON();
 		return json;
 	}
+	
+	public String toSecureServerListJson() {
+		String command = "EXCHANGE";
+		Exchange exchange = new Exchange(command, this.secureServerList);
+		String json = exchange.toJSON();
+		return json;
+	}
 
 }

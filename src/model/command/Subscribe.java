@@ -30,7 +30,7 @@ public class Subscribe extends Request {
 	private transient int numOfHits;
 
 	public Subscribe() {
-		this.id = tool.Common.randomString(ID_LEN);
+		this.id = tool.Common.randomString(ID_LEN) + System.currentTimeMillis();
 	}
 
 	public Subscribe(String command, boolean relay, Resource resourceTemplate) {

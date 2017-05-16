@@ -143,23 +143,43 @@ public class Client {
 		}
 		try{
 			//create ssl socket
-			System.setProperty("javax.net.ssl.trustStore", "clientKeyStore/client.jks");
+			System.out.println("start to connecting the server");
+			System.setProperty("javax.net.ssl.trustStore", "clientKeyStore/myGreatName");
+			System.out.println("starting to certification");
 			SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 			SSLSocket sslsocket = (SSLSocket) sslsocketfactory.createSocket(hostname, port);
 			
 			Log.log(Common.getMethodName(), "FINE", op.toLowerCase() + "ing to " + hostname + ":" + port);
 			Log.log(Common.getMethodName(), "FINE", "SENT: " + query);
-			DataInputStream in = new DataInputStream(sslsocket.getInputStream());
-			DataOutputStream out = new DataOutputStream(sslsocket.getOutputStream());
-			out.writeUTF(query);
-			doIN(in,op,printLog,resultArr,out,port,hostname);
-			in.close();
-			out.flush();
-			out.close();
+			
+			// read from the server
+			InputStream inputstream = sslsocket.getInputStream();
+			InputStreamReader inputstreamreader = new InputStreamReader(inputstream);
+			BufferedReader bufferedreader = new BufferedReader(inputstreamreader);
+			//write to the server
+			OutputStream outputstream = sslsocket.getOutputStream();
+			OutputStreamWriter outputstreamwriter = new OutputStreamWriter(outputstream);
+			BufferedWriter bufferedwriter = new BufferedWriter(outputstreamwriter);
+			System.out.println(query);
+			bufferedwriter.write(query + '\n');
+			bufferedwriter.flush();
+			
+			
+			//DataInputStream in = new DataInputStream(sslsocket.getInputStream());
+			//DataOutputStream out = new DataOutputStream(sslsocket.getOutputStream());
+			
+			//out.writeUTF(query);
+			//out.flush();
+			System.out.println("doing response from server");
+			doInSecure(bufferedreader,op,printLog,resultArr,bufferedwriter,port,hostname);
+			//in.close();
+			
+			//out.close();
 			sslsocket.close();
 		} catch (Exception ee){
 			Log.log(Common.getMethodName(), "FINE", "CONNECTION ERROR: Please check the network or server(" + hostname
 					+ ":" + port + "). Timeout or connection refused.");
+			ee.printStackTrace();
 			return false;
 		}
 		return true;
@@ -545,6 +565,180 @@ public class Client {
 					}
 				} else {
 					String message = in.readUTF();
+					// Output result
+					// System.out.println(message);
+					Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + message);
+					// set response as end flag
+					if (message.contains("{\"response\":\"")) {
+						break;
+					}
+				}
+				// Move to if else
+				break;
+			}
+		}
+		} catch (Exception ee) {
+			// ee.printStackTrace();
+			Log.log(Common.getMethodName(), "FINE", "CONNECTION ERROR: Please check the network or server(" + hostname
+			+ ":" + port + "). Timeout or connection refused.");
+			return false;
+		}
+		return true;
+	}
+	
+	public static boolean doInSecure(BufferedReader in,String op,boolean printLog,ArrayList<String> resultArr,BufferedWriter out
+			,int port,String hostname){
+		long start = Common.getCurrentSecTimestamp();
+		// 5.Listen for the results and output to log. End the listening
+		// based on commands
+		boolean endFlag = false;
+		try{
+		while (!endFlag) {
+			if (Common.getCurrentSecTimestamp() - start >= Config.CONNECTION_TIMEOUT / 1000) {
+				throw new Exception();
+			}
+			String message;
+			System.out.println("getting response");
+			if ((message=in.readLine())!=null) {
+				System.out.println(message+"add");
+				if (op.equals("FETCH")) {
+					//String message = in.readUTF();
+					// Output result
+					// System.out.println(message);
+					Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + message);
+					NormalResponse nr = new NormalResponse();
+					nr.fromJSON(message);
+					if (nr.getResponse().equals("success")) {
+						String resourceStr = in.readLine();
+						// Output result
+						// System.out.println(resourceStr);
+						Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + resourceStr);
+						if (resourceStr.equals("{\"resultSize\":0}")) {
+							break;
+						}
+						Resource resource = new Resource();
+						resource.fromJSON(resourceStr);
+						// The file location
+						// Create a RandomAccessFile to read and write the
+						// output file.
+						File file = new File(resource.uri);
+						String filename = file.getName();
+						String pathString = "./ezdownload/";
+						File path = new File(pathString);
+						path.mkdirs();
+						String absolutePath = path.getAbsolutePath() + "/" + filename;
+						// File cFile = new File(absolutePath);
+						// cFile.createNewFile();
+						Log.log(Common.getMethodName(), "FINE", "Downloading to Destination: " + absolutePath);
+						RandomAccessFile downloadingFile = new RandomAccessFile(pathString + filename, "rw");
+
+						// Find out how much size is remaining to get from
+						// the server.
+						long fileSizeRemaining = (Long) resource.resourceSize;
+
+						int chunkSize = setChunkSize(fileSizeRemaining);
+
+						// Represents the receiving buffer
+						byte[] receiveBuffer = new byte[chunkSize];
+
+						// Variable used to read if there are remaining size
+						// left to read.
+						int num = 0;
+
+						// System.out.println("Downloading " + resource.uri+
+						// " of size " + fileSizeRemaining);
+						Log.log(Common.getMethodName(), "FINE",
+								"Downloading " + resource.uri + " of size " + fileSizeRemaining);
+						while (1> 0) {
+						//while ((num = in.readLine()) > 0) {
+							// Write the received bytes into the
+							// RandomAccessFile
+							downloadingFile.write(Arrays.copyOf(receiveBuffer, num));
+
+							// Reduce the file size left to read..
+							fileSizeRemaining -= num;
+
+							// Set the chunkSize again
+							chunkSize = setChunkSize(fileSizeRemaining);
+							receiveBuffer = new byte[chunkSize];
+
+							// If you're done then break
+							if (fileSizeRemaining == 0) {
+								break;
+							}
+						}
+						// System.out.println("File received!");
+						Log.log(Common.getMethodName(), "FINE", "FILE RECEIVED.");
+						downloadingFile.close();
+					}
+
+					break;
+				} else if (op.equals("QUERY")) {
+					if (printLog)
+						Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + message);
+					NormalResponse nr = new NormalResponse();
+					nr.fromJSON(message);
+					if (nr.getResponse().equals("success")) {
+						while (true) {
+							String messageResponse = in.readLine();
+							// TODO: Output result
+							// System.out.println(message);
+							if (printLog)
+								Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + message);
+							// TODO: set {"resultSize":6} as end flag
+							if (message.contains("{\"resultSize\":")) {
+								break;
+							} else {
+								if (resultArr != null) {
+									resultArr.add(message);
+								}
+							}
+						}
+					}
+				} else if (op.equals("SUBSCRIBE")) {
+					//String messageResponse = in.readUTF();
+					Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + message);
+					SubscribeResponse sr = new SubscribeResponse();
+					sr.fromJSON(message);
+					if (sr.getResponse().equals("success")) {
+						// listen unsubscribe event
+						ExecutorService pool = Executors.newCachedThreadPool();
+						pool.execute(new Runnable() {
+							@Override
+							public void run() {
+								BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+								try {
+									while (true) {
+										char input = (char) br.read();
+										if (input == '\n' || input == '\r') {
+											Unsubscribe unsubscribe = new Unsubscribe("UNSUBSCRIBE", sr.getId());
+											out.write(unsubscribe.toJSON());
+											pool.shutdown();
+											break;
+										}
+									}
+									br.close();
+								} catch (IOException e) {
+									e.printStackTrace();
+									System.exit(0);
+								}
+							}
+						});
+
+						while (true) {
+							String messageResponse = in.readLine();
+							Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + messageResponse);
+							if (messageResponse.contains("{\"resultSize\":")) {
+								break;
+							} else {
+								if (resultArr != null) {
+									resultArr.add(messageResponse);
+								}
+							}
+						}
+					}
+				} else {
+					//String message = in.readUTF();
 					// Output result
 					// System.out.println(message);
 					Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + message);

@@ -110,7 +110,7 @@ public class Operation {
 		}
 		return result;
 	}
-
+    
 	public ArrayList<String> doClientExchange(Exchange exchange,
 			ServerModel server) {
 		// System.out.println("doClientExchange:" + exchange.toJSON());
@@ -277,7 +277,7 @@ public class Operation {
 		return result;
 	}
 	
-
+//fei
 	public ArrayList<String> doClientSubscribe(Subscribe subscribe,
 			ServerModel server, ClientModel client) {
 		ArrayList<String> result = new ArrayList<String>();
@@ -323,7 +323,7 @@ public class Operation {
 
 		return result;
 	}
-
+    //fei
 	public void forwardSubscribe(ClientModel client, ServerModel forwardServer,
 			String query) {
 		try {
@@ -395,7 +395,7 @@ public class Operation {
 		result.add("{\"resultSize\":" + numOfHits + "}");
 		return result;
 	}
-
+    //fei
 	public int getRelayNumOfHits(ServerModel forwardServer, String query,
 			boolean printLog) {
 		int relayNumOfHits = 0;

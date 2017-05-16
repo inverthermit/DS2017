@@ -38,17 +38,18 @@ public class ServerSocketSSLThread implements Runnable {
 		// TODO Auto-generated method stub
 		ExecutorService pool = Executors.newCachedThreadPool();
 		pool.execute(new HeartbeatThread(selfModel));
-		System.setProperty("javax.net.ssl.keyStore","serverKeystore/server.jks");
-		System.setProperty("javax.net.ssl.keyStorePassword","ezshare");
+		System.setProperty("javax.net.ssl.keyStore","serverKeystore/aGreatName");
+		System.setProperty("javax.net.ssl.keyStorePassword","comp90015");
+		//System.setProperty("javax.net.debug","all");
 		try {
 			//System.out.println("start to conneting through secure socket");
-			Log.log(Common.getMethodName(), "INFO", "started");
+			
 			
 			SSLServerSocketFactory sslserversocketfactory = (SSLServerSocketFactory) SSLServerSocketFactory
 					.getDefault();
 			SSLServerSocket sslserversocket = (SSLServerSocket) sslserversocketfactory.createServerSocket(sport);
-			//SSLSocket sslSocket = (SSLSocket)sslserversocket.accept();
 			
+			Log.log(Common.getMethodName(), "INFO", "started");
 			boolean bool = true;
 			while (bool) {
 				ClientModel client = new ClientModel();

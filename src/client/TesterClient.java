@@ -14,7 +14,7 @@ import tool.Log;
  */
 public class TesterClient {
 	public static void main(String[] args){
-		int serverPort = 10002;//3780;
+		int serverPort = 10001;//3780;
 		String serverHostname = "127.0.0.1";//"sunrise.cis.unimelb.edu.au";
 		//TODO: 1. Check if parameters are valid
 		//Commandline.isValid(args);
@@ -29,7 +29,7 @@ public class TesterClient {
 	    String SubscribeExample = "{ \"command\": \"SUBSCRIBE\", \"relay\": true, \"resource\" : {  \"tags\" : [\"web\", \"html\"], \"description\" : \"The main page for the University of Melbournee\", \"uri\" : \"www.baidu.com\" , \"channel\" : \"\", \"owner\" : \"\", \"ezserver\" : null } }";
 	    Log.debug =true;
 	    String query = queryExample;//Translated query
-	    Client.doSend(serverHostname,serverPort,query,null,Log.debug);
+	    Client.doSendSecure(serverHostname,serverPort,query,null,Log.debug);
 	}
 
 }

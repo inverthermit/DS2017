@@ -8,6 +8,8 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
+import javax.net.ssl.SSLSocket;
+
 import tool.Common;
 import tool.Config;
 import tool.Log;
@@ -22,10 +24,14 @@ import model.ServerModel;
  * @version 1.1
  */
 public class SecureServerThread implements Runnable {
-	private Socket client;
+	private SSLSocket client;
 	private ClientModel clientModel;
-	private DataInputStream in;
-	private DataOutputStream out;
+	private InputStream input;
+	private InputStreamReader inReader;
+	private BufferedReader in;
+	private OutputStream output;
+	private OutputStreamWriter outWriter;
+	private BufferedWriter out;
 	private ServerModel selfModel;
 
 	/**
@@ -38,8 +44,13 @@ public class SecureServerThread implements Runnable {
 		this.client = client.sslsocket;
 		this.selfModel = selfModel;
 		try {
-			this.in = new DataInputStream(this.client.getInputStream());
-			this.out = new DataOutputStream(this.client.getOutputStream());
+			this.input = this.client.getInputStream();
+			this.inReader = new InputStreamReader(this.input);
+			this.in = new BufferedReader(inReader);
+			this.output = this.client.getOutputStream();
+			this.outWriter = new OutputStreamWriter(this.output);
+			this.out = new BufferedWriter(outWriter);
+			
 		} catch (Exception ee) {
 			ee.printStackTrace();
 		}
@@ -57,9 +68,10 @@ public class SecureServerThread implements Runnable {
 		System.out.println("run a thread for opreation");
 		try {
 			while (true) {
-				if (in.available() > 0) {
+				String message;
+				if ((message = in.readLine())!=null) {
+					System.out.println("has in");
 					// 1.Get message
-					String message = in.readUTF();
 					String option = Common.getOperationfromJson(message);
 					boolean persistentConnFlag = option == "SUBSCRIBE";
 					boolean unsubscribe = option == "UNSUBSCRIBE";
@@ -80,7 +92,8 @@ public class SecureServerThread implements Runnable {
 					}
 					// 3.Send results back to client
 					for (int i = 0; i < resultSet.size(); i++) {
-						out.writeUTF(resultSet.get(i));
+						out.write(resultSet.get(i)+'\n');
+						out.flush();
 						Log.log(Common.getMethodName(), "FINE", "SENDING: "
 								+ resultSet.get(i));
 					}
@@ -91,10 +104,9 @@ public class SecureServerThread implements Runnable {
 			}
 			// 4.Close the socket and quit the thread and leave it to be dealt
 			// by the threadpool
-			in.close();
-			out.flush();
-			out.close();
-			client.close();
+			//in.close();
+			//out.close();
+			//client.close();
 		} catch (Exception ee) {
 			ee.printStackTrace();
 		}

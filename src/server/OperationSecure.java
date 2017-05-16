@@ -36,80 +36,8 @@ import tool.Config;
 import tool.ErrorMessage;
 import tool.Log;
 
-public class OperationSecure {
+public class OperationSecure extends Operation {
 
-	public ArrayList<String> dispatcher(String json, ServerModel server,
-			ClientModel client) {
-		// 1.get the command of json
-		ArrayList<String> result = null;
-		if (checkResource(json, "") == -1) {
-			result = new ArrayList<String>();
-			NormalResponse nr = new NormalResponse("error",
-					ErrorMessage.GENERIC_INVALID);
-			result.add(nr.toJSON());
-		} else {
-			String op = Common.getOperationfromJson(json);
-			if (op == null) {
-				result = new ArrayList<String>();
-				NormalResponse nr = new NormalResponse("error",
-						ErrorMessage.GENERIC_INVALID);
-				result.add(nr.toJSON());
-				return result;
-			}
-			if (checkValidMissing(op, json) != null) {
-				result = new ArrayList<String>();
-				result.add(checkValidMissing(op, json));
-				return result;
-			} else {
-				switch (op) {
-				case "PUBLISH":
-					Publish publish = new Publish();
-					publish.fromJSON(json);
-					result = doClientPublish(publish, server);
-					break;
-				case "REMOVE":
-					Remove remove = new Remove();
-					remove.fromJSON(json);
-					result = doClientRemove(remove, server);
-					break;
-				case "SHARE":
-					Share share = new Share();
-					share.fromJSON(json);
-					result = doClientShare(share, server);
-					break;
-				case "QUERY":
-					Query query = new Query();
-					query.fromJSON(json);
-					result = doClientQuery(query, server);
-					break;
-				case "EXCHANGE":
-					Exchange exchange = new Exchange();
-					exchange.fromJSON(json);
-					result = doClientExchange(exchange, server);
-					break;
-				case "FETCH":
-					Fetch fetch = new Fetch();
-					fetch.fromJSON(json);
-					result = doClientFetch(fetch, server, client);
-					break;
-				case "SUBSCRIBE":
-					Subscribe subscribe = new Subscribe();
-					subscribe.fromJSON(json);
-					result = doClientSubscribe(subscribe, server, client);
-					break;
-				case "UNSUBSCRIBE":
-					Unsubscribe unsubscribe = new Unsubscribe();
-					unsubscribe.fromJSON(json);
-					result = doClientUnsubscribe(unsubscribe, server, client);
-					break;
-				default:
-					result = null;
-					break;
-				}
-			}
-		}
-		return result;
-	}
 
 	public ArrayList<String> doClientExchange(Exchange exchange,
 			ServerModel server) {
@@ -205,37 +133,6 @@ public class OperationSecure {
 			}
 		}
 		return null;
-	}
-
-	public ArrayList<String> doClientPublish(Publish publish, ServerModel server) {
-		ArrayList<String> result = new ArrayList<String>();
-
-		if (checkServerPublish(publish) != null) {
-			result.add(checkServerPublish(publish));
-			return result;
-		} else {
-			int status = server.addDelResource(publish.getResource(), true);
-			if (status > 0) {
-				NormalResponse nr = new NormalResponse("success");
-				result.add(nr.toJSON());
-			} else { // error 4
-				NormalResponse nr = new NormalResponse("error",
-						ErrorMessage.PUBLISH_BROKEN);
-				result.add(nr.toJSON());
-			}
-		}
-		return result;
-	}
-
-	public ArrayList<Resource> resourceMatch(Resource queryResource,
-			ArrayList<Resource> resourceList) {
-		ArrayList<Resource> matchedResource = new ArrayList<Resource>();
-		for (Resource resource : resourceList) {
-			if (Common.isMatchedResource(queryResource, resource)) { // queryresource is resource template
-				matchedResource.add(resource);
-			}
-		}
-		return matchedResource;
 	}
 
 	public ArrayList<String> doClientQuery(Query query, ServerModel server) {
@@ -437,69 +334,7 @@ public class OperationSecure {
 		return relayNumOfHits;
 	}
 
-	public ArrayList<String> doClientRemove(Remove remove, ServerModel server) {
-		ArrayList<String> result = new ArrayList<String>();
 
-		if (checkServerRemove(remove) != null) {
-			result.add(checkServerRemove(remove));
-			return result;
-		} else {
-
-			int status = server.addDelResource(remove.getResource(), false);
-			if (status > 0) {
-				NormalResponse nr = new NormalResponse("success");
-				result.add(nr.toJSON());
-			} else { // 3
-				NormalResponse nr = new NormalResponse("error",
-						ErrorMessage.REMOVE_RESOURCE_NOT_EXIST);
-				result.add(nr.toJSON());
-			}
-		}
-		return result;
-	}
-
-	public ArrayList<String> doClientShare(Share share, ServerModel server) {
-		ArrayList<String> result = new ArrayList<String>();
-
-		if (checkServerShare(share) != null) {
-			result.add(checkServerShare(share));
-			return result;
-		} else {
-
-			// System.out.println(share.getSecret()+"--"+server.secret);
-			if (share.getSecret() == null
-					|| (share.getSecret() != null && !share.getSecret().equals(
-							server.secret))) { // error 5
-				NormalResponse nr = new NormalResponse("error",
-						ErrorMessage.SHARE_SECRET_INCORRECT);
-				result.add(nr.toJSON());
-				return result;
-			}
-			// Check if the resource uri is a file which exists
-			String uri = share.getResource().uri;
-			if (uri.startsWith("file:")) {
-				uri = uri.replace("file:", "");
-			}
-			File f = new File(uri);
-			// System.out.println(share.getResource().uri+" "+f.exists()+" "+f.isDirectory()+" ");
-			if (!(f.exists() && !f.isDirectory())) {
-				NormalResponse nr = new NormalResponse("error",
-						ErrorMessage.PUBLISH_REMOVE_RESOURCE_INCORRECT);
-				result.add(nr.toJSON());
-				return result;
-			}
-			int status = server.addDelResource(share.getResource(), true);
-			if (status > 0) {
-				NormalResponse nr = new NormalResponse("success");
-				result.add(nr.toJSON());
-			} else { // error 4
-				NormalResponse nr = new NormalResponse("error",
-						ErrorMessage.SHARE_BROKEN);
-				result.add(nr.toJSON());
-			}
-		}
-		return result;
-	}
 
 	// Send using the EXCHANGE request to other servers in server.serverList
 	public ArrayList<String> doServerExchange(ServerModel server) {

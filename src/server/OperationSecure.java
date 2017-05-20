@@ -11,10 +11,16 @@ import model.Response.NormalResponse;
 import model.Response.SubscribeResponse;
 import model.command.*;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -24,6 +30,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 
 import org.json.JSONException;
 import org.json.simple.JSONObject;
@@ -161,11 +170,11 @@ public class OperationSecure extends Operation {
 				String forwardQuery = relayQuery.toJSON();
 				for (int i = 0; i < server.secureServerList.size(); i++) {
 					ServerModel tempServer = server.secureServerList.get(i);
-					if (server.hostName.equals(tempServer.hostName)
+					if (server.hostname.equals(tempServer.hostname)
 							&& server.sport == tempServer.sport) {
 						continue;
 					}
-					Client.doSendSecure(tempServer.hostName, tempServer.sport,
+					Client.doSendSecure(tempServer.hostname, tempServer.sport,
 							forwardQuery, result, Log.debug);
 				}
 			}
@@ -203,7 +212,7 @@ public class OperationSecure extends Operation {
 			relaySubscribe.setRelay(false);
 
 			for (ServerModel forwardServer : server.secureServerList) {
-				if (server.hostName.equals(forwardServer.hostName)
+				if (server.hostname.equals(forwardServer.hostname)
 						&& server.sport == forwardServer.sport) {
 					continue;
 				}
@@ -225,35 +234,44 @@ public class OperationSecure extends Operation {
 			String query) {
 		try {
 			// change to secure socket
-			Socket socket = new Socket();
-			String hostname = forwardServer.hostName;
+			System.setProperty("javax.net.ssl.trustStore", "clientKeyStore/myGreatName");
+			SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+			String hostname = forwardServer.hostname;
 			int port = forwardServer.sport;
-			socket.connect(new InetSocketAddress(hostname, port),
-					Config.CONNECTION_TIMEOUT);
+			SSLSocket sslsocket = (SSLSocket) sslsocketfactory.createSocket(hostname, port);
+			//socket.connect(new InetSocketAddress(hostname, port),
+		//			Config.CONNECTION_TIMEOUT);
 			Log.log(Common.getMethodName(), "FINE", "SENT: " + query);
-			DataInputStream in = new DataInputStream(socket.getInputStream());
-			DataOutputStream out = new DataOutputStream(
-					socket.getOutputStream());
-			out.writeUTF(query);
+			InputStream inputstream = sslsocket.getInputStream();
+			InputStreamReader inputstreamreader = new InputStreamReader(inputstream);
+			BufferedReader bufferedreader = new BufferedReader(inputstreamreader);
+			//write to the server
+			OutputStream outputstream = sslsocket.getOutputStream();
+			OutputStreamWriter outputstreamwriter = new OutputStreamWriter(outputstream);
+			BufferedWriter bufferedwriter = new BufferedWriter(outputstreamwriter);
+			bufferedwriter.write(query + '\n');
+			bufferedwriter.flush();
 
 			while (true) {
-				if (in.available() > 0) {
-					String messageResponse = in.readUTF();
+				String message;
+				if ((message = bufferedreader.readLine())!=null) {
 					Log.log(Common.getMethodName(), "FINE", "RECEIVED: "
-							+ messageResponse);
+							+ message);
 					SubscribeResponse sr = new SubscribeResponse();
-					sr.fromJSON(messageResponse);
+					sr.fromJSON(message);
 					if (sr.getResponse().equals("success")) {
-						DataOutputStream outClient = new DataOutputStream(
-								client.socket.getOutputStream());
+						OutputStream outputstreamClient = sslsocket.getOutputStream();
+						OutputStreamWriter outputstreamwriterClient = new OutputStreamWriter(outputstream);
+						BufferedWriter bufferedwriterClient = new BufferedWriter(outputstreamwriter);
 						while (true) {
-							String message = in.readUTF();
+							String messageResponse = bufferedreader.readLine();
 							Log.log(Common.getMethodName(), "FINE",
-									"RECEIVED: " + message);
+									"RECEIVED: " + messageResponse);
 							ArrayList<String> resultSet = new ArrayList<String>();
-							resultSet.add(message);
+							resultSet.add(messageResponse);
 							for (int i = 0; i < resultSet.size(); i++) {
-								outClient.writeUTF(resultSet.get(i));
+								bufferedwriterClient.write(resultSet.get(i) + '\n');
+								bufferedwriterClient.flush();
 								Log.log(Common.getMethodName(), "FINE",
 										"SENDING: " + resultSet.get(i));
 							}
@@ -262,6 +280,7 @@ public class OperationSecure extends Operation {
 					break;
 				}
 			}
+			//need closing??
 			// in.close();
 			// out.flush();
 			// out.close();
@@ -282,7 +301,7 @@ public class OperationSecure extends Operation {
 		int numOfHits = subscribe.getNumOfHits();
 		if (server.secureServerList != null) {
 			for (ServerModel subscribedServer : server.secureServerList) {
-				if (server.hostName.equals(subscribedServer.hostName)
+				if (server.hostname.equals(subscribedServer.hostname)
 						&& server.sport == subscribedServer.sport) {
 					continue;
 				}
@@ -297,20 +316,25 @@ public class OperationSecure extends Operation {
 	public int getRelayNumOfHits(ServerModel forwardServer, String query,
 			boolean printLog) {
 		int relayNumOfHits = 0;
-		Socket socket = new Socket();
-		String hostname = forwardServer.hostName;
+		System.setProperty("javax.net.ssl.trustStore", "clientKeyStore/myGreatName");
+		SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+		String hostname = forwardServer.hostname;
 		int port = forwardServer.sport;
 		try {
-			socket.connect(new InetSocketAddress(hostname, port),
-					Config.CONNECTION_TIMEOUT);
+			SSLSocket sslsocket = (SSLSocket) sslsocketfactory.createSocket(hostname, port);
 			Log.log(Common.getMethodName(), "FINE", "SENT: " + query);
-			DataInputStream in = new DataInputStream(socket.getInputStream());
-			DataOutputStream out = new DataOutputStream(
-					socket.getOutputStream());
-			out.writeUTF(query);
+			InputStream inputstream = sslsocket.getInputStream();
+			InputStreamReader inputstreamreader = new InputStreamReader(inputstream);
+			BufferedReader bufferedreader = new BufferedReader(inputstreamreader);
+			//write to the server
+			OutputStream outputstream = sslsocket.getOutputStream();
+			OutputStreamWriter outputstreamwriter = new OutputStreamWriter(outputstream);
+			BufferedWriter bufferedwriter = new BufferedWriter(outputstreamwriter);
+			bufferedwriter.write(query + '\n');
+			bufferedwriter.flush();
 			while (true) {
-				if (in.available() > 0) {
-					String messageResponse = in.readUTF();
+				String messageResponse;
+				if ((messageResponse = bufferedreader.readLine())!=null) {
 					Log.log(Common.getMethodName(), "FINE", "RECEIVED: "
 							+ messageResponse);
 					org.json.JSONObject json = new org.json.JSONObject(
@@ -321,6 +345,7 @@ public class OperationSecure extends Operation {
 					}
 				}
 			}
+			// need to close?
 			// in.close();
 			// out.flush();
 			// out.close();
@@ -343,7 +368,7 @@ public class OperationSecure extends Operation {
 		for (int i = 0; i < server.secureServerList.size(); i++) {
 			ServerModel tempServer = server.secureServerList.get(i);
 			// System.out.println(server.hostname+" "+(tempServer.hostname)+" "+server.port+" "+tempServer.port);
-			if (server.hostName.equals(tempServer.hostName)
+			if (server.hostname.equals(tempServer.hostname)
 					&& server.sport == tempServer.sport) {
 				continue;
 			}
@@ -353,7 +378,7 @@ public class OperationSecure extends Operation {
 			// java.net.ConnectException Then Delete the address (Add a return
 			// to doSend)
 			// TODO: Needed test
-			boolean success = Client.doSendSecure(tempServer.hostName,
+			boolean success = Client.doSendSecure(tempServer.hostname,
 					tempServer.sport, Common.queryExample, null, false);
 			if (!success) {
 				// Log.log(Common.getMethodName(), "INFO",
@@ -372,11 +397,11 @@ public class OperationSecure extends Operation {
 			int randomNum = ThreadLocalRandom.current().nextInt(0,
 					server.secureServerList.size());
 			ServerModel tempServer = server.secureServerList.get(randomNum);
-			if (server.hostName.equals(tempServer.hostName)
+			if (server.hostname.equals(tempServer.hostname)
 					&& server.sport == tempServer.sport) {
 				return null;
 			}
-			boolean success = Client.doSendSecure(tempServer.hostName,
+			boolean success = Client.doSendSecure(tempServer.hostname,
 					tempServer.sport, query, null, Log.debug);
 			if (!success) {
 				server.addDelServerSecure(server.secureServerList.get(randomNum), false);

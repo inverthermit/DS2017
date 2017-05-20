@@ -600,7 +600,7 @@ public class Client {
 			String message;
 			System.out.println("getting response");
 			if ((message=in.readLine())!=null) {
-				System.out.println(message+"add");
+				System.out.println(message);
 				if (op.equals("FETCH")) {
 					//String message = in.readUTF();
 					// Output result

@@ -264,11 +264,11 @@ public class Operation {
 				String forwardQuery = relayQuery.toJSON();
 				for (int i = 0; i < server.serverList.size(); i++) {
 					ServerModel tempServer = server.serverList.get(i);
-					if (server.hostName.equals(tempServer.hostName)
+					if (server.hostname.equals(tempServer.hostname)
 							&& server.port == tempServer.port) {
 						continue;
 					}
-					Client.doSend(tempServer.hostName, tempServer.port,
+					Client.doSend(tempServer.hostname, tempServer.port,
 							forwardQuery, result, Log.debug);
 				}
 			}
@@ -306,7 +306,7 @@ public class Operation {
 			relaySubscribe.setRelay(false);
 
 			for (ServerModel forwardServer : server.serverList) {
-				if (server.hostName.equals(forwardServer.hostName)
+				if (server.hostname.equals(forwardServer.hostname)
 						&& server.port == forwardServer.port) {
 					continue;
 				}
@@ -328,7 +328,7 @@ public class Operation {
 			String query) {
 		try {
 			Socket socket = new Socket();
-			String hostname = forwardServer.hostName;
+			String hostname = forwardServer.hostname;
 			int port = forwardServer.port;
 			socket.connect(new InetSocketAddress(hostname, port),
 					Config.CONNECTION_TIMEOUT);
@@ -384,7 +384,7 @@ public class Operation {
 		int numOfHits = subscribe.getNumOfHits();
 		if (server.serverList != null) {
 			for (ServerModel subscribedServer : server.serverList) {
-				if (server.hostName.equals(subscribedServer.hostName)
+				if (server.hostname.equals(subscribedServer.hostname)
 						&& server.port == subscribedServer.port) {
 					continue;
 				}
@@ -400,7 +400,7 @@ public class Operation {
 			boolean printLog) {
 		int relayNumOfHits = 0;
 		Socket socket = new Socket();
-		String hostname = forwardServer.hostName;
+		String hostname = forwardServer.hostname;
 		int port = forwardServer.port;
 		try {
 			socket.connect(new InetSocketAddress(hostname, port),
@@ -507,7 +507,7 @@ public class Operation {
 		for (int i = 0; i < server.serverList.size(); i++) {
 			ServerModel tempServer = server.serverList.get(i);
 			// System.out.println(server.hostname+" "+(tempServer.hostname)+" "+server.port+" "+tempServer.port);
-			if (server.hostName.equals(tempServer.hostName)
+			if (server.hostname.equals(tempServer.hostname)
 					&& server.port == tempServer.port) {
 				continue;
 			}
@@ -517,7 +517,7 @@ public class Operation {
 			// java.net.ConnectException Then Delete the address (Add a return
 			// to doSend)
 			// TODO: Needed test
-			boolean success = Client.doSend(tempServer.hostName,
+			boolean success = Client.doSend(tempServer.hostname,
 					tempServer.port, Common.queryExample, null, false);
 			if (!success) {
 				// Log.log(Common.getMethodName(), "INFO",
@@ -536,11 +536,11 @@ public class Operation {
 			int randomNum = ThreadLocalRandom.current().nextInt(0,
 					server.serverList.size());
 			ServerModel tempServer = server.serverList.get(randomNum);
-			if (server.hostName.equals(tempServer.hostName)
+			if (server.hostname.equals(tempServer.hostname)
 					&& server.port == tempServer.port) {
 				return null;
 			}
-			boolean success = Client.doSend(tempServer.hostName,
+			boolean success = Client.doSend(tempServer.hostname,
 					tempServer.port, query, null, Log.debug);
 			if (!success) {
 				server.addDelServer(server.serverList.get(randomNum), false);

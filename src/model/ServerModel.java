@@ -29,7 +29,7 @@ import com.google.gson.Gson;
 public class ServerModel {
 	/** All of attributes of server command line and initialize them. */
 	public String advertisedHostName;
-	public String hostName;
+	public String hostname;
 	public String intervalLimit;
 	public String exchangeInterval;
 	public int port;
@@ -57,7 +57,7 @@ public class ServerModel {
 	}
 
 	public ServerModel(String hostname, int port) {
-		this.hostName = hostname;
+		this.hostname = hostname;
 		this.port = port;
 		init();
 	}
@@ -69,7 +69,7 @@ public class ServerModel {
 	 *            String type hostName
 	 */
 	public void setHostName(String hostName) {
-		this.hostName = hostName;
+		this.hostname = hostName;
 	}
 
 	/**
@@ -143,7 +143,7 @@ public class ServerModel {
 		if (isAdd) {
 			for (int i = 0; i < this.serverList.size(); i++) {
 				ServerModel element = this.serverList.get(i);
-				if (server.hostName.equals(element.hostName)
+				if (server.hostname.equals(element.hostname)
 						&& server.port == element.port) {
 					this.serverList.remove(i);
 					break;
@@ -156,7 +156,7 @@ public class ServerModel {
 			int flag = 0;// Record if there's a successful deletion
 			for (int i = 0; i < this.serverList.size(); i++) {
 				ServerModel element = this.serverList.get(i);
-				if (server.hostName.equals(element.hostName)
+				if (server.hostname.equals(element.hostname)
 						&& server.port == element.port) {
 					this.serverList.remove(i);
 					flag = 1;
@@ -175,7 +175,7 @@ public class ServerModel {
 		if (isAdd) {
 			for (int i = 0; i < this.secureServerList.size(); i++) {
 				ServerModel element = this.secureServerList.get(i);
-				if (server.hostName.equals(element.hostName)
+				if (server.hostname.equals(element.hostname)
 						&& server.sport == element.sport) {
 					this.secureServerList.remove(i);
 					break;
@@ -188,7 +188,7 @@ public class ServerModel {
 			int flag = 0;// Record if there's a successful deletion
 			for (int i = 0; i < this.secureServerList.size(); i++) {
 				ServerModel element = this.secureServerList.get(i);
-				if (server.hostName.equals(element.hostName)
+				if (server.hostname.equals(element.hostname)
 						&& server.sport == element.sport) {
 					this.secureServerList.remove(i);
 					flag = 1;

@@ -66,8 +66,8 @@ public class Server {
 		if (selfModel.secret == null) {
 			selfModel.secret = Common.SECRET;
 		}
-		if (selfModel.hostName == null) {
-			selfModel.hostName = Config.DEFAULT_HOST;
+		if (selfModel.hostname == null) {
+			selfModel.hostname = Config.DEFAULT_HOST;
 		}
 		if (selfModel.exchangeInterval != null) {
 			// to int catch exception

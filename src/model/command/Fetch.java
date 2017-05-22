@@ -28,12 +28,6 @@ public class Fetch extends Request {
 	}
 	
 	@Override
-	public String toJSON() {
-		Gson gson = new Gson();
-		return gson.toJson(this);
-	}
-
-	@Override
 	public void fromJSON(String json) {
 		Gson gson = new Gson();
 		Fetch obj = gson.fromJson(json, Fetch.class);

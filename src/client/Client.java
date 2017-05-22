@@ -436,12 +436,12 @@ public class Client {
 					nr.fromJSON(message);
 					if (nr.getResponse().equals("success")) {
 						String resourceStr = in.readUTF();
-						// Output result
-						// System.out.println(resourceStr);
 						Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + resourceStr);
 						if (resourceStr.equals("{\"resultSize\":0}")) {
 							break;
 						}
+						resourceStr = in.readUTF();
+						Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + resourceStr);
 						Resource resource = new Resource();
 						resource.fromJSON(resourceStr);
 						// The file location
@@ -616,6 +616,9 @@ public class Client {
 						if (resourceStr.equals("{\"resultSize\":0}")) {
 							break;
 						}
+						resourceStr = in.readLine();
+						Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + resourceStr);
+						
 						Resource resource = new Resource();
 						resource.fromJSON(resourceStr);
 						// The file location

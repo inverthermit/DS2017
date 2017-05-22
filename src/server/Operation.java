@@ -172,6 +172,7 @@ public class Operation {
 					// Send trigger to client
 					NormalResponse nr = new NormalResponse("success");
 					output.writeUTF(nr.toJSON());
+					output.writeUTF("{\"resultSize\":1}");
 					Log.log(Common.getMethodName(), "FINE",
 							"SENDING: " + nr.toJSON());
 					fetch.getResource().resourceSize = f.length();

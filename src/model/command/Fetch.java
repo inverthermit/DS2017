@@ -24,6 +24,13 @@ public class Fetch extends Request {
 	public Fetch(String command, Resource resourceTemplate) {
 		this.command = command;
 		this.resourceTemplate = resourceTemplate;
+		this.resourceTemplate.resourceSize = 0l;
+	}
+	
+	@Override
+	public String toJSON() {
+		Gson gson = new Gson();
+		return gson.toJson(this);
 	}
 
 	@Override

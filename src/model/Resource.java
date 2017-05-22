@@ -4,12 +4,8 @@
  */
 package model;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Arrays;
-import model.command.Share;
 import com.google.gson.Gson;
 
 /**
@@ -32,7 +28,7 @@ public class Resource {
 	public String channel = "";
 	public String owner = "";
 	public String EZserver = "null";
-	public long resourceSize;
+	public Long resourceSize = null;
 
 	/** Default constructor of the class Resource. */
 	public Resource() {

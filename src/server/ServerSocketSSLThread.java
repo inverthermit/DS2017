@@ -4,17 +4,25 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
+import java.security.KeyStore;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 
 import model.ClientModel;
 import model.ServerModel;
@@ -38,8 +46,22 @@ public class ServerSocketSSLThread implements Runnable {
 		// TODO Auto-generated method stub
 		ExecutorService pool = Executors.newCachedThreadPool();
 		pool.execute(new HeartbeatThread(selfModel));
-		System.setProperty("javax.net.ssl.keyStore","serverKeystore/aGreatName");
-		System.setProperty("javax.net.ssl.keyStorePassword","comp90015");
+		InputStream keystoreInput = Thread.currentThread().getContextClassLoader()
+			    .getResourceAsStream("/serverKeystore/aGreatName");
+			InputStream truststoreInput = Thread.currentThread().getContextClassLoader()
+			    .getResourceAsStream("/clientKeyStore/myGreatName");
+			try {
+				setSSLFactories(keystoreInput, "comp90015",truststoreInput);
+				
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+		//InputStream path = this.getClass().getResourceAsStream("/serverKeystore/aGreatName");
+		//System.out.println(path);
+		//System.setProperty("javax.net.ssl.keyStore",path.toString());
+		//System.setProperty("javax.net.ssl.keyStorePassword","comp90015");
 		//System.setProperty("javax.net.debug","all");
 		try {
 			//System.out.println("start to conneting through secure socket");
@@ -81,12 +103,59 @@ public class ServerSocketSSLThread implements Runnable {
 				pool.execute(new SecureServerThread(client, selfModel));
 			}
 			sslserversocket.close();
+			keystoreInput.close();
+			truststoreInput.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			e.printStackTrace();
 			Log.log(Common.getMethodName(), "INFO", "Server fail to start: Port already in used(" + sport + ")");
 			System.exit(0);
 		}
 	}
+	
+	
+
+		private static void setSSLFactories(InputStream keyStream, String keyStorePassword, 
+		    InputStream trustStream) throws Exception
+		{    
+		  // Get keyStore
+		  KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());    
+
+		  // if your store is password protected then declare it (it can be null however)
+		  char[] keyPassword = keyStorePassword.toCharArray();
+
+		  // load the stream to your store
+		  keyStore.load(keyStream, keyPassword);
+
+		  // initialize a trust manager factory with the trusted store
+		  KeyManagerFactory keyFactory = 
+		  KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());    
+		  keyFactory.init(keyStore, keyPassword);
+
+		  // get the trust managers from the factory
+		  KeyManager[] keyManagers = keyFactory.getKeyManagers();
+
+		  // Now get trustStore
+		  KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());    
+
+		  // if your store is password protected then declare it (it can be null however)
+		  //char[] trustPassword = password.toCharArray();
+
+		  // load the stream to your store
+		  trustStore.load(trustStream, null);
+
+		  // initialize a trust manager factory with the trusted store
+		  TrustManagerFactory trustFactory = 
+		  TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());    
+		  trustFactory.init(trustStore);
+
+		  // get the trust managers from the factory
+		  TrustManager[] trustManagers = trustFactory.getTrustManagers();
+
+		  // initialize an ssl context to use these managers and set as default
+		  SSLContext sslContext = SSLContext.getInstance("SSL");
+		  sslContext.init(keyManagers, trustManagers, null);
+		  SSLContext.setDefault(sslContext);    
+		}
 	
 }

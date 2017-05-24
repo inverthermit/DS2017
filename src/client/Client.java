@@ -16,6 +16,7 @@ import tool.ClientCommandLine;
 import tool.Common;
 import tool.Config;
 import tool.ErrorMessage;
+import tool.Keystore;
 import tool.Log;
 
 import java.util.*;
@@ -67,7 +68,6 @@ public class Client {
 		 * for(int i=0;i<args.length;i++){ System.out.println(args[i]); }
 		 */
 		ClientCommandLine.checkError(args);
-		System.out.println("1");
 		String query = ClientCommandLine.ClientCommandLine(args);
 		if (ClientCommandLine.getDebug()) {
 			Log.debug = true;
@@ -143,8 +143,19 @@ public class Client {
 		}
 		try{
 			//create ssl socket
+			InputStream keystoreInput = Thread.currentThread().getContextClassLoader()
+				    .getResourceAsStream("/clientKeystore/aGreatName");
+				InputStream truststoreInput = Thread.currentThread().getContextClassLoader()
+				    .getResourceAsStream("/serverKeyStore/myGreatName");
+				try {
+					Keystore.setSSLFactories(keystoreInput, "comp90015",truststoreInput);
+					
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			System.out.println("start to connecting the server");
-			System.setProperty("javax.net.ssl.trustStore", "clientKeyStore/myGreatName");
+			//System.setProperty("javax.net.ssl.trustStore", "clientKeyStore/myGreatName");
 			System.out.println("starting to certification");
 			SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 			SSLSocket sslsocket = (SSLSocket) sslsocketfactory.createSocket(hostname, port);

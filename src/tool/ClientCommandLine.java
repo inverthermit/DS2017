@@ -511,12 +511,13 @@ public class ClientCommandLine {
 	
 	public static boolean checkErrorOptions(Option[] commandline) {
 		try {
-			for (int i = 0; i < allcommandline.length; i++) {
-				if (allcommandline[i].getOpt() != null && allcommandline[i].getOpt().equals("debug")) {
+			for (int i = 0; i < commandline.length; i++) {
+				if (commandline[i].getOpt() != null) {
 					return true;
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			Log.debug = true;
 			ErrorMessage error = new ErrorMessage();
 			NormalResponse response = new NormalResponse("error", error.GENERIC_MISS_INCORRECT);

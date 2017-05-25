@@ -17,8 +17,8 @@ public class Keystore {
 		    InputStream trustStream) throws Exception
 		{    
 		  // Get keyStore
-		  //KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());    
-		  KeyStore keyStore = KeyStore.getInstance("JKS");  
+		  KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());    
+		  //KeyStore keyStore = KeyStore.getInstance("JKS");  
 		  // if your store is password protected then declare it (it can be null however)
 		  char[] keyPassword = keyStorePassword.toCharArray();
 

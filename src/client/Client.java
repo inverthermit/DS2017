@@ -7,7 +7,7 @@ package client;
 import java.net.*;
 import java.util.Arrays;
 import java.io.*;
-
+//import com.sun.net.ssl.internal.ssl.Provider;
 import model.Resource;
 import model.Response.NormalResponse;
 import model.Response.SubscribeResponse;
@@ -85,6 +85,7 @@ public class Client {
 
 			if (query != null) {
 				if(ClientCommandLine.getSecure()){
+					serverPort = Config.DEFAULT_SECURE_PORT;
 					doSendSecure(serverHostname,serverPort,query,null,Log.debug);
 				} else {
 					doSend(serverHostname, serverPort,query,null,Log.debug);
@@ -143,19 +144,16 @@ public class Client {
 		}
 		try{
 			//create ssl socket
+			/*
 			InputStream keystoreInput = Thread.currentThread().getContextClassLoader()
-				    .getResourceAsStream("/clientKeystore/aGreatName");
-				InputStream truststoreInput = Thread.currentThread().getContextClassLoader()
-				    .getResourceAsStream("/serverKeyStore/myGreatName");
-				try {
-					Keystore.setSSLFactories(keystoreInput, "comp90015",truststoreInput);
-					
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				    .getResourceAsStream("/xty/clientKeystore/client.jks");//"/xty/clientKeystore/client.jks"
+			InputStream truststoreInput = Thread.currentThread().getContextClassLoader()
+				    .getResourceAsStream("/xty/serverKeystore/server.jks");///xty/serverKeystore/server.jks
+				
+			Keystore.setSSLFactories(keystoreInput, "comp90015",truststoreInput);
+			*/	
 			System.out.println("start to connecting the server");
-			//System.setProperty("javax.net.ssl.trustStore", "clientKeyStore/myGreatName");
+			System.setProperty("javax.net.ssl.trustStore", "clientKeyStore/myGreatName");
 			System.out.println("starting to certification");
 			SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 			SSLSocket sslsocket = (SSLSocket) sslsocketfactory.createSocket(hostname, port);

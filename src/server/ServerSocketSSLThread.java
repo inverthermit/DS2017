@@ -47,10 +47,12 @@ public class ServerSocketSSLThread implements Runnable {
 		// TODO Auto-generated method stub
 		ExecutorService pool = Executors.newCachedThreadPool();
 		pool.execute(new HeartbeatThread(selfModel));
+		/*
+		System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
 		InputStream keystoreInput = Thread.currentThread().getContextClassLoader()
-			    .getResourceAsStream("/serverKeystore/aGreatName");
+			    .getResourceAsStream("/serverKeystore/server.jks");///xty/serverKeystore/server.jks
 			InputStream truststoreInput = Thread.currentThread().getContextClassLoader()
-			    .getResourceAsStream("/clientKeyStore/myGreatName");
+			    .getResourceAsStream("/clientKeystore/client.jks");///xty/clientKeystore/client.jks
 			try {
 				Keystore.setSSLFactories(keystoreInput, "comp90015",truststoreInput);
 				
@@ -58,14 +60,15 @@ public class ServerSocketSSLThread implements Runnable {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+			*/
 			
 		//InputStream path = this.getClass().getResourceAsStream("/serverKeystore/aGreatName");
 		//System.out.println(path);
-		//System.setProperty("javax.net.ssl.keyStore",path.toString());
-		//System.setProperty("javax.net.ssl.keyStorePassword","comp90015");
-		//System.setProperty("javax.net.debug","all");
+		System.setProperty("javax.net.ssl.keyStore","serverKeystore/aGreatName");
+		System.setProperty("javax.net.ssl.keyStorePassword","comp90015");
+		System.setProperty("javax.net.debug","all");
 		try {
-			//System.out.println("start to conneting through secure socket");
+			System.out.println("start to conneting through secure socket");
 			
 			
 			SSLServerSocketFactory sslserversocketfactory = (SSLServerSocketFactory) SSLServerSocketFactory
@@ -104,8 +107,8 @@ public class ServerSocketSSLThread implements Runnable {
 				pool.execute(new SecureServerThread(client, selfModel));
 			}
 			sslserversocket.close();
-			keystoreInput.close();
-			truststoreInput.close();
+			//keystoreInput.close();
+			//truststoreInput.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

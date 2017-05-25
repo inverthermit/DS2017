@@ -104,17 +104,18 @@ public class OperationSecure extends Operation {
 			if (f.exists()) {
 				// Send this back to client so that they know what the file is.
 				try {
-					DataOutputStream output = new DataOutputStream(
-							client.socket.getOutputStream());
+					DataOutputStream output = new DataOutputStream(client.sslsocket.getOutputStream());
 					// Send trigger to client
 					NormalResponse nr = new NormalResponse("success");
 					output.writeUTF(nr.toJSON());
 					output.writeUTF("{\"resultSize\":1}");
 					Log.log(Common.getMethodName(), "FINE",
 							"SENDING: " + nr.toJSON());
+					Log.log(Common.getMethodName(),"FINE","SENDING: "+"{\"resultSize\":1}");
 					fetch.getResource().resourceSize = f.length();
 					// System.out.println(fetch.getResource().toJSON());
 					output.writeUTF(fetch.getResource().toJSON());
+
 					Log.log(Common.getMethodName(), "FINE", "SENDING: "
 							+ fetch.getResource().toJSON());
 					// Start sending file
@@ -122,6 +123,7 @@ public class OperationSecure extends Operation {
 					byte[] sendingBuffer = new byte[Config.TRUNK_SIZE];
 					int num;
 					// While there are still bytes to send..
+					System.out.println("ready to send the file");
 					while ((num = byteFile.read(sendingBuffer)) > 0) {
 						output.write(Arrays.copyOf(sendingBuffer, num));
 					}

@@ -690,7 +690,7 @@ public class Client {
 					break;
 				} else if (op.equals("QUERY")) {
 					if (printLog)
-						Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + message);
+					Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + message);
 					NormalResponse nr = new NormalResponse();
 					nr.fromJSON(message);
 					if (nr.getResponse().equals("success")) {
@@ -701,7 +701,8 @@ public class Client {
 							if (printLog)
 								Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + messageResponse);
 							// TODO: set {"resultSize":6} as end flag
-							if (message.contains("{\"resultSize\":")) {
+							if (messageResponse.contains("{\"resultSize\":")) {
+								System.out.println("end");
 								break;
 							} else {
 								if (resultArr != null) {

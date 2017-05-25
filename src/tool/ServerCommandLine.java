@@ -119,6 +119,7 @@ public class ServerCommandLine {
 
 			// if command line has -debug
 			if (commandLine.hasOption("debug")) {
+				
 				Log.debug = true;
 				//System.out.println("has debug");
 			}

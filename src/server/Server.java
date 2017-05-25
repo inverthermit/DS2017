@@ -47,6 +47,8 @@ public class Server {
 	 */
 	public static void main(String[] args) {
 		ServerModel sm = ServerCommandLine.ServerCommandLine(args);
+		Log.infoDebug = true;
+		System.out.println("starting the server");
 		if (sm == null) {
 			return;
 		} else {
@@ -97,6 +99,7 @@ public class Server {
 		// System.out.println(selfModel.hostname+":"+selfModel.port+"
 		// "+selfModel.exchangeInterval+" "+selfModel.intervallimit+"
 		// "+selfModel.secret);
+		Log.infoDebug = true;
 		Log.log(Common.getMethodName(), "INFO", "Starting the EZShare Server");
 		Log.log(Common.getMethodName(), "INFO", "using advertised hostname: " + selfModel.advertisedHostName);
 		Log.log(Common.getMethodName(), "INFO", "using secret: " + selfModel.secret);
@@ -105,6 +108,7 @@ public class Server {
 //		selfModel.serverList.add(sm1);
 		Log.log(Common.getMethodName(), "INFO", "bound to port " + port);
 		Log.log(Common.getMethodName(), "INFO", "bound to sport " + sport);
+		Log.infoDebug = false;
 		ServerSocketThread unsecure=new ServerSocketThread(port,selfModel);
 		ServerSocketSSLThread secure=new ServerSocketSSLThread(sport,selfModel);
 	    Thread t1 = new Thread(unsecure);

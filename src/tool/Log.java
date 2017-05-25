@@ -9,6 +9,7 @@ import java.util.*;
 
 public class Log{
 	public static boolean debug = false;
+	public static boolean infoDebug = false;
 	/**
 	 * This method outputs an message.
 	 * @param msg A message to be output.
@@ -16,6 +17,8 @@ public class Log{
 	 */
 	public static void log(String msg){
 		if(debug){
+			System.out.println(msg);
+		} else if (infoDebug){
 			System.out.println(msg);
 		}
 	}
@@ -25,7 +28,7 @@ public class Log{
 	 * 
 	 */
 	public static void log(String className, String level, String content){
-		if(debug){
+		if(debug||infoDebug){
 			//get dd/MM/yyyy HH:mm:ss.SSS
 			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS");
 			Date date = new Date();

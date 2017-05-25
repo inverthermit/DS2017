@@ -64,6 +64,7 @@ public class ClientCommandLine {
 				Log.log(Common.getMethodName(), "FINE", "CHECK: " + response.toJSON());
 			} else {
 				allcommandline = commandline;
+				
 				String command = commandline[0].getOpt();
 				switch (command) {
 				case "publish":
@@ -87,11 +88,19 @@ public class ClientCommandLine {
 				case "subscribe":
 					request = cliSubscribe(commandline);
 					break;
+//				case "port":
+//				case "hostname":
+//				case "debug":
+//				case "secure":
+//				case "owner":
+
+//					break;
 				default:
 					ErrorMessage error = new ErrorMessage();
-					NormalResponse response = new NormalResponse("error", error.GENERIC_INVALID);
+					NormalResponse response = new NormalResponse("error", "Please put command first");
 					Log.log(Common.getMethodName(), "FINE", "CHECK: " + response.toJSON());
 					break;
+				
 				}
 				if (valid == false) {
 					request = null;

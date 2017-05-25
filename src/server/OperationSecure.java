@@ -43,6 +43,7 @@ import client.Client;
 import tool.Common;
 import tool.Config;
 import tool.ErrorMessage;
+import tool.Keystore;
 import tool.Log;
 
 public class OperationSecure extends Operation {
@@ -236,11 +237,24 @@ public class OperationSecure extends Operation {
 	public void forwardSubscribe(ClientModel client, ServerModel forwardServer,
 			String query) {
 		try {
-			// change to secure socket
-			System.setProperty("javax.net.ssl.trustStore", "clientKeyStore/myGreatName");
-			SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 			String hostname = forwardServer.hostname;
 			int port = forwardServer.sport;
+			InputStream keystoreInput = Client.class.
+				    getResourceAsStream("/key/server.jks");//serverKeystore/server.jks
+			InputStream truststoreInput = Client.class
+				    .getResourceAsStream("/key/client.jks");///xty/clientKeystore/client.jks
+				
+			try {
+				Keystore.setSSLFactories(keystoreInput, "comp90015",truststoreInput);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			System.out.println("start to connecting the server");
+			System.setProperty("javax.net.ssl.trustStore", "xty/clientKeyStore/client.jks");
+			System.out.println("starting to certification");
+			SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 			SSLSocket sslsocket = (SSLSocket) sslsocketfactory.createSocket(hostname, port);
 			//socket.connect(new InetSocketAddress(hostname, port),
 		//			Config.CONNECTION_TIMEOUT);
@@ -318,13 +332,24 @@ public class OperationSecure extends Operation {
 
 	public int getRelayNumOfHits(ServerModel forwardServer, String query,
 			boolean printLog) {
+		
 		int relayNumOfHits = 0;
-		System.setProperty("javax.net.ssl.trustStore", "clientKeyStore/myGreatName");
-		SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 		String hostname = forwardServer.hostname;
 		int port = forwardServer.sport;
 		try {
-			SSLSocket sslsocket = (SSLSocket) sslsocketfactory.createSocket(hostname, port);
+		InputStream keystoreInput = Client.class.
+			    getResourceAsStream("/key/server.jks");//serverKeystore/server.jks
+		InputStream truststoreInput = Client.class
+			    .getResourceAsStream("/key/client.jks");///xty/clientKeystore/client.jks
+			
+		Keystore.setSSLFactories(keystoreInput, "comp90015",truststoreInput);
+		
+		System.out.println("start to connecting the server");
+		System.setProperty("javax.net.ssl.trustStore", "xty/clientKeyStore/client.jks");
+		System.out.println("starting to certification");
+		SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+		SSLSocket sslsocket = (SSLSocket) sslsocketfactory.createSocket(hostname, port);
+	
 			Log.log(Common.getMethodName(), "FINE", "SENT: " + query);
 			InputStream inputstream = sslsocket.getInputStream();
 			InputStreamReader inputstreamreader = new InputStreamReader(inputstream);
@@ -353,9 +378,7 @@ public class OperationSecure extends Operation {
 			// out.flush();
 			// out.close();
 			// socket.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 

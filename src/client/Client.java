@@ -729,6 +729,7 @@ public class Client {
 										if (input == '\n' || input == '\r') {
 											Unsubscribe unsubscribe = new Unsubscribe("UNSUBSCRIBE", sr.getId());
 											out.write(unsubscribe.toJSON());
+											out.flush();
 											pool.shutdown();
 											break;
 										}

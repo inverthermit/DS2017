@@ -169,7 +169,7 @@ public class Client {
 			OutputStream outputstream = sslsocket.getOutputStream();
 			OutputStreamWriter outputstreamwriter = new OutputStreamWriter(outputstream);
 			BufferedWriter bufferedwriter = new BufferedWriter(outputstreamwriter);
-			System.out.println(query);
+			System.out.println("ready to send sth to the server");
 			bufferedwriter.write(query + '\n');
 			bufferedwriter.flush();
 			
@@ -185,6 +185,8 @@ public class Client {
 			
 			//out.close();
 			sslsocket.close();
+			bufferedreader.close();
+			bufferedwriter.close();
 		} catch (Exception ee){
 			Log.log(Common.getMethodName(), "FINE", "CONNECTION ERROR: Please check the network or server(" + hostname
 					+ ":" + port + "). Timeout or connection refused.");

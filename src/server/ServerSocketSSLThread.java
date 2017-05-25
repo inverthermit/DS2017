@@ -66,7 +66,7 @@ public class ServerSocketSSLThread implements Runnable {
 		//System.out.println(path);
 		System.setProperty("javax.net.ssl.keyStore","serverKeystore/aGreatName");
 		System.setProperty("javax.net.ssl.keyStorePassword","comp90015");
-		System.setProperty("javax.net.debug","all");
+		//System.setProperty("javax.net.debug","all");
 		try {
 			System.out.println("start to conneting through secure socket");
 			

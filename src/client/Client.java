@@ -12,6 +12,7 @@ import model.Resource;
 import model.Response.NormalResponse;
 import model.Response.SubscribeResponse;
 import model.command.Unsubscribe;
+import server.ServerSocketSSLThread;
 import tool.ClientCommandLine;
 import tool.Common;
 import tool.Config;
@@ -144,16 +145,16 @@ public class Client {
 		}
 		try{
 			//create ssl socket
-			/*
-			InputStream keystoreInput = Thread.currentThread().getContextClassLoader()
-				    .getResourceAsStream("/xty/clientKeystore/client.jks");//"/xty/clientKeystore/client.jks"
-			InputStream truststoreInput = Thread.currentThread().getContextClassLoader()
-				    .getResourceAsStream("/xty/serverKeystore/server.jks");///xty/serverKeystore/server.jks
+			
+			InputStream keystoreInput = Client.class.
+				    getResourceAsStream("/key/server.jks");//serverKeystore/server.jks
+			InputStream truststoreInput = Client.class
+				    .getResourceAsStream("/key/client.jks");///xty/clientKeystore/client.jks
 				
 			Keystore.setSSLFactories(keystoreInput, "comp90015",truststoreInput);
-			*/	
+			
 			System.out.println("start to connecting the server");
-			System.setProperty("javax.net.ssl.trustStore", "clientKeyStore/myGreatName");
+			System.setProperty("javax.net.ssl.trustStore", "xty/clientKeyStore/client.jks");
 			System.out.println("starting to certification");
 			SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 			SSLSocket sslsocket = (SSLSocket) sslsocketfactory.createSocket(hostname, port);
@@ -698,7 +699,7 @@ public class Client {
 							// TODO: Output result
 							// System.out.println(message);
 							if (printLog)
-								Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + message);
+								Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + messageResponse);
 							// TODO: set {"resultSize":6} as end flag
 							if (message.contains("{\"resultSize\":")) {
 								break;

@@ -47,25 +47,25 @@ public class ServerSocketSSLThread implements Runnable {
 		// TODO Auto-generated method stub
 		ExecutorService pool = Executors.newCachedThreadPool();
 		pool.execute(new HeartbeatThread(selfModel));
-		/*
+	
 		System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
-		InputStream keystoreInput = Thread.currentThread().getContextClassLoader()
-			    .getResourceAsStream("/serverKeystore/server.jks");///xty/serverKeystore/server.jks
-			InputStream truststoreInput = Thread.currentThread().getContextClassLoader()
-			    .getResourceAsStream("/clientKeystore/client.jks");///xty/clientKeystore/client.jks
-			try {
+		InputStream keystoreInput = ServerSocketSSLThread.class.
+			    getResourceAsStream("/key/server.jks");//serverKeystore/server.jks
+		InputStream truststoreInput = ServerSocketSSLThread.class
+			    .getResourceAsStream("/key/client.jks");///xty/clientKeystore/client.jks
+		try {
 				Keystore.setSSLFactories(keystoreInput, "comp90015",truststoreInput);
 				
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			*/
-			
+	
+		
 		//InputStream path = this.getClass().getResourceAsStream("/serverKeystore/aGreatName");
 		//System.out.println(path);
-		System.setProperty("javax.net.ssl.keyStore","serverKeystore/aGreatName");
-		System.setProperty("javax.net.ssl.keyStorePassword","comp90015");
+		//System.setProperty("javax.net.ssl.keyStore","xty/serverKeystore/server.jks");
+		//System.setProperty("javax.net.ssl.keyStorePassword","comp90015");
 		//System.setProperty("javax.net.debug","all");
 		try {
 			System.out.println("start to conneting through secure socket");

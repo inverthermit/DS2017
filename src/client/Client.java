@@ -87,6 +87,9 @@ public class Client {
 			if (query != null) {
 				if(ClientCommandLine.getSecure()){
 					serverPort = Config.DEFAULT_SECURE_PORT;
+					if (ClientCommandLine.getPort() != 0) {
+						serverPort = ClientCommandLine.getPort();
+					}
 					doSendSecure(serverHostname,serverPort,query,null,Log.debug);
 				} else {
 					doSend(serverHostname, serverPort,query,null,Log.debug);

@@ -61,6 +61,12 @@ public class ServerModel {
 		this.port = port;
 		init();
 	}
+	
+	public ServerModel(String hostname, int port,int sport) {
+		this.hostname = hostname;
+		this.sport = sport;
+		init();
+	}
 
 	/**
 	 * This is a setter() function to set the HostName for server command line

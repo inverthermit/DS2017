@@ -285,6 +285,16 @@ public class ClientCommandLine {
 			Log.log(Common.getMethodName(), "FINE", "CHECK: " + response.toJSON());
 			valid = false;
 		}
+		if (getSecure()){
+			String[] server = servers.split(",");
+			for (int m = 0; m < server.length; m++) {
+				String[] serverlist = server[m].split(":");
+				hostName = serverlist[0];
+				portNum = Integer.parseInt(serverlist[1]);
+				ServerModel sm = new ServerModel(hostName, 0,portNum);
+				serverList.add(sm);
+			}
+		} else {
 		String[] server = servers.split(",");
 		for (int m = 0; m < server.length; m++) {
 			String[] serverlist = server[m].split(":");
@@ -292,6 +302,7 @@ public class ClientCommandLine {
 			portNum = Integer.parseInt(serverlist[1]);
 			ServerModel sm = new ServerModel(hostName, portNum);
 			serverList.add(sm);
+		}
 		}
 		Exchange exchange = new Exchange("EXCHANGE", serverList);
 		request = exchange.toJSON();

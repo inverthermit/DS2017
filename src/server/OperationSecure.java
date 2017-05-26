@@ -182,7 +182,7 @@ public class OperationSecure extends Operation {
 							forwardQuery, result, Log.debug);
 				}
 			}
-			result.add("{\"resultSize\":" + (result.size() - 1) + "}");
+			result.add("{\"resultSize\":" + (result.size()-1) + "}");
 		}
 		return result;
 	}

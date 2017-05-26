@@ -347,7 +347,11 @@ public class OperationSecure extends Operation {
 						OutputStreamWriter outputstreamwriterClient = new OutputStreamWriter(outputstreamClient);
 						BufferedWriter bufferedwriterClient = new BufferedWriter(outputstreamwriterClient);
 						while (true) {
+							
 							String messageResponse = bufferedreader.readLine();
+							if(messageResponse==null){
+								continue;
+							}
 							Log.log(Common.getMethodName(), "FINE",
 									"RECEIVED: " + messageResponse);
 							ArrayList<String> resultSet = new ArrayList<String>();

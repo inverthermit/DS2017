@@ -317,10 +317,6 @@ public class OperationSecure extends Operation {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			System.out.println("start to connecting the server");
-			System.setProperty("javax.net.ssl.trustStore", "xty/clientKeyStore/client.jks");
-			System.out.println("starting to certification");
 			//hostserver start a short socket with forward server
 			SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 			SSLSocket sslsocket = (SSLSocket) sslsocketfactory.createSocket(hostname, port);
@@ -413,7 +409,6 @@ public class OperationSecure extends Operation {
 		Keystore.setSSLFactories(keystoreInput, "comp90015",truststoreInput);
 		
 		System.out.println("start to connecting the server");
-		System.setProperty("javax.net.ssl.trustStore", "xty/clientKeyStore/client.jks");
 		System.out.println("starting to certification");
 		SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 		SSLSocket sslsocket = (SSLSocket) sslsocketfactory.createSocket(hostname, port);

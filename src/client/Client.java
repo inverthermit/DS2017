@@ -153,9 +153,9 @@ public class Client {
 
 			Keystore.setSSLFactories(keystoreInput, "comp90015", truststoreInput);
 
-			System.out.println("start to connecting the server");
+			//System.out.println("start to connecting the server");
 			System.setProperty("javax.net.ssl.trustStore", "xty/clientKeyStore/client.jks");
-			System.out.println("starting to certification");
+			//System.out.println("starting to certification");
 			SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 			SSLSocket sslsocket = (SSLSocket) sslsocketfactory.createSocket(hostname, port);
 
@@ -170,7 +170,7 @@ public class Client {
 			OutputStream outputstream = sslsocket.getOutputStream();
 			OutputStreamWriter outputstreamwriter = new OutputStreamWriter(outputstream);
 			BufferedWriter bufferedwriter = new BufferedWriter(outputstreamwriter);
-			System.out.println("ready to send sth to the server");
+			//System.out.println("ready to send sth to the server");
 			bufferedwriter.write(query + '\n');
 			bufferedwriter.flush();
 
@@ -181,7 +181,7 @@ public class Client {
 
 			// out.writeUTF(query);
 			// out.flush();
-			System.out.println("doing response from server");
+			//System.out.println("doing response from server");
 			doInSecure(bufferedreader, op, printLog, resultArr, bufferedwriter, port, hostname);
 			// in.close();
 
@@ -627,11 +627,10 @@ public class Client {
 					throw new Exception();
 				}
 				String message;
-				System.out.println("getting response");
+				//System.out.println("getting response");
 				if ((message = in.readLine()) != null) {
-					System.out.println(message);
+					//System.out.println(message);
 					if (op.equals("FETCH")) {
-						// String message = in.readUTF();
 						// Output result
 						// System.out.println(message);
 						Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + message);
@@ -724,7 +723,7 @@ public class Client {
 								} else {
 									if (resultArr != null) {
 										resultArr.add(messageResponse);
-
+									}
 									}
 								}
 							}
@@ -786,7 +785,7 @@ public class Client {
 						break;
 					}
 				}
-			}
+			
 		} catch (Exception ee) {
 			// ee.printStackTrace();
 			Log.log(Common.getMethodName(), "FINE", "CONNECTION ERROR: Please check the network or server(" + hostname

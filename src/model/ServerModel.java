@@ -247,14 +247,15 @@ public class ServerModel {
 			// check subscribe list, returning this added resource to all
 			// subscribers.
 			for (Subscribe subscribe : subscribeList) {
-				// need test
 			if (Common.isMatchedResource(subscribe.getResource(), resource)) {
 					ClientModel clientModel = subscribe.getClient();
 					subscribe.setNumOfHits(subscribe.getNumOfHits() + 1);
 					try {
 						OutputStream outputstream=null;
+						Boolean isSecure=false;
 						if(clientModel.socket==null&&clientModel.sslsocket!=null){
 							outputstream = clientModel.sslsocket.getOutputStream();
+							isSecure=true;
 						}
 						else if(clientModel.socket!=null&&clientModel.sslsocket==null){
 							outputstream = clientModel.socket.getOutputStream();
@@ -262,16 +263,28 @@ public class ServerModel {
 						if(outputstream==null){
 							continue;
 						}
-						OutputStreamWriter outputstreamwriter = new OutputStreamWriter(outputstream);
-						BufferedWriter bufferedwriter = new BufferedWriter(outputstreamwriter);
 						ArrayList<String> resultSet = new ArrayList<String>();
 						resultSet.add(resource.toJSON());
-						for (int i = 0; i < resultSet.size(); i++) {
-							bufferedwriter.write(resultSet.get(i)+"\n");
-							bufferedwriter.flush();
-							Log.log(Common.getMethodName(), "FINE", "SENDING: "
-									+ resultSet.get(i));
+						if(isSecure){
+							OutputStreamWriter outputstreamwriter = new OutputStreamWriter(outputstream);
+							BufferedWriter bufferedwriter = new BufferedWriter(outputstreamwriter);
+							
+							for (int i = 0; i < resultSet.size(); i++) {
+								bufferedwriter.write(resultSet.get(i)+"\n");
+								bufferedwriter.flush();
+								Log.log(Common.getMethodName(), "FINE", "SENDING: "
+										+ resultSet.get(i));
+							}
 						}
+						else{
+							DataOutputStream out = new DataOutputStream(outputstream);
+							for (int i = 0; i < resultSet.size(); i++) {
+								out.writeUTF(resultSet.get(i));
+								Log.log(Common.getMethodName(), "FINE", "SENDING: "
+										+ resultSet.get(i));
+							}
+						}
+						
 					} catch (IOException e) {
 						e.printStackTrace();
 					}

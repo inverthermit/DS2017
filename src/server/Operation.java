@@ -371,7 +371,7 @@ public class Operation {
 			// out.close();
 			// socket.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 

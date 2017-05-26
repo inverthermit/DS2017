@@ -198,7 +198,7 @@ public class OperationSecure extends Operation {
 			return result;
 		} else {
 			System.out.println("4");
-			int status = server.addDelResourceSecure(publish.getResource(), true);
+			int status = server.addDelResource(publish.getResource(), true);
 			System.out.println("5");
 			if (status > 0) {
 				System.out.println("6");
@@ -244,7 +244,7 @@ public class OperationSecure extends Operation {
 				result.add(nr.toJSON());
 				return result;
 			}
-			int status = server.addDelResourceSecure(share.getResource(), true);
+			int status = server.addDelResource(share.getResource(), true);
 			if (status > 0) {
 				NormalResponse nr = new NormalResponse("success");
 				result.add(nr.toJSON());

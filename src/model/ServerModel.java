@@ -208,85 +208,6 @@ public class ServerModel {
 		}
 	}
 
-	/**
-	 * This method returns the validation of resource template.
-	 * 
-	 * @param Resource
-	 *            Resource template isAdd True for add operation, false for
-	 *            delete operation.
-	 * 
-	 * @return Integer(1:Successfully added;-1:Resource with same primary key
-	 *         found, add failed;2:Successfully deleted;-2:No such resource to
-	 *         delete)
-	 */
-	public synchronized int addDelResource(Resource resource, boolean isAdd) {
-		if (isAdd) {
-			for (int i = 0; i < this.resourceList.size(); i++) {
-				Resource element = this.resourceList.get(i);
-				if (resource.owner.equals(element.owner)
-						&& resource.channel.equals(element.channel)
-						&& resource.uri.equals(element.uri)) {
-					resourceList.remove(i);
-					break;
-				}
-				// According to Aeron's server
-				else if (!resource.owner.equals(element.owner)
-						&& resource.channel.equals(element.channel)
-						&& resource.uri.equals(element.uri)) {
-					return -1;
-				}
-			}
-			resource.setEZserver(this.advertisedHostName);
-			this.resourceList.add(resource);
-			System.out.println("Resource List in server:");
-			for (int i = 0; i < this.resourceList.size(); i++) {
-				System.out.println(resourceList.get(i).toJSON());
-			}
-
-			// check subscribe list, returning this added resource to all
-			// subscribers.
-			for (Subscribe subscribe : subscribeList) {
-				if (Common.isMatchedResource(subscribe.getResource(), resource)) {
-					ClientModel clientModel = subscribe.getClient();
-					subscribe.setNumOfHits(subscribe.getNumOfHits() + 1);
-					try {
-						DataOutputStream out = new DataOutputStream(
-								clientModel.socket.getOutputStream());
-						ArrayList<String> resultSet = new ArrayList<String>();
-						resultSet.add(resource.toJSON());
-						for (int i = 0; i < resultSet.size(); i++) {
-							out.writeUTF(resultSet.get(i));
-							Log.log(Common.getMethodName(), "FINE", "SENDING: "
-									+ resultSet.get(i));
-						}
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-
-			return 1;
-		} else {
-			int flag = 0;// Record if there's a successful deletion
-			for (int i = 0; i < this.resourceList.size(); i++) {
-				Resource element = this.resourceList.get(i);
-				if (resource.owner.equals(element.owner)
-						&& resource.channel.equals(element.channel)
-						&& resource.uri.equals(element.uri)) {
-					this.resourceList.remove(i);
-					flag = 1;
-				}
-			}
-			for (int i = 0; i < this.resourceList.size(); i++) {
-				System.out.println(resourceList.get(i).toJSON());
-			}
-			if (flag == 1) {
-				return 2;
-			} else {
-				return -2;
-			}
-		}
-	}
 	
 	/**
 	 * This method returns the validation of resource template.
@@ -299,7 +220,7 @@ public class ServerModel {
 	 *         found, add failed;2:Successfully deleted;-2:No such resource to
 	 *         delete)
 	 */
-	public synchronized int addDelResourceSecure(Resource resource, boolean isAdd) {
+	public synchronized int addDelResource(Resource resource, boolean isAdd) {
 		System.out.println("8");
 		if (isAdd) {
 			System.out.println("9");
@@ -336,15 +257,26 @@ public class ServerModel {
 			// subscribers.
 			for (Subscribe subscribe : subscribeList) {
 				System.out.println("17");
-				if (Common.isMatchedResource(subscribe.getResource(), resource)) {
+				if (true) {
+//				if (Common.isMatchedResource(subscribe.getResource(), resource)) {
 					System.out.println("18");
 					ClientModel clientModel = subscribe.getClient();
 					System.out.println("19");
 					subscribe.setNumOfHits(subscribe.getNumOfHits() + 1);
 					System.out.println("20");
 					try {
-						System.out.println(clientModel.sslsocket+"*************************");
-						OutputStream outputstream = clientModel.sslsocket.getOutputStream();
+						OutputStream outputstream=null;
+						if(clientModel.socket==null&&clientModel.sslsocket!=null){
+							outputstream = clientModel.sslsocket.getOutputStream();
+						}
+						else if(clientModel.socket!=null&&clientModel.sslsocket==null){
+							outputstream = clientModel.socket.getOutputStream();
+						}
+						
+						System.out.println(outputstream+"*************************");
+						if(outputstream==null){
+							continue;
+						}
 						OutputStreamWriter outputstreamwriter = new OutputStreamWriter(outputstream);
 						BufferedWriter bufferedwriter = new BufferedWriter(outputstreamwriter);
 //						DataOutputStream out = new DataOutputStream(
@@ -357,10 +289,17 @@ public class ServerModel {
 							Log.log(Common.getMethodName(), "FINE", "SENDING: "
 									+ resultSet.get(i));
 						}
+						bufferedwriter.write("!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+						bufferedwriter.flush();
+						Log.log(Common.getMethodName(), "FINE", "SENDING: "
+								+ "!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
+				} else {
+					System.out.println("21");
 				}
+				
 			}
 
 			return 1;

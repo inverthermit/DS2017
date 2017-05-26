@@ -760,7 +760,9 @@ public class Client {
 								});
 
 								while (true) {
+								    System.out.println(22);
 									String messageResponse = in.readLine();
+									System.out.println(23);
 									Log.log(Common.getMethodName(), "FINE", "RECEIVED: " + messageResponse);
 									if (messageResponse.contains("{\"resultSize\":")) {
 										break;

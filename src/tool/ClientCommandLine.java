@@ -292,6 +292,12 @@ public class ClientCommandLine {
 				hostName = serverlist[0];
 				portNum = Integer.parseInt(serverlist[1]);
 				ServerModel sm = new ServerModel(hostName, Config.DEFAULT_PORT,portNum);
+				sm.clientList = null;
+				sm.serverList = null;
+				sm.resourceList =null;
+				sm.subscribeList = null;
+				sm.secureServerList = null;
+				//serverList":[],"secureServerList":[],"clientList":[],"resourceList":[],"subscribeList":[]}
 				serverList.add(sm);
 			}
 		} else {
@@ -301,6 +307,11 @@ public class ClientCommandLine {
 			hostName = serverlist[0];
 			portNum = Integer.parseInt(serverlist[1]);
 			ServerModel sm = new ServerModel(hostName, portNum,Config.DEFAULT_SECURE_PORT);
+			sm.clientList = null;
+			sm.serverList = null;
+			sm.resourceList =null;
+			sm.subscribeList = null;
+			sm.secureServerList = null;
 			serverList.add(sm);
 		}
 		}

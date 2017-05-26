@@ -190,20 +190,14 @@ public class OperationSecure extends Operation {
 
 	public ArrayList<String> doClientPublish(Publish publish, ServerModel server) {
 		ArrayList<String> result = new ArrayList<String>();
-		System.out.println("1");
 		if (checkServerPublish(publish) != null) {
-			System.out.println("2");
 			result.add(checkServerPublish(publish));
-			System.out.println("3");
 			return result;
 		} else {
-			System.out.println("4");
 			int status = server.addDelResource(publish.getResource(), true);
-			System.out.println("5");
 			if (status > 0) {
-				System.out.println("6");
+
 				NormalResponse nr = new NormalResponse("success");
-				System.out.println("7");
 				result.add(nr.toJSON());
 			} else { // error 4
 				NormalResponse nr = new NormalResponse("error",

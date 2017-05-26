@@ -366,7 +366,6 @@ public class OperationSecure extends Operation {
 					break;
 				}
 			}
-			//need closing??
 			// in.close();
 			// out.flush();
 			// out.close();
@@ -437,12 +436,12 @@ public class OperationSecure extends Operation {
 					org.json.JSONObject json = new org.json.JSONObject(
 							messageResponse);
 					relayNumOfHits = json.getInt("resultSize");
+					System.out.println("get the number of size from the forward server");
 					if (messageResponse.contains("resultSize")) {
 						break;
 					}
 				}
 			}
-			// need to close?
 			// in.close();
 			// out.flush();
 			// out.close();

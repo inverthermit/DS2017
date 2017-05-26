@@ -100,6 +100,7 @@ public class Operation {
 				case "UNSUBSCRIBE":
 					Unsubscribe unsubscribe = new Unsubscribe();
 					unsubscribe.fromJSON(json);
+					System.out.println("doing unsubscribe");
 					result = doClientUnsubscribe(unsubscribe, server, client);
 					break;
 				default:

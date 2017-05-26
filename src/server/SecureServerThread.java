@@ -97,6 +97,11 @@ public class SecureServerThread implements Runnable {
 						Log.log(Common.getMethodName(), "FINE", "SENDING: "
 								+ resultSet.get(i));
 					}
+					Thread.sleep(5000);
+					out.write("asdfasef"+'\n');
+					out.flush();
+					Log.log(Common.getMethodName(), "FINE", "SENDING: "
+							+ "asdfasef");
 					if (!persistentConnFlag || unsubscribe) {
 						break;
 					}

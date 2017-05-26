@@ -283,13 +283,14 @@ public class ServerModel {
 //								clientModel.sslsocket.getOutputStream());
 						ArrayList<String> resultSet = new ArrayList<String>();
 						resultSet.add(resource.toJSON());
+						resultSet.add("???????????????????");
 						for (int i = 0; i < resultSet.size(); i++) {
-							bufferedwriter.write(resultSet.get(i));
+							bufferedwriter.write(resultSet.get(i)+"\n");
 							bufferedwriter.flush();
 							Log.log(Common.getMethodName(), "FINE", "SENDING: "
 									+ resultSet.get(i));
 						}
-						bufferedwriter.write("!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+						bufferedwriter.write("!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 						bufferedwriter.flush();
 						Log.log(Common.getMethodName(), "FINE", "SENDING: "
 								+ "!!!!!!!!!!!!!!!!!!!!!!!!!!!");

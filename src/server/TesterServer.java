@@ -22,8 +22,8 @@ public class TesterServer {
 		int port = 10000;
 		//int port = 10001;
 		//int port = 10002;
-		ServerModel sm1 = new ServerModel("127.0.0.1",10001);
-		ServerModel sm2 = new ServerModel("127.0.0.1",10000);
+		ServerModel sm1 = new ServerModel("127.0.0.1",10001,10002);
+		ServerModel sm2 = new ServerModel("127.0.0.1",10000,10003);
 		//selfModel.serverList.add(sm1);
 		ExecutorService pool = Executors.newCachedThreadPool();
 		pool.execute(new HeartbeatThread(selfModel));

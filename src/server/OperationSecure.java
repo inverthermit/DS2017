@@ -188,6 +188,70 @@ public class OperationSecure extends Operation {
 	}
 	
 
+	public ArrayList<String> doClientPublish(Publish publish, ServerModel server) {
+		ArrayList<String> result = new ArrayList<String>();
+
+		if (checkServerPublish(publish) != null) {
+			result.add(checkServerPublish(publish));
+			return result;
+		} else {
+			int status = server.addDelResourceSecure(publish.getResource(), true);
+			if (status > 0) {
+				NormalResponse nr = new NormalResponse("success");
+				result.add(nr.toJSON());
+			} else { // error 4
+				NormalResponse nr = new NormalResponse("error",
+						ErrorMessage.PUBLISH_BROKEN);
+				result.add(nr.toJSON());
+			}
+		}
+		return result;
+	}
+	
+	public ArrayList<String> doClientShare(Share share, ServerModel server) {
+		ArrayList<String> result = new ArrayList<String>();
+
+		if (checkServerShare(share) != null) {
+			result.add(checkServerShare(share));
+			return result;
+		} else {
+
+			// System.out.println(share.getSecret()+"--"+server.secret);
+			if (share.getSecret() == null
+					|| (share.getSecret() != null && !share.getSecret().equals(
+							server.secret))) { // error 5
+				NormalResponse nr = new NormalResponse("error",
+						ErrorMessage.SHARE_SECRET_INCORRECT);
+				result.add(nr.toJSON());
+				return result;
+			}
+			// Check if the resource uri is a file which exists
+			String uri = share.getResource().uri;
+			if (uri.startsWith("file:")) {
+				uri = uri.replace("file:", "");
+			}
+			File f = new File(uri);
+			// System.out.println(share.getResource().uri+" "+f.exists()+" "+f.isDirectory()+" ");
+			if (!(f.exists() && !f.isDirectory())) {
+				NormalResponse nr = new NormalResponse("error",
+						ErrorMessage.PUBLISH_REMOVE_RESOURCE_INCORRECT);
+				result.add(nr.toJSON());
+				return result;
+			}
+			int status = server.addDelResourceSecure(share.getResource(), true);
+			if (status > 0) {
+				NormalResponse nr = new NormalResponse("success");
+				result.add(nr.toJSON());
+			} else { // error 4
+				NormalResponse nr = new NormalResponse("error",
+						ErrorMessage.SHARE_BROKEN);
+				result.add(nr.toJSON());
+			}
+		}
+		return result;
+	}
+
+	
 	public ArrayList<String> doClientSubscribe(Subscribe subscribe,
 			ServerModel server, ClientModel client) {
 		ArrayList<String> result = new ArrayList<String>();
@@ -200,12 +264,15 @@ public class OperationSecure extends Operation {
 
 		// first check if already exists subscribed resource in the
 		// resourceList, just like query.
+		// get the resource in the subscribe host
 		ArrayList<Resource> matchedResource = resourceMatch(
 				subscribe.getResource(), server.resourceList);
 		for (Resource resource : matchedResource) {
 			result.add(resource.toJSON());
 		}
+		
 		subscribe.setClient(client);
+		//get the number of the first subscribe
 		subscribe.setNumOfHits(matchedResource.size());
 		server.addDelSubscribe(subscribe, true);
 
@@ -254,15 +321,17 @@ public class OperationSecure extends Operation {
 			System.out.println("start to connecting the server");
 			System.setProperty("javax.net.ssl.trustStore", "xty/clientKeyStore/client.jks");
 			System.out.println("starting to certification");
+			//hostserver start a short socket with forward server
 			SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 			SSLSocket sslsocket = (SSLSocket) sslsocketfactory.createSocket(hostname, port);
 			//socket.connect(new InetSocketAddress(hostname, port),
 		//			Config.CONNECTION_TIMEOUT);
 			Log.log(Common.getMethodName(), "FINE", "SENT: " + query);
+			// forward server bufferedreader and bufferwriter with hostserver
 			InputStream inputstream = sslsocket.getInputStream();
 			InputStreamReader inputstreamreader = new InputStreamReader(inputstream);
 			BufferedReader bufferedreader = new BufferedReader(inputstreamreader);
-			//write to the server
+			//write to the forward server
 			OutputStream outputstream = sslsocket.getOutputStream();
 			OutputStreamWriter outputstreamwriter = new OutputStreamWriter(outputstream);
 			BufferedWriter bufferedwriter = new BufferedWriter(outputstreamwriter);
@@ -277,9 +346,9 @@ public class OperationSecure extends Operation {
 					SubscribeResponse sr = new SubscribeResponse();
 					sr.fromJSON(message);
 					if (sr.getResponse().equals("success")) {
-						OutputStream outputstreamClient = sslsocket.getOutputStream();
-						OutputStreamWriter outputstreamwriterClient = new OutputStreamWriter(outputstream);
-						BufferedWriter bufferedwriterClient = new BufferedWriter(outputstreamwriter);
+						OutputStream outputstreamClient = client.sslsocket.getOutputStream();
+						OutputStreamWriter outputstreamwriterClient = new OutputStreamWriter(outputstreamClient);
+						BufferedWriter bufferedwriterClient = new BufferedWriter(outputstreamwriterClient);
 						while (true) {
 							String messageResponse = bufferedreader.readLine();
 							Log.log(Common.getMethodName(), "FINE",

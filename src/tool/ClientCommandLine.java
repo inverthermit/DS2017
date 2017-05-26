@@ -291,7 +291,7 @@ public class ClientCommandLine {
 				String[] serverlist = server[m].split(":");
 				hostName = serverlist[0];
 				portNum = Integer.parseInt(serverlist[1]);
-				ServerModel sm = new ServerModel(hostName, 0,portNum);
+				ServerModel sm = new ServerModel(hostName, Config.DEFAULT_PORT,portNum);
 				serverList.add(sm);
 			}
 		} else {
@@ -300,7 +300,7 @@ public class ClientCommandLine {
 			String[] serverlist = server[m].split(":");
 			hostName = serverlist[0];
 			portNum = Integer.parseInt(serverlist[1]);
-			ServerModel sm = new ServerModel(hostName, portNum);
+			ServerModel sm = new ServerModel(hostName, portNum,Config.DEFAULT_SECURE_PORT);
 			serverList.add(sm);
 		}
 		}

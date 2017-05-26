@@ -300,25 +300,34 @@ public class ServerModel {
 	 *         delete)
 	 */
 	public synchronized int addDelResourceSecure(Resource resource, boolean isAdd) {
+		System.out.println("8");
 		if (isAdd) {
+			System.out.println("9");
 			for (int i = 0; i < this.resourceList.size(); i++) {
+				System.out.println("10");
 				Resource element = this.resourceList.get(i);
+				System.out.println("11");
 				if (resource.owner.equals(element.owner)
 						&& resource.channel.equals(element.channel)
 						&& resource.uri.equals(element.uri)) {
+					System.out.println("12");
 					resourceList.remove(i);
+					System.out.println("13");
 					break;
 				}
 				// According to Aeron's server
 				else if (!resource.owner.equals(element.owner)
 						&& resource.channel.equals(element.channel)
 						&& resource.uri.equals(element.uri)) {
+					System.out.println("14");
 					return -1;
 				}
 			}
 			resource.setEZserver(this.advertisedHostName);
+			System.out.println("15");
 			this.resourceList.add(resource);
 			System.out.println("Resource List in server:");
+			System.out.println("16");
 			for (int i = 0; i < this.resourceList.size(); i++) {
 				System.out.println(resourceList.get(i).toJSON());
 			}
@@ -326,10 +335,15 @@ public class ServerModel {
 			// check subscribe list, returning this added resource to all
 			// subscribers.
 			for (Subscribe subscribe : subscribeList) {
+				System.out.println("17");
 				if (Common.isMatchedResource(subscribe.getResource(), resource)) {
+					System.out.println("18");
 					ClientModel clientModel = subscribe.getClient();
+					System.out.println("19");
 					subscribe.setNumOfHits(subscribe.getNumOfHits() + 1);
+					System.out.println("20");
 					try {
+						System.out.println(clientModel.sslsocket+"*************************");
 						OutputStream outputstream = clientModel.sslsocket.getOutputStream();
 						OutputStreamWriter outputstreamwriter = new OutputStreamWriter(outputstream);
 						BufferedWriter bufferedwriter = new BufferedWriter(outputstreamwriter);

@@ -709,7 +709,7 @@ public class Client {
 								break;
 							} else {
 								if (resultArr != null) {
-									resultArr.add(message);
+									resultArr.add(messageResponse);
 								}
 							}
 						}

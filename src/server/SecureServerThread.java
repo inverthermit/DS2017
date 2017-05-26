@@ -65,12 +65,10 @@ public class SecureServerThread implements Runnable {
 	 */
 	@Override
 	public void run() {
-		System.out.println("run a thread for opreation");
 		try {
 			while (true) {
 				String message;
 				if ((message = in.readLine())!=null) {
-					System.out.println("has in");
 					// 1.Get message
 					String option = Common.getOperationfromJson(message);
 					boolean persistentConnFlag = option == "SUBSCRIBE";
@@ -81,7 +79,6 @@ public class SecureServerThread implements Runnable {
 							+ message);
 					// 2.Parse message, do operations, return ArrayList<String>
 					// to send back to client
-					System.out.println("sop");
 					OperationSecure sop = new OperationSecure();
 					ArrayList<String> resultSet = sop.dispatcher(message,
 							selfModel, clientModel);
@@ -97,11 +94,6 @@ public class SecureServerThread implements Runnable {
 						Log.log(Common.getMethodName(), "FINE", "SENDING: "
 								+ resultSet.get(i));
 					}
-					Thread.sleep(5000);
-					out.write("asdfasef"+'\n');
-					out.flush();
-					Log.log(Common.getMethodName(), "FINE", "SENDING: "
-							+ "asdfasef");
 					if (!persistentConnFlag || unsubscribe) {
 						break;
 					}
@@ -113,7 +105,7 @@ public class SecureServerThread implements Runnable {
 			//out.close();
 			//client.close();
 		} catch (Exception ee) {
-			ee.printStackTrace();
+			//ee.printStackTrace();
 		}
 
 	}

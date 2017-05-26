@@ -58,17 +58,9 @@ public class ServerSocketSSLThread implements Runnable {
 				
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
 			}
-	
-		
-		//InputStream path = this.getClass().getResourceAsStream("/serverKeystore/aGreatName");
-		//System.out.println(path);
-		//System.setProperty("javax.net.ssl.keyStore","xty/serverKeystore/server.jks");
-		//System.setProperty("javax.net.ssl.keyStorePassword","comp90015");
-		//System.setProperty("javax.net.debug","all");
 		try {
-			System.out.println("start to conneting through secure socket");
 			
 			
 			SSLServerSocketFactory sslserversocketfactory = (SSLServerSocketFactory) SSLServerSocketFactory
@@ -99,7 +91,6 @@ public class ServerSocketSSLThread implements Runnable {
 				//System.out.println("add clients");
 				selfModel.clientList.add(client);
 				// TODO: Output client connection log
-				// System.out.println("Connected");
 				Log.log(Common.getMethodName(), "INFO",
 						"New Connection:" + client.sslsocket.getRemoteSocketAddress().toString().split(":")[0] + ":"
 								+ client.sslsocket.getPort());
@@ -107,8 +98,8 @@ public class ServerSocketSSLThread implements Runnable {
 				pool.execute(new SecureServerThread(client, selfModel));
 			}
 			sslserversocket.close();
-			//keystoreInput.close();
-			//truststoreInput.close();
+			keystoreInput.close();
+			truststoreInput.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

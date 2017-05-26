@@ -48,7 +48,6 @@ public class Server {
 	public static void main(String[] args) {
 		ServerModel sm = ServerCommandLine.ServerCommandLine(args);
 		Log.infoDebug = true;
-		System.out.println("starting the server");
 		if (sm == null) {
 			return;
 		} else {
@@ -103,9 +102,6 @@ public class Server {
 		Log.log(Common.getMethodName(), "INFO", "Starting the EZShare Server");
 		Log.log(Common.getMethodName(), "INFO", "using advertised hostname: " + selfModel.advertisedHostName);
 		Log.log(Common.getMethodName(), "INFO", "using secret: " + selfModel.secret);
-		// comment this
-//		ServerModel sm1 = new ServerModel("127.0.0.1", 10001);
-//		selfModel.serverList.add(sm1);
 		Log.log(Common.getMethodName(), "INFO", "bound to port " + port);
 		Log.log(Common.getMethodName(), "INFO", "bound to sport " + sport);
 		Log.infoDebug = false;
@@ -115,55 +111,5 @@ public class Server {
 	    Thread t2 = new Thread(secure);
 	    t1.start();
 	    t2.start();
-		/*
-		ExecutorService pool = Executors.newCachedThreadPool();
-		pool.execute(new HeartbeatThread(selfModel));
-		try {
-			Log.log(Common.getMethodName(), "INFO", "bound to port " + port);
-			Log.log(Common.getMethodName(), "INFO", "started");
-			
-			ServerSocket server = new ServerSocket(port);
-			
-			//SSLServerSocketFactory sslserversocketfactory = (SSLServerSocketFactory) SSLServerSocketFactory
-			//		.getDefault();
-			//SSLServerSocket sslserversocket = (SSLServerSocket) sslserversocketfactory.createServerSocket(sport);
-			
-			boolean bool = true;
-			while (bool) {
-				ClientModel client = new ClientModel();
-				// Log.log(Common.getMethodName(), "INFO", "started");
-				client.socket = server.accept();
-				//client.sslsocket = (SSLSocket) sslserversocket.accept();
-				client.ip = client.socket.getRemoteSocketAddress().toString().split(":")[0];
-				long timestamp = Common.getCurrentSecTimestamp();
-				if (selfModel.ipTimeList == null) {
-					selfModel.ipTimeList = new HashMap<String, Long>();
-				} else if (timestamp - selfModel.getLastClientTime(client.ip) < Config.CONNECTION_LIMIT_INTERVAL) {
-					System.out.println("Less than connection limit interval");
-					client.socket.close();
-					continue;
-				}
-				selfModel.ipTimeList.put(client.ip, timestamp);
-				// client.timestamp = timestamp;
-
-				// Timeout
-				client.socket.setSoTimeout(Config.CONNECTION_TIMEOUT);
-				// System.out.println(client.socket.getSoTimeout());
-				selfModel.clientList.add(client);
-				// TODO: Output client connection log
-				// System.out.println("Connected");
-				Log.log(Common.getMethodName(), "INFO",
-						"New Connection:" + client.socket.getRemoteSocketAddress().toString().split(":")[0] + ":"
-								+ client.socket.getPort());
-				pool.execute(new ServerThread(client, selfModel));
-			}
-			server.close();
-		} catch (Exception ee) {
-			// ee.printStackTrace();
-			Log.log(Common.getMethodName(), "INFO", "Server fail to start: Port already in used(" + port + ")");
-			System.exit(0);
-		}
-		*/
-		
 	}
 }
